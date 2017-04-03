@@ -1,0 +1,45 @@
+//
+// Created by b.karjoo on 3/20/2017.
+//
+
+#ifndef BRIMUS_PCAP_FILE_H
+#define BRIMUS_PCAP_FILE_H
+
+#include <memory>
+#include <set>
+#include <string>
+#include "read_mode.h"
+#include "st_notifier.h"
+
+class pcap_file {
+    pcap_file() {}
+    std::set<std::string> symbols;
+    int start_time_seconds = 0, end_time_seconds = 86399;
+
+    read_mode mode = read_mode::PACKET_HEADER;
+    bool is_packet_delimiter(const char &c);
+    bool is_msg_delimiter(const char &c, const char &prev);
+    bool is_upper_case(const char &c);
+    bool is_field_delimiter(const char &c, const char &prev);
+    bool is_lower_case(const char &c);
+    std::string get_full_path(std::string date, std::string symbol);
+    // TODO: deletion candidates, notifier class to be replaced by global_basket
+    std::unique_ptr<st_notifier> notifier = std::make_unique<st_notifier>();
+public:
+    // static construction
+    void operator=(pcap_file const&) = delete;
+    pcap_file(pcap_file const&) = delete;
+    static pcap_file& get_instance();
+    // getters and setters
+    int getStart_time_seconds() const;
+    void setStart_time_seconds(int start_time_seconds);
+    int getEnd_time_seconds() const;
+    void setEnd_time_seconds(int end_time_seconds);
+    void run(const std::vector<std::string> &file_paths);
+    void add_instrument(std::string);
+    void add_instrument(std::shared_ptr<instrument>);
+
+};
+
+
+#endif //BRIMUS_PCAP_FILE_H
