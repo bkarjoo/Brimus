@@ -5,6 +5,7 @@
 #ifndef BRIMUS_PCAP_FILE_SERVER_H
 #define BRIMUS_PCAP_FILE_SERVER_H
 
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <memory>
 #include <set>
 #include <string>
@@ -16,30 +17,27 @@
  * responsible for producing the file paths and file management on discs
  */
 class pcap_file_server : public IDataServer {
-    std::set<std::shared_ptr<tm>> dates;
-public:
-    const std::set<std::shared_ptr<tm>> &getDates() const;
-
-private:
+    typedef boost::gregorian::date bdate;
+    typedef std::shared_ptr<bdate> date_ptr;
+    typedef std::set<date_ptr, Date_Compare> date_set;
+    date_set dates;
     std::vector<std::string> paths;
     pcap_file_server() {}
     ~pcap_file_server() {}
 public:
+    const date_set &getDates() const;
     pcap_file_server(pcap_file_server const&) = delete;
     void operator=(pcap_file_server const&) = delete;
     static pcap_file_server& get_instance() {
         static pcap_file_server pfs;
         return pfs;
     }
-    std::vector<std::string>& get_paths() {
-        paths.push_back("C:\\Users\\b.karjoo\\Documents\\CMDCPP\\CapFileMaker\\output\\40000.CAP");
-        paths.push_back("C:\\Users\\b.karjoo\\Documents\\CMDCPP\\CapFileMaker\\output\\40001.CAP");
-        paths.push_back("C:\\Users\\b.karjoo\\Documents\\CMDCPP\\CapFileMaker\\output\\40002.CAP");
-        paths.push_back("C:\\Users\\b.karjoo\\Documents\\CMDCPP\\CapFileMaker\\output\\40003.CAP");
-        return paths;
-    };
-
+    void construct_paths();
+    const std::vector<std::string>& get_paths();
+    void clear_date_set() { dates.clear(); }
     void request_data(std::shared_ptr<launch_rules> ptr) override;
+
+
 };
 
 

@@ -190,7 +190,7 @@ std::string pcap_file::get_full_path(std::string date, std::string symbol) {
      * then you get the next message from the file whose message was used and so forth
      * the dates themselves are provided by the strategy's launch rule definition
      */
-    // TODO : get the date from date param
+    // TODO : get the date_ptr from date_ptr param
     // not that it can be passed as 2017-1-1 from launch rule def?
     string year_str = "2017";
     string month_str = "01";
