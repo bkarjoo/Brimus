@@ -17,6 +17,7 @@
 #include "strategy_oms.h"
 #include "launch_rules.h"
 #include "symbol_basket.h"
+#include "IStrategyRules.h"
 
 
 class instrument;
@@ -26,9 +27,10 @@ enum class run_mode { LIVE, BACKTEST };
 class strategy {
 protected:
     run_mode runMode = run_mode::BACKTEST;
-    strategy_oms oms;
+    std::shared_ptr<strategy_oms> oms;
     std::shared_ptr<launch_rules> launchRules;
     std::shared_ptr<symbol_basket> symbolBakset;
+    std::shared_ptr<IStrategyRules> rules;
     std::shared_ptr<market_simulator> broker = nullptr;
     std::map<std::string, std::shared_ptr<instrument> > instruments;
     btime currentTime;
@@ -42,11 +44,14 @@ public:
     void send_order(int quantity, std::string symbol, double price);
     void setLaunchRules(const std::shared_ptr<launch_rules> &launchRules);
     void setSymbolBakset(const std::shared_ptr<symbol_basket> &symbolBakset);
-    run_mode getRunMode() const;
-    void setRunMode(run_mode runMode);
     const std::shared_ptr<launch_rules> &getLaunchRules() const;
     const std::shared_ptr<symbol_basket> &getSymbolBakset() const;
     std::function<void(std::string)> get_symbol_update_callback();
+    // getter setters
+    run_mode getRunMode() const;
+    void setRunMode(run_mode runMode);
+    void setOMS(std::shared_ptr<strategy_oms> o) { oms = o; }
+    void setRules(std::shared_ptr<IStrategyRules> r) { rules = r; rules->set_oms(oms); }
 };
 
 

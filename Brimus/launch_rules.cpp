@@ -70,7 +70,7 @@ void launch_rules::set_date_range() {
 
       }
         dcounter += dd;
-         
+
     }
 }
 

@@ -34,7 +34,7 @@ void strategy_art::notify(std::string s) {
 //    std::shared_ptr<bar_series> bs = std::make_shared<bar_series>(symbol);
 //    bs->setBar_duration(5);
 //    bs->AddNewBarObserver(get_on_new_bar_callback());
-//    i->setLast_observer(bs->get_callback());
+//    i->setLast_observer(bs->instrument_callback());
 //    FiveMinute[symbol] = bs;
 //}
 

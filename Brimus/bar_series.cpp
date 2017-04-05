@@ -5,6 +5,7 @@
 #include "bar_series.h"
 #include <iostream>
 #include <cmath>
+#include <numeric>
 using std::cout; using std::endl;
 
 void bar_series::add_price(std::string timestamp, double price) {
@@ -138,6 +139,7 @@ double bar_series::AverageHigh(int numberOfBars)
     int count = 0;
     double sum =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
+        if (a->second->get_high() == 0) continue;
         if (count < numberOfBars) sum += a->second->get_high(); else break;
         count ++;
     }
@@ -150,6 +152,7 @@ double bar_series::AverageHigh(int numberOfBars, int barsBack)
     int count = 0 - barsBack;
     double sum = 0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
+        if (a->second->get_high() == 0) continue;
         if (count >= 0) {
             if (count < numberOfBars)
                 sum += a->second->get_high();
@@ -164,28 +167,31 @@ double bar_series::AverageLow(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
     int count = 0;
-    double sum =0;
+    std::vector<double> vec;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) sum += a->second->get_low(); else break;
-        count ++;
+        if (a->second->get_low() != 100000) {
+            if (count < numberOfBars) vec.push_back(a->second->get_low()); else break;
+            count++;
+        }
     }
-    return sum / numberOfBars;
+    return std::accumulate(vec.begin(), vec.end(), 0.0) / vec.size();
 }
 double bar_series::AverageLow(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
     int count = 0 - barsBack;
-    double sum = 0;
+    std::vector<double> vec;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
+            if (a->second->get_low() == 100000) continue;
             if (count < numberOfBars)
-                sum += a->second->get_low();
+                vec.push_back(a->second->get_low());
             else
                 break;
         }
         count ++;
     }
-    return sum / numberOfBars;
+    return std::accumulate(vec.begin(), vec.end(), 0.0) / vec.size();
 }
 
 const std::string &bar_series::getSymbol() const {

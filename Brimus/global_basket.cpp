@@ -28,16 +28,16 @@ void global_basket::add_basket(const std::shared_ptr<symbol_basket> symbols,
         std::shared_ptr<instrument> iptr = add_instrument(a);
         if (iptr) {
             capFileReader.add_instrument(iptr);
-            add_observer(a, callback);
+            symbol_observer(a, callback);
         }
     }
 }
 
-void global_basket::add_observer(std::string symbol, std::function<void(std::string)> callback) {
-    observers[symbol].push_back(callback);
+void global_basket::symbol_observer(std::string symbol, std::function<void(std::string)> symbol_changed_callback) {
+    observers[symbol].push_back(symbol_changed_callback);
 }
 
-std::function<void(instrument &, const std::string &)> global_basket::get_callback() {
+std::function<void(instrument &, const std::string &)> global_basket::instrument_callback() {
     std::function<void(instrument &, const std::string &)> callback;
     callback = [this](instrument & i, std::string symbol){
         auto call_vector = observers[symbol];
@@ -46,5 +46,7 @@ std::function<void(instrument &, const std::string &)> global_basket::get_callba
     };
     return callback;
 }
+
+
 
 

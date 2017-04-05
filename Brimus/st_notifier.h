@@ -10,8 +10,9 @@
 #include <memory>
 #include "instrument.h"
 #include "market_simulator.h"
+#include "ISTNotifier.h"
 
-class st_notifier {
+class st_notifier : public ISTNotifier {
     std::shared_ptr<market_simulator> market = nullptr;
     std::map<std::string, std::shared_ptr<instrument> > instruments;
 public:

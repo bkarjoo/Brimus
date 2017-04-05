@@ -58,9 +58,13 @@ void instrument::register_field(st_field *pField) {
         case 'o':
             open_price = set_price(pField->field_value);
             break;
-        case 't':
-            last_price = set_price(pField->field_value);
-            for (auto a : last_observers) if (a) a(last_time_stamp, last_price);
+        case 't': {
+            double val = set_price(pField->field_value);
+            if (val != 0) {
+                last_price = val;
+                for (auto a : last_observers) if (a) a(last_time_stamp, last_price);
+            }
+        }
             break;
         case 'y':
             close_price = set_price(pField->field_value);

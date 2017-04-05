@@ -10,6 +10,7 @@
 #include "IDataServer.h"
 #include "pcap_file_server.h"
 #include "live_data_server.h"
+#include "global_basket.h"
 
 using std::cout; using std::endl;using std::string;
 
@@ -27,11 +28,11 @@ void strategy::notify(std::string symbol) {
     currentTime.update(symb->getLast_time_stamp());
 
 
-    if (oms.has_position(symbol)
-        && !oms.has_open_orders(symbol)) {
+    if (oms->has_position(symbol)
+        && !oms->has_open_orders(symbol)) {
         send_order(100,symbol,symb->getAsk_price());
-    } else if (oms.get_position(symbol) > 0
-        && !oms.has_open_orders(symbol)) {
+    } else if (oms->get_position(symbol) > 0
+        && !oms->has_open_orders(symbol)) {
         send_order(-100,symbol,symb->getBid_price());
     }
 
@@ -133,7 +134,17 @@ std::function<void(std::string)> strategy::get_symbol_update_callback() {
 }
 
 void strategy::on_symbol_updated(std::string symbol) {
+//    std::cout << symbol << " Last Price: "
+//              << global_basket::get_instance().LastPrice(symbol) << endl;
 
+    if (rules->update_on()) {
+        if (rules->long_stoploss_rules(symbol)) rules->place_long_stoploss(symbol);
+        if (rules->short_stoploss_rules(symbol)) rules->place_short_stoploss(symbol);
+        if (rules->long_entry_rules(symbol)) rules->place_long_entry(symbol);
+        if (rules->short_entry_rules(symbol)) rules->place_short_entry(symbol);
+        if (rules->long_target_rules(symbol)) rules->place_long_target(symbol);
+        if (rules->short_target_rules(symbol)) rules->place_short_target(symbol);
+    }
 }
 
 

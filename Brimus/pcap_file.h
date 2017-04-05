@@ -8,8 +8,12 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <vector>
 #include "read_mode.h"
-#include "st_notifier.h"
+#include "ISTNotifier.h"
+//#include "st_notifier.h"
+#include "st_message.h"
+#include "instrument.h"
 
 class pcap_file {
     pcap_file() {}
@@ -24,7 +28,7 @@ class pcap_file {
     bool is_lower_case(const char &c);
     std::string get_full_path(std::string date, std::string symbol);
     // TODO: deletion candidates, notifier class to be replaced by global_basket
-    std::unique_ptr<st_notifier> notifier = std::make_unique<st_notifier>();
+    std::shared_ptr<ISTNotifier> notifier;
 public:
     // static construction
     void operator=(pcap_file const&) = delete;
@@ -38,7 +42,7 @@ public:
     void run(const std::vector<std::string> &file_paths);
     void add_instrument(std::string);
     void add_instrument(std::shared_ptr<instrument>);
-
+    void set_notifier(std::shared_ptr<ISTNotifier> istn) { notifier = istn; }
 };
 
 

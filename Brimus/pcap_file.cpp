@@ -91,6 +91,7 @@ void pcap_file::run(const std::vector<std::string> &file_paths) {
                                 time_since_midnight > end_time_seconds)
                                 mode = read_mode::IGNORE_PACKET;
                             else {
+                                //cout << packet_header_str << endl;
                                 if (is_upper_case(c)) symbol += c; else msg_delim = c;
                                 mode = read_mode::MSG_HEADER;
                             }
