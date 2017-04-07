@@ -31,7 +31,6 @@ protected:
     std::shared_ptr<launch_rules> launchRules;
     std::shared_ptr<symbol_basket> symbolBakset;
     std::shared_ptr<IStrategyRules> rules;
-    std::shared_ptr<market_simulator> broker = nullptr;
     std::map<std::string, std::shared_ptr<instrument> > instruments;
     btime currentTime;
     std::function<void(std::shared_ptr<execution>)> get_callback();
@@ -41,7 +40,6 @@ public:
     const btime &getCurrentTime() const;
     void notify(std::string);
     // void add_instrument(std::shared_ptr<instrument>);
-    void send_order(int quantity, std::string symbol, double price);
     void setLaunchRules(const std::shared_ptr<launch_rules> &launchRules);
     void setSymbolBakset(const std::shared_ptr<symbol_basket> &symbolBakset);
     const std::shared_ptr<launch_rules> &getLaunchRules() const;
@@ -50,7 +48,6 @@ public:
     // getter setters
     run_mode getRunMode() const;
     void setRunMode(run_mode runMode);
-    void setOMS(std::shared_ptr<strategy_oms> o) { oms = o; }
     void setRules(std::shared_ptr<IStrategyRules> r) { rules = r; rules->set_oms(oms); }
 };
 

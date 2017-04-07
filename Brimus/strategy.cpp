@@ -30,10 +30,10 @@ void strategy::notify(std::string symbol) {
 
     if (oms->has_position(symbol)
         && !oms->has_open_orders(symbol)) {
-        send_order(100,symbol,symb->getAsk_price());
+        oms->submit(100,symbol,symb->getBid_price());
     } else if (oms->get_position(symbol) > 0
         && !oms->has_open_orders(symbol)) {
-        send_order(-100,symbol,symb->getBid_price());
+        oms->submit(-100,symbol,symb->getBid_price());
     }
 
     //cout << "Current Time : " << currentTime.to_string() << endl;
@@ -85,12 +85,7 @@ std::function<void(std::shared_ptr<execution>)> strategy::get_callback() {
     return callback;
 }
 
-void strategy::send_order(int quantity, std::string symbol, double price) {
-    // construct order, add to open orders, submit to broker simulator
-    //std::shared_ptr<order> o = std::make_shared<order>(quantity,symbol,price);
-    //open_orders[symbol].push_back(o);
-    //broker->send_order(o);
-}
+
 
 void strategy::setLaunchRules(const std::shared_ptr<launch_rules> &launchRules) {
     strategy::launchRules = launchRules;
@@ -103,7 +98,7 @@ void strategy::setSymbolBakset(const std::shared_ptr<symbol_basket> &symbolBakse
 strategy::strategy(const std::shared_ptr<launch_rules> &launchRules, const std::shared_ptr<symbol_basket> &symbolBakset)
         : launchRules(launchRules), symbolBakset(symbolBakset)
 {
-    broker = market_simulator::market();
+    oms = std::make_shared<strategy_oms>();
 }
 
 run_mode strategy::getRunMode() const {

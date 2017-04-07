@@ -6,6 +6,8 @@
 #include <iostream>
 #include <cmath>
 #include <numeric>
+#include <algorithm>
+
 using std::cout; using std::endl;
 
 void bar_series::add_price(std::string timestamp, double price) {
@@ -179,11 +181,12 @@ double bar_series::AverageLow(int numberOfBars)
 double bar_series::AverageLow(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack;
+    int count = 0 - barsBack; // skip these bars
     std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second->get_low() == 100000) continue;
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
                 vec.push_back(a->second->get_low());
             else
@@ -209,193 +212,218 @@ void bar_series::AddNewBarObserver(std::function<void(std::string)> observer) {
 double bar_series::MaxClose(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0;
-    double max =0;
+    int count = 0; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) {
-            if (max < a->second->get_close()) max = a->second->get_close();
+        if (count >= 0) {
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_close());
+            else
+                break;
         }
-        else
-            break;
         count ++;
     }
-    return max;
+    return *std::max_element(vec.begin(), vec.end());
 }
 double bar_series::MaxClose(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack;
-    double max = 0;
+    int count = 0 - barsBack; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (count < numberOfBars) {
-                if (max < a->second->get_close()) max = a->second->get_close();
-            }
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_close());
             else
                 break;
         }
         count ++;
     }
-    return max;
+    return *std::max_element(vec.begin(), vec.end());
 }
 double bar_series::MaxHigh(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0;
-    double max =0;
+    int count = 0 ; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) {
-            if (max < a->second->get_high()) max = a->second->get_high();
+        if (count >= 0) {
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_high());
+            else
+                break;
         }
-        else
-            break;
         count ++;
     }
-    return max;
+    return *std::max_element(vec.begin(), vec.end());
 }
 double bar_series::MaxHigh(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack;
-    double max = 0;
+    int count = 0 - barsBack; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (count < numberOfBars) {
-                if (max < a->second->get_high()) max = a->second->get_high();
-            }
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_high());
             else
                 break;
         }
         count ++;
     }
-    return max;
+    return *std::max_element(vec.begin(), vec.end());
 }
 double bar_series::MaxLow(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0;
-    double max =0;
+    int count = 0 ; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) {
-            if (max < a->second->get_low()) max = a->second->get_low();
+        if (count >= 0) {
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_low());
+            else
+                break;
         }
-        else
-            break;
         count ++;
     }
-    return max;
+    return *std::max_element(vec.begin(), vec.end());
 }
 double bar_series::MaxLow(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack;
-    double max = 0;
+    int count = 0 - barsBack; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (count < numberOfBars) {
-                if (max < a->second->get_low()) max = a->second->get_low();
-            }
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_low());
             else
                 break;
         }
         count ++;
     }
-    return max;
+    return *std::max_element(vec.begin(), vec.end());
 }
 
-double bar_series::MinClose(int numberOfBars)
-{
+double bar_series::MinClose(int numberOfBars) {
     if (numberOfBars < 1) return 0;
-    int count = 0;
-    double min =100000;
+    int count = 0; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) {
-            if (min > a->second->get_close()) min = a->second->get_close();
+        if (count >= 0) {
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_close());
+            else
+                break;
         }
-        else
-            break;
-        count ++;
+        count++;
     }
-    return min;
+    return *std::min_element(vec.begin(), vec.end());
 }
+
 double bar_series::MinClose(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack;
-    double min = 100000;
+    int count = 0 - barsBack; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (count < numberOfBars) {
-                if (min > a->second->get_close()) min = a->second->get_close();
-            }
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_close());
             else
                 break;
         }
         count ++;
     }
-    return min;
+    return *std::min_element(vec.begin(), vec.end());
 }
+
 double bar_series::MinHigh(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0;
-    double min =100000;
+    int count = 0; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) {
-            if (min > a->second->get_high()) min = a->second->get_high();
+        if (count >= 0) {
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_high());
+            else
+                break;
         }
-        else
-            break;
         count ++;
     }
-    return min;
+    return *std::min_element(vec.begin(), vec.end());
 }
 double bar_series::MinHigh(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack;
-    double min = 100000;
+    int count = 0 - barsBack; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (count < numberOfBars) {
-                if (min > a->second->get_high()) min = a->second->get_high();
-            }
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_high());
             else
                 break;
         }
         count ++;
     }
-    return min;
+    return *std::min_element(vec.begin(), vec.end());
 }
 double bar_series::MinLow(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0;
-    double min =100000;
-    for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) {
-            if (min > a->second->get_low()) min = a->second->get_low();
-        }
-        else
-            break;
-        count ++;
-    }
-    return min;
-}
-double bar_series::MinLow(int numberOfBars, int barsBack)
-{
-    if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack;
-    double min = 100000;
+    int count = 0; // skip these bars
+    std::vector<double> vec;
+    // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (count < numberOfBars) {
-                if (min > a->second->get_low()) min = a->second->get_low();
-            }
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_low());
             else
                 break;
         }
         count ++;
     }
-    return min;
+    return *std::min_element(vec.begin(), vec.end());
+}
+double bar_series::MinLow(int numberOfBars, int barsBack)
+{
+    if (numberOfBars < 1) return 0;
+    int count = 0 - barsBack; // skip these bars
+    std::vector<double> vec;
+    // reverse it
+    for (auto a = bars.rbegin(); a != bars.rend(); a++) {
+        if (count >= 0) {
+            if (a->second->get_low() == 100000) continue; // low hasn't been set yet
+            if (count < numberOfBars)
+                vec.push_back(a->second->get_low());
+            else
+                break;
+        }
+        count ++;
+    }
+    return *std::min_element(vec.begin(), vec.end());
 }

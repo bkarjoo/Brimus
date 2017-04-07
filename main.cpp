@@ -53,11 +53,12 @@ void run(param_vec parameters)
     auto & gb = global_basket::get_instance();
     auto basket = std::make_shared<symbol_basket>();basket->add_symbol("SPY");
     auto launch = std::make_shared<launch_rules>();
-    strategy s(launch,basket);
-    gb.add_basket(basket,s.get_symbol_update_callback());
+
+    strategy* sptr = new strategy (launch,basket);
+    gb.add_basket(basket,sptr->get_symbol_update_callback());
 
     auto rules = std::make_shared<S_SpyArt>();
-    s.setRules(rules);
+    sptr->setRules(rules);
 
 
     std::vector<std::string> paths {"C:\\Users\\b.karjoo\\Documents\\Brimus\\cmake-build-debug\\SPY.CAP"};

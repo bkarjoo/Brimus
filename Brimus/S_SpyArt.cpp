@@ -20,15 +20,56 @@ S_SpyArt::S_SpyArt() {
 
 
 bool S_SpyArt::long_entry_rules(std::string s) {
-    std::cout << time.to_string() << std::endl;
-    std::cout << FiveMinBars->AverageLow(3) << std::endl;
-    std::cout << (bar_close < avgLow3) << std::endl;
-
-    return time.isGreaterThan("094959")
-            && time.isLessThan("120000")
-            && !(time.isGreaterThan("105959")
-                && time.isLessThan("113000"))
-            ;
+    std::cout << std::endl << time.to_string() << std::endl;
+    int i = 0;
+    if (oms->has_open_buy_orders(s)) {
+        std::cout << "NO CIGAR BECAUSE HAS OPEN BUY ORDER" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if (!(oms->get_position(s) < maxPosition)) {
+        std::cout << "NO CIGAR BECAUSE HAS MAX SHARES ALLOWED" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if (!time.isGreaterThan("094959")) {
+        std::cout << "NO CIGAR BECAUSE TOO EARLY" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if (!time.isLessThan("120000")) {
+        std::cout << "NO CIGAR BECAUSE TOO LATE" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if ((time.isGreaterThan("105959")
+           && time.isLessThan("113000"))) {
+        std::cout << "NO CIGAR BECAUSE DNT TIME ZONE" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if (!(bar_close < avgLow3)) {
+        std::cout << "NO CIGAR BECAUSE NOT LOWER THAN AvgLow3" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if (!(bar_high < avgHigh3)) {
+        std::cout << "NO CIGAR BECAUSE Reversal Bar" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if (!(bar_close == minClose5)) {
+        std::cout << "NO CIGAR BECAUSE NOT LOWEST CLOSE" << std::endl;
+        return false;
+    }
+    std::cout << i++;
+    if (!(oms->get_position(s) == 0 ||
+         bar_close < oms->last_execution_price(s) - minDistBetweenLongs)) {
+        std::cout << "NO CIGAR BECAUSE NOT LOW ENOUGH COMPARED TO PREV BUY" << std::endl;
+        return false;
+    }
+    std::cout << i++ ;
+    return true;
 }
 
 bool S_SpyArt::short_entry_rules(std::string s) {
@@ -53,31 +94,32 @@ bool S_SpyArt::short_stoploss_rules(std::string s) {
 
 
 
-void S_SpyArt::place_long_entry(std::string string) {
+void S_SpyArt::place_long_entry(std::string s) {
+    std::cout << "Placing Long Order" << std::endl;
+    oms->submit(100,s,bar_close - limitAway);
+}
+
+void S_SpyArt::place_short_entry(std::string s) {
 
 }
 
-void S_SpyArt::place_short_entry(std::string string) {
+void S_SpyArt::place_long_target(std::string s) {
 
 }
 
-void S_SpyArt::place_long_target(std::string string) {
+void S_SpyArt::place_short_target(std::string s) {
 
 }
 
-void S_SpyArt::place_short_target(std::string string) {
+void S_SpyArt::place_long_stoploss(std::string s) {
 
 }
 
-void S_SpyArt::place_long_stoploss(std::string string) {
+void S_SpyArt::place_short_stoploss(std::string s) {
 
 }
 
-void S_SpyArt::place_short_stoploss(std::string string) {
-
-}
-
-void S_SpyArt::update(std::string string) {
+void S_SpyArt::update(std::string s) {
 
 }
 
@@ -90,6 +132,8 @@ std::function<void(std::string)> S_SpyArt::get_callback() {
             avgLow3 = FiveMinBars->AverageLow(3);
             avgHigh8 = FiveMinBars->AverageHigh(8);
             avgLow8 = FiveMinBars->AverageLow(8);
+            bar_high = FiveMinBars->PreviousBar(1)->get_high();
+            minClose5 = FiveMinBars->MinClose(5);
             if (this->long_stoploss_rules(symbol)) this->place_long_stoploss(symbol);
             if (this->short_stoploss_rules(symbol)) this->place_short_stoploss(symbol);
             if (this->long_entry_rules(symbol)) this->place_long_entry(symbol);

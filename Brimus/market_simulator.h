@@ -8,22 +8,24 @@
 #include <map>
 #include <memory>
 #include "order.h"
-#include "order_sender.h"
+#include "IOrderSender.h"
 
 class instrument;
 
 class market_simulator {
-
-    std::map<order*,order_sender*> orders;
-    static std::shared_ptr<market_simulator> instance;
+    std::map<order*,IOrderSender*> orders;
     std::map<std::string,std::shared_ptr<instrument> > instruments;
-    bool check_for_fill(order*,order_sender*);
+    void check_for_fill();
+    market_simulator() {}
+    ~market_simulator() {}
 public:
-    static std::shared_ptr<market_simulator> market();
+    market_simulator(market_simulator const&) = delete;
+    void operator=(market_simulator const&) = delete;
+    static market_simulator& get_instance() { static market_simulator ms; return ms; }
     std::string ping() { return "Connected."; }
     void add_instrument(std::shared_ptr<instrument>);
     std::string ping(std::string);
-    void send_order(int qty, std::string symbol, double price, order_sender* sender);
+    void send_order(int qty, std::string symbol, double price, IOrderSender* sender);
     // called by notifier when an instrument is updated
     void notify(std::string symbol);
 };

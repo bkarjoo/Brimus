@@ -6,9 +6,9 @@
 #define BRIMUS_ORDER_SENDER_H
 
 #include <string>
-class order_sender {
+class IOrderSender {
 public:
-    virtual void on_execution(int quanity, std::string symbol, double price) = 0;
+    virtual void on_execution(int quanity, std::string symbol, double price, int orig_qty) = 0;
 };
 
 

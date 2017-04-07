@@ -12,6 +12,8 @@ struct execution {
     double price = 0.0;
     std::string symbol = "";
     double money_flow() { return -1 * quantity * price; }
+    execution(int qty, std::string symb, double prc) :
+            quantity(qty), symbol(symb), price(prc) {}
 };
 
 

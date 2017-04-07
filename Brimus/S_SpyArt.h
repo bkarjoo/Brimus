@@ -22,11 +22,16 @@ class S_SpyArt : public IStrategyRules {
     std::shared_ptr<instrument> SPY;
     std::shared_ptr<bar_series> FiveMinBars = nullptr;
     btime time;
+    int maxPosition = 400; // 4 levels of 100 each
     double bar_close = 0;
+    double bar_high = 0;
+    double minClose5 = 0;
     double avgHigh3 = 0;
     double avgLow3 = 0;
     double avgHigh8 = 0;
     double avgLow8 = 0;
+    static constexpr double minDistBetweenLongs = 0.10;
+    static constexpr double limitAway = .02;
 public:
     bool update_on() override;
 
@@ -59,6 +64,7 @@ public:
     void place_long_stoploss(std::string string) override;
 
     void place_short_stoploss(std::string string) override;
+
 
 };
 

@@ -13,7 +13,6 @@
 #include "ISTNotifier.h"
 
 class st_notifier : public ISTNotifier {
-    std::shared_ptr<market_simulator> market = nullptr;
     std::map<std::string, std::shared_ptr<instrument> > instruments;
 public:
     st_notifier();
