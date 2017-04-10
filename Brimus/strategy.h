@@ -5,11 +5,7 @@
 #ifndef BRIMUS_STRATEGY_H
 #define BRIMUS_STRATEGY_H
 
-#include <functional>
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 #include "market_simulator.h"
 #include "execution.h"
 #include "btime.h"

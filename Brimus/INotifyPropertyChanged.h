@@ -3,8 +3,7 @@
 //
 #pragma once
 
-#include <boost/signals2.hpp>
-#include <string>
+#include "stdafx.h"
 
 template <typename T>
 class INotifyPropertyChanged {

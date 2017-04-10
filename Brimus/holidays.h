@@ -6,10 +6,7 @@
 #define BRIMUS_HOLIDAYS_H
 
 
-#include <boost/date_time/gregorian/greg_date.hpp>
-#include <memory>
-#include <set>
-#include <string>
+#include "stdafx.h"
 #include "Date_Compare.h"
 
 class holidays {

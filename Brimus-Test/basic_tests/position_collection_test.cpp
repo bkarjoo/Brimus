@@ -13,6 +13,7 @@ TEST(position_collection_test, test1) {
 TEST(position_collection_test, test2) {
     position_collection pc;
     pc.add_position("AAPL",10000);
+
     EXPECT_EQ(10000,pc.get_position("AAPL"));
 }
 
@@ -22,3 +23,9 @@ TEST(position_collection_test, test3) {
     EXPECT_TRUE(pc.has_position("AAPL"));
 }
 
+TEST(position_collection_test, test4) {
+    position_collection pc;
+    pc.add_position("AAPL",10000);
+    pc.add_position("AAPL",-10000);
+    EXPECT_EQ(0,pc.get_position("AAPL"));
+}

@@ -3,8 +3,6 @@
 //
 
 #include "strategy_art.h"
-#include <string>
-#include <iostream>
 #include "instrument.h"
 
 using std::cout; using std::endl;

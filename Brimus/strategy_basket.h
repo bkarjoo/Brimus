@@ -5,8 +5,7 @@
 #ifndef BRIMUS_STRATEGY_BASKET_H
 #define BRIMUS_STRATEGY_BASKET_H
 
-#include <memory>
-#include <vector>
+#include "stdafx.h"
 #include "global_basket.h"
 #include "live_data_server.h"
 #include "pcap_file.h"

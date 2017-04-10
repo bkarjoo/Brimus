@@ -2,7 +2,6 @@
 // Created by b.karjoo on 4/6/2017.
 //
 
-#include <algorithm>
 #include "order_collection.h"
 
 void order_collection::add_order(order_collection::ord_ptr order) {
@@ -55,7 +54,7 @@ order_collection::ord_ptr order_collection::find_order(int qty, std::string symb
                                  return
                                          sptr->getQuantity() == qty &&
                                          sptr->getSymbol() == symbol &&
-                                         sptr->getPrice() == price;
+                                         abs(sptr->getPrice() - price) < .000001;
                              });
 
     return (it != orders.end() ? *it : nullptr);

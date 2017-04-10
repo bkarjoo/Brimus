@@ -5,9 +5,7 @@
 #ifndef BRIMUS_SYMBOL_BASKET_H
 #define BRIMUS_SYMBOL_BASKET_H
 
-#include <memory>
-#include <string>
-#include <set>
+#include "stdafx.h"
 #include "launch_rules.h"
 
 class symbol_basket {

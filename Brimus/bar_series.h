@@ -5,10 +5,7 @@
 #ifndef BRIMUS_BAR_SERIES_H
 #define BRIMUS_BAR_SERIES_H
 
-#include <functional>
-#include <map>
-#include <memory>
-#include <vector>
+#include "stdafx.h"
 #include "bar.h"
 #include "btime.h"
 

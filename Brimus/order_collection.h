@@ -5,8 +5,7 @@
 #ifndef BRIMUS_ORDER_COLLECTION_H
 #define BRIMUS_ORDER_COLLECTION_H
 
-#include <memory>
-#include <vector>
+#include "stdafx.h"
 #include "order.h"
 
 class order_collection {

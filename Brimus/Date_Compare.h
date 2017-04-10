@@ -4,8 +4,8 @@
 
 #ifndef BRIMUS_DATE_COMPARE_H
 #define BRIMUS_DATE_COMPARE_H
-#include <memory>
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include "stdafx.h"
+
 
 typedef boost::gregorian::date bdate;
 typedef std::shared_ptr<bdate> DatePtr;

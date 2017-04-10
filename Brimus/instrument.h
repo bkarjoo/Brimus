@@ -5,10 +5,7 @@
 #ifndef BRIMUS_INSTRUMENT_H
 #define BRIMUS_INSTRUMENT_H
 
-#include <iostream>
-#include <memory>
-#include <fstream>
-#include <functional>
+#include "stdafx.h"
 #include "st_message.h"
 #include "instrument_observer.h"
 #include "bar_series.h"

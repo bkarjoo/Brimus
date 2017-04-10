@@ -2,7 +2,7 @@
 // Created by b.karjoo on 3/31/2017.
 //
 #include "gtest/gtest.h"
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include "stdafx.h"
 
 TEST(BoostDateTest, test1)
 {

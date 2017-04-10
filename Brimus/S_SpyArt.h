@@ -6,9 +6,7 @@
 #define BRIMUS_S_SPYART_H
 
 
-#include <functional>
-#include <memory>
-#include <string>
+#include "stdafx.h"
 #include "bar_series.h"
 #include "btime.h"
 #include "instrument.h"
@@ -26,11 +24,13 @@ class S_SpyArt : public IStrategyRules {
     double bar_close = 0;
     double bar_high = 0;
     double minClose5 = 0;
+    double maxClose5 = 0;
     double avgHigh3 = 0;
     double avgLow3 = 0;
     double avgHigh8 = 0;
     double avgLow8 = 0;
     static constexpr double minDistBetweenLongs = 0.10;
+    static constexpr double minDistBetweenShorts = 0.10;
     static constexpr double limitAway = .02;
 public:
     bool update_on() override;

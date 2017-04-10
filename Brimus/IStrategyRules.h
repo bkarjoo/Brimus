@@ -5,8 +5,7 @@
 #ifndef BRIMUS_ISTRATEGYRULES_H
 #define BRIMUS_ISTRATEGYRULES_H
 
-#include <memory>
-#include <string>
+#include "stdafx.h"
 #include "strategy_oms.h"
 
 class IStrategyRules {

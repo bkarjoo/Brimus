@@ -4,7 +4,7 @@
 
 #ifndef BRIMUS_ST_FIELD_H
 #define BRIMUS_ST_FIELD_H
-#include <string>
+#include "stdafx.h"
 
 struct st_field {
     char field_exchange;

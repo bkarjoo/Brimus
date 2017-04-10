@@ -3,9 +3,6 @@
 //
 
 #include "strategy.h"
-#include <iostream>
-#include <memory>
-#include <string>
 #include "instrument.h"
 #include "IDataServer.h"
 #include "pcap_file_server.h"

@@ -3,8 +3,6 @@
 //
 
 #include "instrument.h"
-#include <cmath>
-#include <iostream>
 
 /*
  * pcap_file class has a vector of instruments to which it sends messages

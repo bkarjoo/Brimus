@@ -5,6 +5,8 @@
 #include "strategy_oms.h"
 #include "global_basket.h"
 
+using namespace std;
+
 bool strategy_oms::has_position(std::string symbol) {
     return positions.has_position(symbol);
 }
@@ -26,11 +28,7 @@ int strategy_oms::get_position(std::string symbol) {
 }
 
 double strategy_oms::sum_money_flow(std::string symbol) {
-    double sum = 0.0;
-    for (auto& a : executions[symbol]) {
-        sum += a->money_flow();
-    }
-    return sum;
+    return executions.sum_money_flow(symbol);
 }
 
 double strategy_oms::sum_money_flow(const std::vector<std::string>& symbols) {
@@ -62,12 +60,14 @@ double strategy_oms::pandl() {
 void strategy_oms::submit(int qty, std::string symbol, double price) {
     std::cout << "SUBMITING ORDER" << std::endl;
     open_orders.add_order(std::make_shared<order>(qty,symbol,price));
+    cout << "OPEN ORDER COUNT: " << open_orders.size() << endl;
     market_simulator::get_instance().send_order(qty,symbol,price,this);
 }
 
-void strategy_oms::on_execution(int execQty, std::string symbol, double price, int orig_qty) {
+void strategy_oms::on_execution(int execQty, const std::string &symbol, double price, int orig_qty, double orig_price) {
     // find my order
-    auto order_ptr = open_orders.find_order(orig_qty,symbol,price);
+    auto order_ptr = open_orders.find_order(orig_qty,symbol,orig_price);
+    cout << "OPEN ORDERS COUNT: " << open_orders.size() << endl;
     if (order_ptr == nullptr) return;
     order_ptr->setExecuted_qty(order_ptr->getExecuted_qty() + execQty);
     if (order_ptr->getQuantity() == order_ptr->getExecuted_qty())
@@ -76,9 +76,7 @@ void strategy_oms::on_execution(int execQty, std::string symbol, double price, i
 }
 
 double strategy_oms::last_execution_price(std::string symbol) {
-    auto& execs = executions[symbol];
-    if (execs.size() > 0) return execs[execs.size() - 1]->price;
-    return 0;
+    return executions.last_fill_price(symbol);
 }
 
 

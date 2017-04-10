@@ -6,8 +6,7 @@
 #define BRIMUS_POSITION_COLLECTION_H
 
 
-#include <memory>
-#include <map>
+#include "stdafx.h"
 #include "position.h"
 
 class position_collection {

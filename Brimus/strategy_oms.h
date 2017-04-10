@@ -5,26 +5,22 @@
 #ifndef BRIMUS_STRATEGY_OMS_H
 #define BRIMUS_STRATEGY_OMS_H
 
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 #include "order.h"
 #include "execution.h"
 #include "IOrderSender.h"
 #include "order_collection.h"
 #include "position.h"
 #include "position_collection.h"
+#include "execution_collection.h"
 
 class strategy_oms :
         public IOrderSender {
     // TODO : use a persistent database for orders to protect against sys crash
-
-    std::vector<std::shared_ptr<order>> oo;
     order_collection open_orders;
     order_collection closed_orders;
     position_collection positions;
-    std::map<std::string, std::vector<std::shared_ptr<execution> > > executions;
+    execution_collection executions;
 public:
     bool has_position(std::string symbol);
     bool has_open_orders(std::string symbol);
@@ -38,7 +34,7 @@ public:
     double pandl();
     double pandl(std::string);
     void submit(int qty, std::string symbol, double price);
-    void on_execution(int quanity, std::string symbol, double price, int orig_qty) override;
+    void on_execution(int quanity, const std::string &symbol, double price, int orig_qty, double orig_price) override;
     double last_execution_price(std::string);
 
 };

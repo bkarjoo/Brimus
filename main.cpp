@@ -1,17 +1,8 @@
-
-#include <boost/tokenizer.hpp>
-#include <chrono>
-#include <iostream>
-#include <limits>
-#include <memory>
-#include <string>
-#include <vector>
-#include <st_notifier.h>
-#include <tick_file_maker.h>
-#include <S_SpyArt.h>
+#include "stdafx.h"
+#include "st_notifier.h"
+#include "tick_file_maker.h"
+#include "S_SpyArt.h"
 #include "global_basket.h"
-#include "pcap_file.h"
-#include "strategy.h"
 
 using boost::tokenizer;
 using std::cin;
@@ -139,6 +130,7 @@ void command_interpretter(std::string choice, param_vec tokens)
 int main() {
     auto t1 = std::chrono::high_resolution_clock::now();
     // timer begin
+    boost::program_options::options_description desc("Program options");
 
     string s;
     vector<string> v;

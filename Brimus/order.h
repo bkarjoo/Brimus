@@ -4,7 +4,7 @@
 
 #ifndef BRIMUS_ORDER_H
 #define BRIMUS_ORDER_H
-#include <string>
+#include "stdafx.h"
 
 class order {
     int quantity = 0;

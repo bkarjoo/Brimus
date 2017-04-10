@@ -6,8 +6,7 @@
 #define BRIMUS_ST_NOTIFIER_H
 
 
-#include <map>
-#include <memory>
+#include "stdafx.h"
 #include "instrument.h"
 #include "market_simulator.h"
 #include "ISTNotifier.h"

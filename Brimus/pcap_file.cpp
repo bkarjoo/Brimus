@@ -2,9 +2,6 @@
 // Created by b.karjoo on 3/20/2017.
 //
 
-#include <fstream>
-#include <iostream>
-#include <memory>
 #include "pcap_file.h"
 
 using std::string;

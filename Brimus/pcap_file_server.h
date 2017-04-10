@@ -5,11 +5,7 @@
 #ifndef BRIMUS_PCAP_FILE_SERVER_H
 #define BRIMUS_PCAP_FILE_SERVER_H
 
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <memory>
-#include <set>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 #include "launch_rules.h"
 #include "IDataServer.h"
 

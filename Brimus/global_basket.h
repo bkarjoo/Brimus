@@ -5,8 +5,7 @@
 #ifndef BRIMUS_BASKET_H
 #define BRIMUS_BASKET_H
 
-#include <iostream>
-#include <memory>
+#include "stdafx.h"
 #include "instrument.h"
 #include "strategy_basket.h"
 #include "symbol_basket.h"

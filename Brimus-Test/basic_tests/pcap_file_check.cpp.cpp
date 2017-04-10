@@ -1,9 +1,7 @@
 //
 // Created by b.karjoo on 4/5/2017.
 //
-#include <memory>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 #include "gtest/gtest.h"
 #include "pcap_file.h"
 #include "st_notifier.h"

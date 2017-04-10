@@ -5,7 +5,7 @@
 #ifndef BRIMUS_INSTRUMENT_OBSERVER_H
 #define BRIMUS_INSTRUMENT_OBSERVER_H
 
-#include <string>
+#include "stdafx.h"
 class instrument_observer {
 public:
     virtual void notify(std::string) = 0;

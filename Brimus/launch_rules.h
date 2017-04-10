@@ -5,12 +5,7 @@
 #ifndef BRIMUS_LAUNCH_RULES_H
 #define BRIMUS_LAUNCH_RULES_H
 
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <memory>
-#include <set>
-#include <string>
-#include <vector>
-#include <time.h>
+#include "stdafx.h"
 #include "holidays.h"
 #include "Date_Compare.h"
 

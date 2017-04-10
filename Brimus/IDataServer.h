@@ -5,9 +5,7 @@
 #ifndef BRIMUS_IDATASERVER_H
 #define BRIMUS_IDATASERVER_H
 
-#include <memory>
-#include <set>
-#include <time.h>
+#include "stdafx.h"
 #include "launch_rules.h"
 
 class IDataServer {

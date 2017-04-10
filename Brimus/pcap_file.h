@@ -5,13 +5,9 @@
 #ifndef BRIMUS_PCAP_FILE_H
 #define BRIMUS_PCAP_FILE_H
 
-#include <memory>
-#include <set>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 #include "read_mode.h"
 #include "ISTNotifier.h"
-//#include "st_notifier.h"
 #include "st_message.h"
 #include "instrument.h"
 

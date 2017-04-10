@@ -3,10 +3,6 @@
 //
 
 #include "bar_series.h"
-#include <iostream>
-#include <cmath>
-#include <numeric>
-#include <algorithm>
 
 using std::cout; using std::endl;
 

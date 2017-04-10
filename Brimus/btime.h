@@ -4,8 +4,8 @@
 
 #ifndef BRIMUS_TIME_H
 #define BRIMUS_TIME_H
+#include "stdafx.h"
 
-#include <string>
 
 class invalid_time_format: public std::exception
 {

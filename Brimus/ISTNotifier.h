@@ -5,7 +5,7 @@
 #ifndef BRIMUS_ISTNOTIFIER_H
 #define BRIMUS_ISTNOTIFIER_H
 
-#include <memory>
+#include "stdafx.h"
 #include "st_message.h"
 #include "instrument.h"
 

@@ -5,8 +5,7 @@
 #ifndef BRIMUS_MARKET_SIMULATOR_H
 #define BRIMUS_MARKET_SIMULATOR_H
 
-#include <map>
-#include <memory>
+#include "stdafx.h"
 #include "order.h"
 #include "IOrderSender.h"
 

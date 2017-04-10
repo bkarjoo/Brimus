@@ -5,10 +5,7 @@
 #ifndef BRIMUS_STRATEGY_ART_H
 #define BRIMUS_STRATEGY_ART_H
 
-#include <functional>
-#include <map>
-#include <memory>
-#include <string>
+#include "stdafx.h"
 #include "strategy.h"
 #include "bar_series.h"
 

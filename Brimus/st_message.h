@@ -4,8 +4,7 @@
 
 #ifndef BRIMUS_ST_MESSAGE_H
 #define BRIMUS_ST_MESSAGE_H
-#include <string>
-#include <vector>
+#include "stdafx.h"
 #include "st_field.h"
 
 class st_message {

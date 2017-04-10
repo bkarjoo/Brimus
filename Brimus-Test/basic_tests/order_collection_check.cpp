@@ -1,10 +1,9 @@
 //
 // Created by b.karjoo on 4/7/2017.
 //
+#include "stdafx.h"
 #include "gtest/gtest.h"
 #include "order_collection.h"
-#include <memory>
-#include <iostream>
 
 TEST(order_collection_tests, test1) {
     order_collection oc;

@@ -3,7 +3,6 @@
 //
 
 #include "launch_rules.h"
-#include <iostream>
 
 void launch_rules::add_date(int year, int month, int day) {
     std::shared_ptr<boost::gregorian::date> d1 =

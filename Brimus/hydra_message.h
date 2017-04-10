@@ -4,7 +4,7 @@
 
 #ifndef BRIMUS_HYDRA_MESSAGE_H
 #define BRIMUS_HYDRA_MESSAGE_H
-#include <string>
+#include "stdafx.h"
 
 class hydra_message {
     hydra_message() {}

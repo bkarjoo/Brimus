@@ -1,10 +1,10 @@
 //
 // Created by b.karjoo on 3/30/2017.
 //
+#include "stdafx.h"
 #include "gtest/gtest.h"
 #include "launch_rules.h"
 #include "holidays.h"
-#include <iostream>
 
 TEST(launch_rules_tests, add_date)
 {

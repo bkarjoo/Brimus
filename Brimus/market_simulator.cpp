@@ -35,14 +35,20 @@ void market_simulator::check_for_fill() {
             std::cout << it->first->getQuantity() << std::endl;
             std::cout << instruments[it->first->getSymbol()]->getAsk_price() << std::endl;
             if (it->first->getPrice() >= instruments[it->first->getSymbol()]->getAsk_price()) {
-                it->second->on_execution(it->first->getQuantity(), it->first->getSymbol(), instruments[it->first->getSymbol()]->getAsk_price(), it->first->getQuantity());
+                it->second->on_execution(it->first->getQuantity(), it->first->getSymbol(),
+                                         instruments[it->first->getSymbol()]->getAsk_price(), it->first->getQuantity(),
+                                         0);
                 delete it->first;
                 erase = true;
             }
         } else if (it->first->getQuantity() < 0) {
             // it's a sell, check the bid
             if (it->first->getPrice() <= instruments[it->first->getSymbol()]->getBid_price()) {
-                it->second->on_execution(it->first->getQuantity(), it->first->getSymbol(), instruments[it->first->getSymbol()]->getBid_price(), it->first->getQuantity());
+                it->second->on_execution(it->first->getQuantity(),
+                                         it->first->getSymbol(),
+                                         instruments[it->first->getSymbol()]->getBid_price(),
+                                         it->first->getQuantity(),
+                                         it->first->getPrice());
                 delete it->first;
                 erase = true;
             }

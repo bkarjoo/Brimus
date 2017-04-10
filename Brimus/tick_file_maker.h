@@ -5,9 +5,7 @@
 #ifndef BRIMUS_TICK_FILE_MAKER_H
 #define BRIMUS_TICK_FILE_MAKER_H
 
-#include <fstream>
-#include <memory>
-#include <string>
+#include "stdafx.h"
 #include <functional>
 #include "ISTNotifier.h"
 
