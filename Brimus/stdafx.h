@@ -20,8 +20,12 @@
 #include <vector>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/gregorian/greg_date.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/program_options.hpp>
 #include <boost/signals2.hpp>
-#include <boost/tokenizer.hpp>
+#include <boost/tokenizer.hpp> 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp> // generators
+#include <boost/uuid/uuid_io.hpp>
 
 #endif //BRIMUS_STDAFX_H_H

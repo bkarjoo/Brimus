@@ -4,6 +4,20 @@
 
 #include "instrument.h"
 
+instrument::instrument(std::string symb, std::function<void(std::string)> callback)  :
+        symbol(symb)
+{
+    update_observer.push_back(callback);
+    std::cout << "New Instrument 2 param." << std::endl;
+    instance_count++;
+}
+
+instrument::instrument(std::string symb) {
+    symbol = symb;
+    instance_count++;
+}
+
+
 /*
  * pcap_file class has a vector of instruments to which it sends messages
  */
@@ -115,12 +129,8 @@ void instrument::setUpdate_observer(const std::vector<std::function<void(std::st
 
 }
 
-instrument::instrument(std::string symb, std::function<void(std::string)> callback)  :
-        symbol(symb)
-{
-    update_observer.push_back(callback);
-    std::cout << "New Instrument 2 param." << std::endl;
-    instance_count++;
-}
+
 
 int instrument::instance_count = 0;
+
+

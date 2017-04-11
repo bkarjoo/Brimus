@@ -33,6 +33,8 @@ protected:
     std::vector<std::function<void(std::string, double)> > last_observers;
     std::vector<std::function<void(std::string)>> update_observer;
 public:
+    instrument(std::string symb);
+    instrument(std::string symb, std::function<void(std::string)> callback);
     static int instance_count;
     void setLast_observer(const std::function<void(std::string, double)> &last_observer);
 
@@ -48,11 +50,7 @@ public:
     unsigned int getAsk_size() const { return ask_size; }
     double getOpen_price() const { return open_price; }
     double getClose_price() const { return close_price; }
-    instrument(std::string symb) { symbol = symb;
-        instance_count++;
-        std::cout << "New Instrument." << symb << std::endl;
-    }
-    instrument(std::string symb, std::function<void(std::string)> callback);
+
     void setOutput_path(const std::string &output_path);
     const std::string &getSymbol() const;
     void setSymbol(const std::string &symbol);

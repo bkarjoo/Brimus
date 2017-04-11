@@ -6,60 +6,108 @@
 #include "instrument.h"
 
 
-
+using namespace std;
 
 void market_simulator::add_instrument(std::shared_ptr<instrument> i) {
     instruments[i->getSymbol()] = i;
 }
 
 std::string market_simulator::ping(std::string s) {
-    return std::to_string(instruments[s]->getLast_price());
+    auto instrPtr = instruments[s];
+    if (instrPtr)
+        return std::to_string(instruments[s]->getLast_price());
+    else
+        return "Instrument not found.";
 }
 
 void market_simulator::send_order(int qty, std::string symbol, double price, IOrderSender* sender) {
 
     order* optr = new order(qty,symbol,price);
     orders[optr] = sender;
-    check_for_fill();
+    check_for_fill(symbol);
 }
 
-void market_simulator::check_for_fill() {
-    for (auto it = orders.begin(); it != orders.end();) {
-        bool erase = false;
-        if (it->first->getQuantity() > 0) {
-            // it's a buy, check the offer
-            // if order price is greater than or equal to the offer fill it
-            std::cout << it->first->getPrice() << std::endl;
-            std::cout << it->first->getSymbol() << std::endl;
-            std::cout << it->first->getExecuted_qty() << std::endl;
-            std::cout << it->first->getQuantity() << std::endl;
-            std::cout << instruments[it->first->getSymbol()]->getAsk_price() << std::endl;
-            if (it->first->getPrice() >= instruments[it->first->getSymbol()]->getAsk_price()) {
-                it->second->on_execution(it->first->getQuantity(), it->first->getSymbol(),
-                                         instruments[it->first->getSymbol()]->getAsk_price(), it->first->getQuantity(),
-                                         0);
-                delete it->first;
-                erase = true;
-            }
-        } else if (it->first->getQuantity() < 0) {
-            // it's a sell, check the bid
-            if (it->first->getPrice() <= instruments[it->first->getSymbol()]->getBid_price()) {
-                it->second->on_execution(it->first->getQuantity(),
-                                         it->first->getSymbol(),
-                                         instruments[it->first->getSymbol()]->getBid_price(),
-                                         it->first->getQuantity(),
-                                         it->first->getPrice());
-                delete it->first;
-                erase = true;
+void market_simulator::check_for_fill(const std::string &symbol) {
+    auto& orders = open_orders.get_orders();
+
+    for (auto& it : orders) {
+        auto instr = instruments[it->getSymbol()];
+        double bid = instr->getBid_price();
+        double ask = instr->getAsk_price();
+        if (it->getSymbol() == symbol) {
+            // check for fill - const pointer
+            int order_qty = it->getQuantity();
+            double order_price = it->getPrice();
+            if (instr) {
+
+                if ((order_qty > 0 && order_price >= ask) ||
+                    (order_qty < 0 && order_price <= bid)) {
+                    // record fill in order
+                    int execQty = 0;
+                    order_qty > 0
+                        ? execQty = min(100, it->remain_qty())
+                        : execQty = max(-100, it->remain_qty());
+                    it->setQuantity(execQty);
+                    double execPrice = it->getQuantity() > 0 ? ask : bid;
+                    it->add_execution(execQty, execPrice);
+                    // report fill
+                    auto f = it->getCallback();
+                    if (f) {
+                        f(execQty,
+                          it->getSymbol(),
+                          execPrice,
+                          it->getId()
+                        );
+                    }
+                    // request removal from collection
+                    closed_orders.add_order(open_orders.remove_order(it->getId()));
+                }
             }
         }
-        if (erase) it = orders.erase(it); else it++;
     }
-
 }
 
 void market_simulator::notify(std::string symbol) {
-    check_for_fill();
+    check_for_fill(symbol);
+}
+
+std::string market_simulator::send_order(int qty, std::string symbol, double price,
+                                         std::function<void(int, std::string, double, std::string)> callback) {
+    order* optr = new order(qty,symbol,price);
+    boost::uuids::random_generator generator;
+    boost::uuids::uuid uuid1 = generator();
+    string id =  boost::lexical_cast<string>(uuid1);
+    auto orderPtr = make_unique<ms_order>(qty,symbol,price,id,callback);
+    open_orders.add_order(move(orderPtr));
+    check_for_fill(symbol);
+    return id;
+}
+
+std::string market_simulator::send_order(int qty, std::string symbol, double price) {
+    boost::uuids::random_generator generator;
+    boost::uuids::uuid uuid1 = generator();
+    string id =  boost::lexical_cast<string>(uuid1);
+    auto orderPtr = make_unique<ms_order>(qty,symbol,price,id);
+    open_orders.add_order(move(orderPtr));
+    check_for_fill(symbol);
+    return id;
+}
+
+void market_simulator::cancel_order(std::string id) {
+    // search open orders for the id
+    auto& orders = open_orders.get_orders();
+    auto orderToCancel = open_orders.remove_order(id);
+    if (orderToCancel)
+        closed_orders.add_order(move(orderToCancel));
+}
+
+void market_simulator::cancel_order(std::string id, std::function<void(std::string)> callback) {
+    auto& orders = open_orders.get_orders();
+    auto orderToCancel = open_orders.remove_order(id);
+    if (orderToCancel) {
+        closed_orders.add_order(move(orderToCancel));
+        callback(id);
+    }
 }
 
 
