@@ -24,10 +24,12 @@ public:
     void operator=(global_basket const&) = delete;
     static global_basket& get_instance(){static global_basket gb;return gb;}
     double LastPrice(std::string symbol) {return instruments[symbol]->getLast_price();}
+    double BidPrice(std::string symbol) {return instruments[symbol]->getBid_price();}
+    double AskPrice(std::string symbol) {return instruments[symbol]->getAsk_price();}
     std::shared_ptr<instrument> add_instrument(std::string symbol);
     void add_basket(const std::shared_ptr<symbol_basket>, std::function<void(std::string)>);
     void symbol_observer(std::string symbol, std::function<void(std::string)> symbol_changed_callback);
-    std::shared_ptr<instrument> get_instrument_ptr(std::string symbol) { return instruments[symbol]; }
+    std::shared_ptr<instrument> get_instrument_ptr(std::string symbol);
 };
 
 

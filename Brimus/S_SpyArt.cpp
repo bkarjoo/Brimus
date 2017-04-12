@@ -31,7 +31,7 @@ bool S_SpyArt::long_entry_rules(std::string s) {
         return false;
     }
     std::cout << i++;
-    if (oms->get_position(s) >= maxPosition) {
+    if (oms->get_position(s) >= MAX_POSITION_SIZE) {
         std::cout << "NO CIGAR BECAUSE HAS MAX SHARES ALLOWED" << std::endl;
         return false;
     }
@@ -68,7 +68,7 @@ bool S_SpyArt::long_entry_rules(std::string s) {
     }
     std::cout << i++;
     if (!(oms->get_position(s) == 0 ||
-         bar_close < oms->last_execution_price(s) - minDistBetweenLongs)) {
+         bar_close < oms->last_execution_price(s) - MIN_DIST_BET_ORDS)) {
         std::cout << "NO CIGAR BECAUSE NOT LOW ENOUGH COMPARED TO PREV BUY" << std::endl;
         return false;
     }
@@ -83,7 +83,7 @@ bool S_SpyArt::short_entry_rules(std::string s) {
         cout << "NO CIGAR BECAUSE OPEN BUY ORDER" << endl;
         return false;
     }
-    if (oms->get_position(s) <= -maxPosition) {
+    if (oms->get_position(s) <= -MAX_POSITION_SIZE) {
         std::cout << "NO CIGAR BECAUSE HAS MAX SHARES ALLOWED" << std::endl;
         return false;
     }
@@ -113,7 +113,7 @@ bool S_SpyArt::short_entry_rules(std::string s) {
         return false;
     }
     if (!(oms->get_position(s) == 0 ||
-          bar_close > oms->last_execution_price(s) + minDistBetweenShorts)) {
+          bar_close > oms->last_execution_price(s) + MIN_DIST_BET_ORDS)) {
         std::cout << "NO CIGAR BECAUSE NOT LOW ENOUGH COMPARED TO PREV BUY" << std::endl;
         return false;
     }
@@ -126,7 +126,15 @@ bool S_SpyArt::long_target_rules(std::string s) {
 
 bool S_SpyArt::short_target_rules(std::string s) {
     if (oms->get_position(s) < 0) {
-
+        // only place a target if I'm short
+        if (oms->has_open_buy_orders(s)) {
+            // if there's already an order cancel replace else place new order
+            // so oms needs a cancel replace function
+            // order should also store its id so I can submit
+            // however market simulator has two submits, one of which must be nullified
+        } else {
+            oms->submit(SHARES_PER_LEVEL,s,avgLow8);
+        }
     }
     return false;
 }
@@ -143,12 +151,12 @@ bool S_SpyArt::short_stoploss_rules(std::string s) {
 
 void S_SpyArt::place_long_entry(std::string s) {
     std::cout << "Placing Long Order" << std::endl;
-    oms->submit(100,s,bar_close - limitAway);
+    oms->submit(100,s,bar_close - LIMIT_AWAY);
 }
 
 void S_SpyArt::place_short_entry(std::string s) {
     cout << "Placing Short Order" << endl;
-    oms->submit(100,s,bar_close + limitAway);
+    oms->submit(100,s,bar_close + LIMIT_AWAY);
 }
 
 void S_SpyArt::place_long_target(std::string s) {

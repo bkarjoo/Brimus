@@ -33,9 +33,10 @@ public:
     double open_position_value(std::string);
     double pandl();
     double pandl(std::string);
-    void submit(int qty, std::string symbol, double price);
+    std::string submit(int qty, std::string symbol, double price);
     void on_execution(int quanity, const std::string &symbol, double price, int orig_qty, double orig_price) override;
     double last_execution_price(std::string);
+    void on_execution(int execQty, double execPrice, const std::string& orderId);
 
 };
 

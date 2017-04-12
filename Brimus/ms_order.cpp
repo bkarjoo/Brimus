@@ -30,11 +30,11 @@ void ms_order::setPrice(double price) {
     ms_order::price = price;
 }
 
-const std::function<void(int, std::string, double, std::string)> &ms_order::getCallback() const {
+const std::function<void(int&, double&, const std::string&)> &ms_order::getCallback() const {
     return callback;
 }
 
-void ms_order::setCallback(const std::function<void(int, std::string, double, std::string)> &callback) {
+void ms_order::setCallback(const std::function<void(int&, double&, const std::string&)> &callback) {
     ms_order::callback = callback;
 }
 
@@ -48,10 +48,11 @@ void ms_order::setId(const std::string &id) {
 }
 
 ms_order::ms_order(int quantity, const std::string &symbol, double price, const std::string &id,
-                   const std::function<void(int, std::string, double, std::string)> &callback) : quantity(quantity),
-                                                                                                 symbol(symbol),
-                                                                                                 price(price), id(id),
-                                                                                                 callback(callback) {}
+                   const std::function<void(int, double, std::string)> &callback) :  quantity(quantity),
+                                                                                     symbol(symbol),
+                                                                                     price(price),
+                                                                                     id(id),
+                                                                                     callback(callback) {}
 
 ms_order::ms_order(int quantity, const std::string &symbol, double price, const std::string &id) : quantity(quantity),
                                                                                                    symbol(symbol),

@@ -13,10 +13,13 @@
 class instrument;
 
 class market_simulator {
+    // will check for fills on every new tick of a symbol
     ms_order_collection open_orders;
+    // moves filled orders to closed order so there's not many left
     ms_order_collection closed_orders;
-    std::map<order*,IOrderSender*> orders;
-    std::map<std::string,std::shared_ptr<instrument> > instruments;
+    // TODO: instruments should not be shared, but access through global basket
+    //std::map<std::string,std::shared_ptr<instrument> > instruments;
+
     void check_for_fill(const std::string &symbol);
 
     market_simulator() {}
@@ -26,22 +29,24 @@ public:
     void operator=(market_simulator const&) = delete;
     static market_simulator& get_instance() { static market_simulator ms; return ms; }
 
-    void add_instrument(std::shared_ptr<instrument>);
+    void add_instrument(std::shared_ptr<instrument> &);
 
     std::string ping() { return "Connected."; }
     std::string ping(std::string);
-    void send_order(int qty, std::string symbol, double price, IOrderSender* sender);
+
+    //void send_order(int qty, std::string symbol, double price, IOrderSender* sender);
     // called by notifier when an instrument is updated
 
 
     std::string send_order(int qty, std::string symbol,
                            double price,
-                           std::function<void(int,std::string,double,std::string)>);
+                           std::function<void(int&,double&,const std::string&)>);
     std::string send_order(int qty, std::string symbol,double price);
     void cancel_order(std::string id);
     void cancel_order(std::string id,std::function<void(std::string)>);
-    std::string cancel_replace_order(std::string id, int qty, std::string symbol,double price,
-                                     std::function<void(std::string,int,std::string,double,std::string)>);
+    // will only place the new order if it can cancel the order
+    std::string cancel_replace_order(std::string id, double new_price);
+    std::string cancel_replace_order(std::string id, int new_qty, double new_price);
 
     int closed_orders_size() const { return closed_orders.size(); }
     int open_orders_size() const { return open_orders.size(); }

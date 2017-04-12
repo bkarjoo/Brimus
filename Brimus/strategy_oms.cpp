@@ -57,11 +57,26 @@ double strategy_oms::pandl() {
     return 0;
 }
 
-void strategy_oms::submit(int qty, std::string symbol, double price) {
-    std::cout << "SUBMITING ORDER" << std::endl;
-    open_orders.add_order(std::make_shared<order>(qty,symbol,price));
-    cout << "OPEN ORDER COUNT: " << open_orders.size() << endl;
-    market_simulator::get_instance().send_order(qty,symbol,price,this);
+string strategy_oms::submit(int qty, std::string symbol, double price) {
+
+    auto ord = make_shared<order>(qty,symbol,price);
+    open_orders.add_order(ord);
+    auto& broker = market_simulator::get_instance();
+//    string id = broker.send_order(qty,symbol,price,
+//        [this](int& execQty){}
+//    );
+    //ord->setId(id);
+
+//        [](int execQty,std::string symb,double price,std::string id){
+//
+//            // find the order by id
+//            // TODO: order collection needs find by id method and id field
+//            // TODO: if can't find order do nothing, or throw exception
+//            // TODO: add execution to the executed orders
+//            // TODO: move order to closed orders if filled
+//            // TODO: adjust positions records
+//        });
+//    ord->setId(market_simulator::get_instance().send_order(qty,symbol,price,this));
 }
 
 void strategy_oms::on_execution(int execQty, const std::string &symbol, double price, int orig_qty, double orig_price) {
@@ -77,6 +92,10 @@ void strategy_oms::on_execution(int execQty, const std::string &symbol, double p
 
 double strategy_oms::last_execution_price(std::string symbol) {
     return executions.last_fill_price(symbol);
+}
+
+void strategy_oms::on_execution(int execQty, double execPrice, const std::string &orderId) {
+
 }
 
 

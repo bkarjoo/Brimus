@@ -14,11 +14,9 @@ class ms_order {
     double price = 0;
     std::string id = "";
     ms_execution_collection executions;
-    std::function<void(int fillQty,
-                       std::string symbol,
-                       double fillPrice,
-                       std::string orderId)> callback = nullptr;
-
+    std::function<void(int& fillQty,
+                       double& fillPrice,
+                       const std::string& orderId)> callback = nullptr;
 public:
 
 
@@ -26,9 +24,12 @@ public:
              const std::string &symbol,
              double price,
              const std::string &id,
-             const std::function<void(int, std::string, double, std::string)> &callback);
+             const std::function<void(int, double, std::string)> &callback);
 
-    ms_order(int quantity, const std::string &symbol, double price, const std::string &id);
+    ms_order(int quantity,
+             const std::string &symbol,
+             double price,
+             const std::string &id);
 
     int getQuantity() const;
 
@@ -46,9 +47,9 @@ public:
 
     void setId(const std::string &id);
 
-    const std::function<void(int, std::string, double, std::string)> &getCallback() const;
+    const std::function<void(int&, double&, const std::string&)> &getCallback() const;
 
-    void setCallback(const std::function<void(int, std::string, double, std::string)> &callback);
+    void setCallback(const std::function<void(int&, double&, const std::string&)> &callback);
 
     void add_execution(int qty, double price);
 

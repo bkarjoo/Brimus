@@ -33,4 +33,19 @@ TEST(ms_order_colection_test, test2)
     EXPECT_EQ(0, moc.size());
 }
 
+TEST(ms_order_colection_test, get_order)
+{
+    ms_order_collection moc;
+
+    auto order = make_unique<ms_order>(100,"SPY",125.23,"aksd;fkja;");
+    moc.add_order(move(order));
+    auto order2 = make_unique<ms_order>(100,"SPY",115.23,"adsd;fkja;");
+    moc.add_order(move(order2));
+
+    const auto& ord = moc.get_order("aksd;fkja;");
+    EXPECT_EQ("SPY",ord->getSymbol());
+    const auto& ord2 = moc.get_order("adsd;fkja;");
+    EXPECT_EQ(115.23,ord2->getPrice());
+}
+
 #endif

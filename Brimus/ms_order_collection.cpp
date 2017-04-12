@@ -23,4 +23,12 @@ ms_order_collection::order_ptr ms_order_collection::remove_order(const std::stri
     return nullptr;
 }
 
+const std::unique_ptr<ms_order>& ms_order_collection::get_order(const std::string &id) {
+    std::vector<std::unique_ptr<ms_order>>::iterator it =
+            std::find_if(orders.begin(), orders.end(),
+                      [&id](const std::unique_ptr<ms_order>& op)
+                      { return op->getId() == id; });
+    return *it;
+}
+
 

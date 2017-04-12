@@ -15,12 +15,20 @@
 
 
 class S_SpyArt : public IStrategyRules {
-    std::function<void(std::string)> get_callback();
+
     std::shared_ptr<strategy_oms> oms;
+    // instruments
     std::shared_ptr<instrument> SPY;
+    // indicators
     std::shared_ptr<bar_series> FiveMinBars = nullptr;
+    // settings
+    static constexpr int SHARES_PER_LEVEL = 100;
+    static constexpr int NUMBER_OF_LEVELS = 4;
+    static constexpr int MAX_POSITION_SIZE = SHARES_PER_LEVEL * NUMBER_OF_LEVELS;
+    static constexpr double MIN_DIST_BET_ORDS = 0.10;
+    static constexpr double LIMIT_AWAY = .02;
+    // variables
     btime time;
-    int maxPosition = 400; // 4 levels of 100 each
     double bar_close = 0;
     double bar_high = 0;
     double minClose5 = 0;
@@ -29,9 +37,8 @@ class S_SpyArt : public IStrategyRules {
     double avgLow3 = 0;
     double avgHigh8 = 0;
     double avgLow8 = 0;
-    static constexpr double minDistBetweenLongs = 0.10;
-    static constexpr double minDistBetweenShorts = 0.10;
-    static constexpr double limitAway = .02;
+    // helper functions
+    std::function<void(std::string)> get_callback();
 public:
     bool update_on() override;
 

@@ -11,7 +11,16 @@ class order {
     std::string symbol = "";
     double price = 0.0;
     int executed_qty = 0;
+    std::string id = "";
 public:
+    const std::string &getId() const {
+        return id;
+    }
+
+    void setId(const std::string &id) {
+        order::id = id;
+    }
+
     int getQuantity() const {
         return quantity;
     }

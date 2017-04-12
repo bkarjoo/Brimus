@@ -14,11 +14,13 @@ public:
     typedef std::unique_ptr<ms_order> order_ptr;
     typedef std::vector<order_ptr> collection_type;
     void add_order(std::unique_ptr<ms_order> order);
-    order_ptr remove_order(const std::string&);
+    order_ptr remove_order(const std::string& id);
+    const std::unique_ptr<ms_order>& get_order(const std::string& id);
     int size() const;
     const collection_type& get_orders() { return orders; }
 private:
     collection_type orders;
+
 };
 
 
