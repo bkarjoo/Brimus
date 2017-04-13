@@ -10,12 +10,15 @@
 #include "position.h"
 
 class position_collection {
-    typedef std::map<std::string, std::shared_ptr<position>> position_map;
+    typedef std::unique_ptr<position> position_ptr;
+    typedef std::map<std::string, position_ptr> position_map;
     position_map positions;
 public:
     void add_position(std::string symbol, int qty);
     int get_position(std::string symbol);
     bool has_position(std::string symbol) { return get_position(symbol) != 0; }
+    void bought(std::string symbol,  int qty);
+    void sold(std::string symbol,  int qty);
 };
 
 

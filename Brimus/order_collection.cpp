@@ -4,13 +4,11 @@
 
 #include "order_collection.h"
 
-void order_collection::add_order(order_collection::ord_ptr order) {
-    orders.push_back(order);
-}
+using namespace std;
 
 bool order_collection::has_open_order(const std::string& symbol) const{
     auto it = std::find_if(orders.begin(),orders.end(),
-        [&symbol](std::shared_ptr<order> sptr) {
+        [&symbol](const order_collection::ord_ptr & sptr) {
            return sptr->getSymbol() == symbol;
         });
     return it != orders.end();
@@ -31,7 +29,7 @@ void order_collection::remove_order(int qty, std::string symbol, double price) {
 
 bool order_collection::has_open_sell_order(const std::string &symbol) const {
     auto it = std::find_if(orders.begin(),orders.end(),
-                           [&symbol](std::shared_ptr<order> sptr) {
+                           [&symbol](const order_collection::ord_ptr & sptr) {
                                return sptr->getSymbol() == symbol
                                && sptr->getQuantity() < 0;
 
@@ -41,23 +39,24 @@ bool order_collection::has_open_sell_order(const std::string &symbol) const {
 
 bool order_collection::has_open_buy_order(const std::string &symbol) const {
     auto it = std::find_if(orders.begin(),orders.end(),
-                           [&symbol](std::shared_ptr<order> sptr) {
+                           [&symbol](const order_collection::ord_ptr & sptr) {
                                return sptr->getSymbol() == symbol
                                && sptr->getQuantity() > 0;
                            });
     return it != orders.end();
 }
 
-order_collection::ord_ptr order_collection::find_order(int qty, std::string symbol, double price) {
+const order_collection::ord_ptr & order_collection::find_order(int qty, std::string symbol, double price) {
     auto it = std::find_if(orders.begin(),orders.end(),
-                             [&](std::shared_ptr<order> sptr) {
+                             [&](const order_collection::ord_ptr & sptr) {
                                  return
                                          sptr->getQuantity() == qty &&
                                          sptr->getSymbol() == symbol &&
                                          abs(sptr->getPrice() - price) < .000001;
                              });
 
-    return (it != orders.end() ? *it : nullptr);
+    if (it == orders.end()) return null_unique;
+    return *it;
 }
 
 order_collection::ord_ptr order_collection::fetch_remove_order(int qty, std::string symbol, double price) {
@@ -65,9 +64,9 @@ order_collection::ord_ptr order_collection::fetch_remove_order(int qty, std::str
         if ( (*it)->getQuantity() == qty
              && (*it)->getSymbol() == symbol
              && (*it)->getPrice() == price) {
-            ord_ptr ptr = *it;
+            ord_ptr ptr = move(*it);
             orders.erase(it);
-            return ptr;
+            return move(ptr);
         } else {
             ++it;
         }
@@ -75,26 +74,38 @@ order_collection::ord_ptr order_collection::fetch_remove_order(int qty, std::str
     return nullptr;
 }
 
-order_collection::ord_ptr order_collection::find_order(std::string id) {
+const order_collection::ord_ptr & order_collection::find_order(std::string id) {
     auto it = std::find_if(orders.begin(),orders.end(),
-                           [&](std::shared_ptr<order> sptr) {
+                           [&](const order_collection::ord_ptr & sptr) {
                                return sptr->getId() == id;
                            });
 
-    return (it != orders.end() ? *it : nullptr);
+    if (it == orders.end())
+        return null_unique;
+    return *it;
 }
 
 order_collection::ord_ptr order_collection::fetch_remove_order(std::string id) {
     for ( auto it = orders.begin(); it != orders.end(); ) {
         if ( (*it)->getId() == id ) {
-            ord_ptr ptr = *it;
+            ord_ptr ptr = move(*it);
             orders.erase(it);
-            return ptr;
+            return move(ptr);
         } else {
             ++it;
         }
     }
     return nullptr;
+}
+
+const order_collection::ord_ptr &order_collection::add_order(int qty, std::string symbol, double price) {
+    auto ord = make_unique<order>(qty,symbol,price);
+    orders.push_back(move(ord));
+    return ord;
+}
+
+void order_collection::pass_order(ord_ptr ord) {
+    orders.push_back(move(ord));
 }
 
 

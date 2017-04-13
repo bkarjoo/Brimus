@@ -11,7 +11,7 @@ class order {
     std::string symbol = "";
     double price = 0.0;
     // TODO: order should have no knowledge of executions
-    int executed_qty = 0;
+//    int executed_qty = 0;
     std::string id = "";
 public:
     const std::string &getId() const {
@@ -46,17 +46,17 @@ public:
         order::price = price;
     }
 
-    int getExecuted_qty() const {
-        return executed_qty;
-    }
+//    int getExecuted_qty() const {
+//        return executed_qty;
+//    }
+//
+//    void setExecuted_qty(int executed_qty) {
+//        order::executed_qty = executed_qty;
+//    }
 
-    void setExecuted_qty(int executed_qty) {
-        order::executed_qty = executed_qty;
-    }
-
-    order(int quantity, const std::string &symbol, double price, int executed_qty) : quantity(quantity), symbol(symbol),
-                                                                                     price(price),
-                                                                                     executed_qty(executed_qty) {}
+//    order(int quantity, const std::string &symbol, double price, int executed_qty) : quantity(quantity), symbol(symbol),
+//                                                                                     price(price),
+//                                                                                     executed_qty(executed_qty) {}
 
     order(int qty, std::string symb, double prc) :
             quantity(qty), symbol(symb), price(prc) {}

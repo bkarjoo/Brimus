@@ -38,7 +38,7 @@ public:
     void on_execution(int quanity, const std::string &symbol, double price, int orig_qty, double orig_price) override;
     double last_execution_price(std::string);
     void on_execution(int execQty, double execPrice, const std::string& orderId);
-
+    int sum_execution_qty(const std::string &id);
 };
 
 

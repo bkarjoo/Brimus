@@ -9,14 +9,10 @@
 
 class execution {
 private:
-    int quantity = 0;
+    int execQty = 0;
     std::string symbol = "";
-    double price = 0.0;
-
-    // TODO: execution should have no knowledge of order except its id
+    double execPrice = 0.0;
     std::string id;
-    int originalQty = 0;
-    double originalPrice = 0.0;
 public:
     const std::string &getId() const {
         return id;
@@ -25,36 +21,21 @@ public:
     void setId(const std::string &id) {
         execution::id = id;
     }
-    int getOriginalQty() const {
-        return originalQty;
-    }
-
-    void setOriginalQty(int originalQty) {
-        execution::originalQty = originalQty;
-    }
-
-    double getOriginalPrice() const {
-        return originalPrice;
-    }
-
-    void setOriginalPrice(double originalPrice) {
-        execution::originalPrice = originalPrice;
-    }
  
     int getQuantity() const {
-        return quantity;
+        return execQty;
     }
 
     void setQuantity(int quantity) {
-        execution::quantity = quantity;
+        execution::execQty = quantity;
     }
 
     double getPrice() const {
-        return price;
+        return execPrice;
     }
 
     void setPrice(double price) {
-        execution::price = price;
+        execution::execPrice = price;
     }
 
     const std::string &getSymbol() const {
@@ -65,11 +46,11 @@ public:
         execution::symbol = symbol;
     }
 
-    double money_flow() { return -1 * quantity * price; }
+    double money_flow() { return -1 * execQty * execPrice; }
     execution(int qty, std::string symb, double prc) :
-            quantity(qty), symbol(symb), price(prc) {}
+            execQty(qty), symbol(symb), execPrice(prc) {}
     execution(int quantity, const std::string &symbol, double price, const std::string &id) :
-            quantity(quantity), symbol(symbol), price(price), id(id) {}
+            execQty(quantity), symbol(symbol), execPrice(price), id(id) {}
 
 };
 

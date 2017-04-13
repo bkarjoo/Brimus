@@ -58,30 +58,30 @@ double strategy_oms::pandl() {
 }
 
 string strategy_oms::submit(int qty, std::string symbol, double price) {
-
-    auto ord = make_shared<order>(qty,symbol,price);
-    open_orders.add_order(ord);
+    // TODO: oms should not make order, order collection should
+    auto& ord = open_orders.add_order(qty,symbol,price);
     auto& broker = market_simulator::get_instance();
     string id = broker.send_order(qty, symbol, price,
         [this](int& execQty, double& execPrc, const std::string& id){
-            auto oo = open_orders.find_order(id);
+            auto& oo = open_orders.find_order(id);
             if (!oo) return; // TODO consider throwing exception here
             positions.add_position(oo->getSymbol(),execQty);
             executions.add_execution(execQty,oo->getSymbol(),execPrc,id);
             auto sumExec = executions.sum_executions(id);
-            if (sumExec == oo->getQuantity()) closed_orders.add_order(move(open_orders.fetch_remove_order(id)));
+            if (sumExec == oo->getQuantity())
+                closed_orders.pass_order(move(open_orders.fetch_remove_order(id)));
     });
     return id;
 }
 
 void strategy_oms::on_execution(int execQty, const std::string &symbol, double price, int orig_qty, double orig_price) {
     // find my order
-    auto order_ptr = open_orders.find_order(orig_qty,symbol,orig_price);
+    auto& order_ptr = open_orders.find_order(orig_qty,symbol,orig_price);
     cout << "OPEN ORDERS COUNT: " << open_orders.size() << endl;
     if (order_ptr == nullptr) return;
-    order_ptr->setExecuted_qty(order_ptr->getExecuted_qty() + execQty);
-    if (order_ptr->getQuantity() == order_ptr->getExecuted_qty())
-        closed_orders.add_order(open_orders.fetch_remove_order(orig_qty,symbol,price));
+    //order_ptr->setExecuted_qty(order_ptr->getExecuted_qty() + execQty);
+    if (order_ptr->getQuantity() == sum_execution_qty(order_ptr->getId()))
+        closed_orders.pass_order(open_orders.fetch_remove_order(orig_qty,symbol,price));
     positions.add_position(symbol, execQty);
 }
 
@@ -98,7 +98,12 @@ void strategy_oms::on_execution(int execQty, double execPrice, const std::string
  */
 std::string strategy_oms::cancel_replace(int newQty, std::string symbol, double newPrice) {
     // TODO implement find_buy_order(symbol) find_sell_order(symbol)
+
     return std::string();
+}
+
+int strategy_oms::sum_execution_qty(const string &id) {
+    return executions.sum_executions(id);
 }
 
 

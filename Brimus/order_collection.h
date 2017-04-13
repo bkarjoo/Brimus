@@ -9,13 +9,16 @@
 #include "order.h"
 
 class order_collection {
-    typedef std::shared_ptr<order> ord_ptr;
-    typedef std::vector<std::shared_ptr<order>> ord_ptr_vec;
+    typedef std::unique_ptr<order> ord_ptr;
+    typedef std::vector<ord_ptr> ord_ptr_vec;
     ord_ptr_vec orders;
+    ord_ptr null_unique;
 public:
-    void add_order(ord_ptr);
-    ord_ptr find_order(std::string);
-    ord_ptr find_order(int qty, std::string symbol, double price);
+    // void add_order(ord_ptr);
+    const ord_ptr& add_order(int qty, std::string symbol, double price);
+    void pass_order(ord_ptr);
+    const ord_ptr & find_order(std::string);
+    const ord_ptr & find_order(int qty, std::string symbol, double price);
     void remove_order(int qty, std::string symbol, double price);
     ord_ptr fetch_remove_order(int qty, std::string symbol, double price);
     ord_ptr fetch_remove_order(std::string id);
