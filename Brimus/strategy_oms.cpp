@@ -62,21 +62,16 @@ string strategy_oms::submit(int qty, std::string symbol, double price) {
     auto ord = make_shared<order>(qty,symbol,price);
     open_orders.add_order(ord);
     auto& broker = market_simulator::get_instance();
-//    string id = broker.send_order(qty,symbol,price,
-//        [this](int& execQty){}
-//    );
-    //ord->setId(id);
-
-//        [](int execQty,std::string symb,double price,std::string id){
-//
-//            // find the order by id
-//            // TODO: order collection needs find by id method and id field
-//            // TODO: if can't find order do nothing, or throw exception
-//            // TODO: add execution to the executed orders
-//            // TODO: move order to closed orders if filled
-//            // TODO: adjust positions records
-//        });
-//    ord->setId(market_simulator::get_instance().send_order(qty,symbol,price,this));
+    string id = broker.send_order(qty, symbol, price,
+        [this](int& execQty, double& execPrc, const std::string& id){
+            auto oo = open_orders.find_order(id);
+            if (!oo) return; // TODO consider throwing exception here
+            positions.add_position(oo->getSymbol(),execQty);
+            executions.add_execution(execQty,oo->getSymbol(),execPrc,id);
+            auto sumExec = executions.sum_executions(id);
+            if (sumExec == oo->getQuantity()) closed_orders.add_order(move(open_orders.fetch_remove_order(id)));
+    });
+    return id;
 }
 
 void strategy_oms::on_execution(int execQty, const std::string &symbol, double price, int orig_qty, double orig_price) {
@@ -96,6 +91,14 @@ double strategy_oms::last_execution_price(std::string symbol) {
 
 void strategy_oms::on_execution(int execQty, double execPrice, const std::string &orderId) {
 
+}
+
+/*
+ * looks for first order in the same direction and same simbol and cancel replaces with this
+ */
+std::string strategy_oms::cancel_replace(int newQty, std::string symbol, double newPrice) {
+    // TODO implement find_buy_order(symbol) find_sell_order(symbol)
+    return std::string();
 }
 
 

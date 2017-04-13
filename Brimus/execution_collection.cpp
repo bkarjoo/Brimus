@@ -18,6 +18,11 @@ void execution_collection::add_execution(int exec_qty, std::string symbol, doubl
     executions.push_back(move(ptr));
 }
 
+void execution_collection::add_execution(int execQty, std::string symbol, double price, std::string id) {
+    auto ptr = make_unique<execution>(execQty,symbol,price,id);
+    executions.push_back(move(ptr));
+}
+
 double execution_collection::last_buy_fill_price(const string &symbol) const {
     auto it = find_if(executions.rbegin(),executions.rend(),
         [&symbol](const exec_ptr& e){
@@ -63,5 +68,15 @@ double execution_collection::sum_money_flow(std::string symbol) const {
     }
     return sum;
 }
+
+int execution_collection::sum_executions(const std::string &id) const {
+    int sum;
+    for (auto& a : executions) {
+        if (a->getId() == id) sum += a->getQuantity();
+    }
+    return sum;
+}
+
+
 
 

@@ -9,14 +9,14 @@
 
 using namespace std;
 
-void market_simulator::add_instrument(shared_ptr<instrument> &i) {
-    global_basket& gb = global_basket::get_instance();
-    if (gb.get_instrument_ptr(i->getSymbol()) == nullptr) {
-        i = global_basket::get_instance().add_instrument(i->getSymbol());
-    } else
-        i = gb.get_instrument_ptr(i->getSymbol());
-//    instruments[i->getSymbol()] = i;
-}
+//void market_simulator::add_instrument(shared_ptr<instrument> &i) {
+//    global_basket& gb = global_basket::get_instance();
+//    if (gb.get_instrument_ptr(i->getSymbol()) == nullptr) {
+//        i = global_basket::get_instance().add_instrument(i->getSymbol());
+//    } else
+//        i = gb.get_instrument_ptr(i->getSymbol());
+////    instruments[i->getSymbol()] = i;
+//}
 
 std::string market_simulator::ping(std::string s) {
     //auto instrPtr = instruments[s];

@@ -15,6 +15,7 @@ class execution_collection {
 public:
     void add_execution(exec_ptr);
     void add_execution(int exec_qty, std::string symbol, double price);
+    void add_execution(int execQty, std::string symbol, double price, std::string id);
     // can't remove an execution
     double last_fill_price(const std::string &) const;
     double last_buy_fill_price(const std::string &) const;
@@ -22,6 +23,7 @@ public:
     int execution_collection_size() const;
     double sum_money_flow() const;
     double sum_money_flow(std::string symbol) const;
+    int sum_executions(const std::string& id) const;
 };
 
 

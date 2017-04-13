@@ -9,6 +9,9 @@
 using namespace std;
 typedef shared_ptr<st_notifier> notifier;
 
+/*
+ * pcap_file takes a notifier,
+ */
 TEST(pcap_file_tests, test1) {
     pcap_file& pf = pcap_file::get_instance();
     notifier n = std::make_shared<st_notifier>();

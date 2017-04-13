@@ -10,11 +10,21 @@
 class execution {
 private:
     int quantity = 0;
-    double price = 0.0;
     std::string symbol = "";
+    double price = 0.0;
+
+    // TODO: execution should have no knowledge of order except its id
+    std::string id;
     int originalQty = 0;
     double originalPrice = 0.0;
 public:
+    const std::string &getId() const {
+        return id;
+    }
+
+    void setId(const std::string &id) {
+        execution::id = id;
+    }
     int getOriginalQty() const {
         return originalQty;
     }
@@ -58,6 +68,9 @@ public:
     double money_flow() { return -1 * quantity * price; }
     execution(int qty, std::string symb, double prc) :
             quantity(qty), symbol(symb), price(prc) {}
+    execution(int quantity, const std::string &symbol, double price, const std::string &id) :
+            quantity(quantity), symbol(symbol), price(price), id(id) {}
+
 };
 
 

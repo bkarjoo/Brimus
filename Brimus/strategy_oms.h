@@ -34,6 +34,7 @@ public:
     double pandl();
     double pandl(std::string);
     std::string submit(int qty, std::string symbol, double price);
+    std::string cancel_replace(int newQty, std::string symbol, double newPrice);
     void on_execution(int quanity, const std::string &symbol, double price, int orig_qty, double orig_price) override;
     double last_execution_price(std::string);
     void on_execution(int execQty, double execPrice, const std::string& orderId);

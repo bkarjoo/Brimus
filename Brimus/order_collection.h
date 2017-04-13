@@ -14,9 +14,11 @@ class order_collection {
     ord_ptr_vec orders;
 public:
     void add_order(ord_ptr);
+    ord_ptr find_order(std::string);
     ord_ptr find_order(int qty, std::string symbol, double price);
     void remove_order(int qty, std::string symbol, double price);
     ord_ptr fetch_remove_order(int qty, std::string symbol, double price);
+    ord_ptr fetch_remove_order(std::string id);
     bool has_open_order(const std::string&) const;
     bool has_open_buy_order(const std::string&) const;
     bool has_open_sell_order(const std::string&) const;

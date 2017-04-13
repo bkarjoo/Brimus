@@ -3,9 +3,13 @@ project(Brimus)
 
 add_definitions(-std=gnu++14)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} C:/Users/b.karjoo/Documents/boost_1_63_0/lib64-msvc-14.0)
-set(Boost_INCLUDE_DIR C:/Users/b.karjoo/Documents/boost_1_63_0)
-set(BOOST_LIBRARYDIR C:/Users/b.karjoo/Documents/boost_1_63_0/lib64-msvc-14.0)
+set(BOOST_ROOT /Users/SuperMac/devel/cpp/boost_1_63_0/build)
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} C:/Users/b.karjoo/Documents/boost_1_63_0/lib64-msvc-14.0)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /Users/SuperMac/devel/cpp/boost_1_63_0/build/lib)
+#set(Boost_INCLUDE_DIR C:/Users/b.karjoo/Documents/boost_1_63_0)
+set(Boost_INCLUDE_DIR /Users/SuperMac/devel/cpp/boost_1_63_0/build/include)
+#set(BOOST_LIBRARYDIR C:/Users/b.karjoo/Documents/boost_1_63_0/lib64-msvc-14.0)
+set(BOOST_LIBRARYDIR /Users/SuperMac/devel/cpp/boost_1_63_0/build/lib)
 set (Boost_USE_STATIC_LIBS OFF)
 find_package(Boost 1.63.0 COMPONENTS program_options system thread REQUIRED)
 

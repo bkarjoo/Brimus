@@ -10,6 +10,7 @@ class order {
     int quantity = 0;
     std::string symbol = "";
     double price = 0.0;
+    // TODO: order should have no knowledge of executions
     int executed_qty = 0;
     std::string id = "";
 public:

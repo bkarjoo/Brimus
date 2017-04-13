@@ -4,11 +4,7 @@
 
 #include "pcap_file.h"
 
-using std::string;
-using std::cout;
-using std::endl;
-using std::ifstream;
-using std::shared_ptr;
+using namespace std;
 
 void pcap_file::run(const std::vector<std::string> &file_paths) {
 

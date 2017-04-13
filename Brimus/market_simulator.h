@@ -29,7 +29,7 @@ public:
     void operator=(market_simulator const&) = delete;
     static market_simulator& get_instance() { static market_simulator ms; return ms; }
 
-    void add_instrument(std::shared_ptr<instrument> &);
+    // void add_instrument(std::shared_ptr<instrument> &);
 
     std::string ping() { return "Connected."; }
     std::string ping(std::string);

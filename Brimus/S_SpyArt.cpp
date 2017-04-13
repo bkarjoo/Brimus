@@ -125,15 +125,20 @@ bool S_SpyArt::long_target_rules(std::string s) {
 }
 
 bool S_SpyArt::short_target_rules(std::string s) {
-    if (oms->get_position(s) < 0) {
+    auto position = oms->get_position(s);
+    if (position < 0) {
         // only place a target if I'm short
         if (oms->has_open_buy_orders(s)) {
             // if there's already an order cancel replace else place new order
             // so oms needs a cancel replace function
             // order should also store its id so I can submit
             // however market simulator has two submits, one of which must be nullified
+            // TODO : buid a cancel replace from oms
+            // TODO : finds previous buy and repalces it
+            // oms->cancel_replace(-position,s,avgLow8);
         } else {
-            oms->submit(SHARES_PER_LEVEL,s,avgLow8);
+            // TODO : how do I get the position
+            oms->submit(-position,s,avgLow8);
         }
     }
     return false;

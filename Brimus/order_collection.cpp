@@ -75,4 +75,26 @@ order_collection::ord_ptr order_collection::fetch_remove_order(int qty, std::str
     return nullptr;
 }
 
+order_collection::ord_ptr order_collection::find_order(std::string id) {
+    auto it = std::find_if(orders.begin(),orders.end(),
+                           [&](std::shared_ptr<order> sptr) {
+                               return sptr->getId() == id;
+                           });
+
+    return (it != orders.end() ? *it : nullptr);
+}
+
+order_collection::ord_ptr order_collection::fetch_remove_order(std::string id) {
+    for ( auto it = orders.begin(); it != orders.end(); ) {
+        if ( (*it)->getId() == id ) {
+            ord_ptr ptr = *it;
+            orders.erase(it);
+            return ptr;
+        } else {
+            ++it;
+        }
+    }
+    return nullptr;
+}
+
 
