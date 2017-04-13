@@ -16,7 +16,7 @@
 
 class strategy_oms :
         public IOrderSender {
-    // TODO : use a persistent database for orders to protect against sys crash
+    // TODO : use a persistent database for orders to protect against sys crash (sqlite)
     order_collection open_orders;
     order_collection closed_orders;
     position_collection positions;
