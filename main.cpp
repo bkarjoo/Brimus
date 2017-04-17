@@ -1,3 +1,4 @@
+#include "cap_file_reader.h"
 #include "stdafx.h"
 #include "st_notifier.h"
 #include "tick_file_maker.h"
@@ -5,12 +6,7 @@
 #include "global_basket.h"
 
 using boost::tokenizer;
-using std::cin;
-using std::cout;
-using std::endl;
-using std::getline;
-using std::string;
-using std::vector;
+using namespace std;
 
 void print_menu();
 void command_interpretter(vector<string> tokens);
@@ -39,8 +35,10 @@ struct param {
 
 void run(param_vec parameters)
 {
-    auto &pcf  = pcap_file::get_instance();
-    auto notifier = std::make_shared<st_notifier>();pcf.set_notifier(notifier);
+//    auto &pcf  = pcap_file::get_instance();
+//    auto notifier = std::make_shared<st_notifier>();pcf.set_notifier(notifier);
+
+    auto& pcf = cap_file_reader::get_instance();
     auto & gb = global_basket::get_instance();
     auto basket = std::make_shared<symbol_basket>();basket->add_symbol("SPY");
     auto launch = std::make_shared<launch_rules>();

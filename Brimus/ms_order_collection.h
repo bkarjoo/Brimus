@@ -17,6 +17,7 @@ public:
     order_ptr remove_order(const std::string& id);
     const std::unique_ptr<ms_order>& get_order(const std::string& id);
     int size() const;
+    // looped over by market simulator to check against quotes
     const collection_type& get_orders() { return orders; }
 private:
     collection_type orders;

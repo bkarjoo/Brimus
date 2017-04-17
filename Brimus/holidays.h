@@ -11,9 +11,7 @@
 
 class holidays {
     typedef boost::gregorian::date bdate;
-    typedef std::shared_ptr<bdate> date_ptr;
-    typedef std::set<date_ptr, Date_Compare> date_set;
-    date_set dates;
+    std::set<bdate> dates;
     holidays() {}
     ~holidays() {}
     const std::string holiday_file = "holidays.txt";
@@ -26,7 +24,7 @@ public:
         if (h.dates.size() == 0) h.load_holidays();
         return h;
     }
-    const date_set& getHolidays() { return dates; }
+    const std::set<bdate>& getHolidays() { return dates; }
 };
 
 

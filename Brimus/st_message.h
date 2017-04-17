@@ -19,6 +19,7 @@ public:
     std::string to_string();
     void set_prefix(const char&);
     void set_symbol(std::string& symb);
+    // make these unique pointers to keep them
     const std::vector<st_field*>& get_fields() const;
     const std::string &getSymbol() const;
     char getDelim() const;

@@ -24,6 +24,7 @@ public:
     double getPrice() const;
 
     void setPrice(double price);
+
 };
 
 

@@ -3,12 +3,13 @@
 //
 
 #include "pcap_file_server.h"
-
+using namespace std;
 
 void pcap_file_server::request_data(std::shared_ptr<launch_rules> launchRules) {
     auto d = launchRules->getDates();
-    for (auto& a : d)
-        dates.insert(a);
+    for (auto a : d) {
+        dates.insert(make_shared<boost::gregorian::date>(a.year(),a.month().as_number(), a.day()));
+    }
 }
 
 const pcap_file_server::date_set &pcap_file_server::getDates() const {

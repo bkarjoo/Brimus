@@ -15,39 +15,39 @@ TEST(market_simulator_tests, ping)
 {
     global_basket& gb = global_basket::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto inst = gb.add_instrument("SPY");
+    auto& inst = gb.add_instrument("SPY");
 
     st_message m;
 
     // last
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "SPY", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // bid
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "SPY", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // ask
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "SPY", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
 
 
@@ -61,37 +61,37 @@ TEST(market_simulator_tests, add_instrument)
 {
     global_basket& gb = global_basket::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto inst = gb.add_instrument("AAPL");
+    auto& inst = gb.add_instrument("AAPL");
     st_message m;
     // last
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // bid
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // ask
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
 
 
@@ -102,37 +102,37 @@ TEST(market_simulator_tests, send_order)
 {
     global_basket& gb = global_basket::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto inst = gb.add_instrument("AAPL");
+    auto& inst = gb.add_instrument("AAPL");
     st_message m;
     // last
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // bid
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // ask
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
 
 
@@ -151,37 +151,37 @@ TEST(market_simulator_tests, cancel_order)
 {
     global_basket& gb = global_basket::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto inst = gb.add_instrument("AAPL");
+    auto& inst = gb.add_instrument("AAPL");
     st_message m;
     // last
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // bid
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // ask
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
 
 
@@ -209,37 +209,37 @@ TEST(market_simulator_tests, cancel_replace_order)
 {
     global_basket& gb = global_basket::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto inst = gb.add_instrument("AAPL");
+    auto& inst = gb.add_instrument("AAPL");
     st_message m;
     // last
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // bid
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // ask
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
 
 
@@ -271,37 +271,37 @@ TEST(market_simulator_tests, cancel_replace_order_shares)
 {
     global_basket& gb = global_basket::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto inst = gb.add_instrument("AAPL");
+    auto& inst = gb.add_instrument("AAPL");
     st_message m;
     // last
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // bid
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
     // ask
     {
-        auto msg = make_shared<st_message>();
+        auto msg = make_unique<st_message>();
         st_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst->on_message(msg);
+        inst.on_message(move(msg));
     }
 
 

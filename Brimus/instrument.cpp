@@ -21,7 +21,7 @@ instrument::instrument(std::string symb) {
 /*
  * pcap_file class has a vector of instruments to which it sends messages
  */
-void instrument::on_message(std::shared_ptr<st_message> msg) {
+void instrument::on_message(std::unique_ptr<st_message> msg) {
 //    std::cout << msg->to_string() << std::endl;
 //    std::cout << msg->get_fields().size() << std::endl;
     for (auto a : msg->get_fields()) {

@@ -15,7 +15,6 @@ void holidays::load_holidays() {
         int year = std::stoi(year_str);
         int month = std::stoi(month_str);
         int day = std::stoi(day_str);
-        holidays::date_ptr d = std::make_shared<bdate>(year,month,day);
-        dates.insert(d);
+        dates.insert(bdate(year,month,day));
     }
 }

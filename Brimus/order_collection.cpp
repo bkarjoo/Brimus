@@ -46,7 +46,7 @@ bool order_collection::has_open_buy_order(const std::string &symbol) const {
     return it != orders.end();
 }
 
-const order_collection::ord_ptr & order_collection::find_order(int qty, std::string symbol, double price) {
+boost::optional<order &> order_collection::find_order(int qty, std::string symbol, double price) {
     auto it = std::find_if(orders.begin(),orders.end(),
                              [&](const order_collection::ord_ptr & sptr) {
                                  return
@@ -55,8 +55,8 @@ const order_collection::ord_ptr & order_collection::find_order(int qty, std::str
                                          abs(sptr->getPrice() - price) < .000001;
                              });
 
-    if (it == orders.end()) return null_unique;
-    return *it;
+    if (it == orders.end()) return {};
+    return **it;
 }
 
 order_collection::ord_ptr order_collection::fetch_remove_order(int qty, std::string symbol, double price) {
@@ -71,18 +71,18 @@ order_collection::ord_ptr order_collection::fetch_remove_order(int qty, std::str
             ++it;
         }
     }
-    return nullptr;
+    return {};
 }
 
-const order_collection::ord_ptr & order_collection::find_order(std::string id) {
+boost::optional<order &> order_collection::find_order(std::string id) {
     auto it = std::find_if(orders.begin(),orders.end(),
                            [&](const order_collection::ord_ptr & sptr) {
                                return sptr->getId() == id;
                            });
 
     if (it == orders.end())
-        return null_unique;
-    return *it;
+        return {};
+    return **it;
 }
 
 order_collection::ord_ptr order_collection::fetch_remove_order(std::string id) {
@@ -95,17 +95,124 @@ order_collection::ord_ptr order_collection::fetch_remove_order(std::string id) {
             ++it;
         }
     }
-    return nullptr;
+    return {};
 }
 
-const order_collection::ord_ptr &order_collection::add_order(int qty, std::string symbol, double price) {
+boost::optional<order &> order_collection::add_order(int qty, std::string symbol, double price) {
     auto ord = make_unique<order>(qty,symbol,price);
     orders.push_back(move(ord));
-    return ord;
+    return *ord;
+}
+
+boost::optional<order &>
+order_collection::add_order(int qty, const std::string &symbol, double price, order_type oType) {
+    auto ord = make_unique<order>(qty,symbol,price,oType);
+    orders.push_back(move(ord));
+    return *ord;
 }
 
 void order_collection::pass_order(ord_ptr ord) {
     orders.push_back(move(ord));
 }
+
+boost::optional<order &> order_collection::find_first_buy_order(const std::string &symbol) const {
+    auto it = std::find_if(orders.begin(),orders.end(),
+                           [&](const order_collection::ord_ptr & sptr) {
+                               return sptr->getSymbol() == symbol && sptr->getQuantity() > 0;
+                           });
+
+    if (it == orders.end())
+        return {};
+    return **it;
+}
+
+boost::optional<order &> order_collection::find_first_sell_order(const std::string &symbol) const {
+    auto it = std::find_if(orders.begin(),orders.end(),
+                           [&](const order_collection::ord_ptr & sptr) {
+                               return sptr->getSymbol() == symbol && sptr->getQuantity() < 0;
+                           });
+
+    if (it == orders.end())
+        return {};
+    return **it;
+}
+
+boost::optional<order &> order_collection::find_first_buy_order(const std::string &symbol, order_type oType) const {
+    auto it = std::find_if(orders.begin(),orders.end(),
+                           [&](const order_collection::ord_ptr & sptr) {
+                               return sptr->getSymbol() == symbol
+                                      && sptr->getQuantity() > 0
+                                       && sptr->getOType() == oType;
+                           });
+
+    if (it == orders.end())
+        return {};
+    return **it;
+}
+
+boost::optional<order &> order_collection::find_first_sell_order(const std::string &symbol, order_type oType) const {
+    auto it = std::find_if(orders.begin(),orders.end(),
+                           [&](const order_collection::ord_ptr & sptr) {
+                               return sptr->getSymbol() == symbol
+                                      && sptr->getQuantity() < 0
+                                       && sptr->getOType() == oType;
+                           });
+
+    if (it == orders.end())
+        return {};
+    return **it;
+}
+
+boost::optional<order &> order_collection::boost_find_order(std::string id) {
+    auto it = std::find_if(orders.begin(),orders.end(),
+                           [&](const order_collection::ord_ptr & sptr) {
+                               return sptr->getId() == id;
+                           });
+
+    if (it == orders.end())
+        return {};
+    return **it;
+}
+
+order *order_collection::findOrder(std::string id) {
+    auto it = std::find_if(orders.begin(),orders.end(),
+                           [&](const order_collection::ord_ptr & sptr) {
+                               return sptr->getId() == id;
+                           });
+
+    if (it == orders.end())
+        return nullptr;
+    return it->get();
+}
+
+
+
+
+
+
+
+//boost::optional<boost::reference_wrapper<order>> order_collection::find_order(const std::string &id) const {
+//    auto it = std::find_if(orders.begin(),orders.end(),
+//                           [&](const order_collection::ord_ptr & sptr) {
+//                               return sptr->getId() == id;
+//                           });
+//
+//    if (it == orders.end())
+//        return {};
+//    return **it;
+//}
+
+// const order *& order_collection::find_order(const std::string &id) const {
+//    auto it = std::find_if(orders.begin(),orders.end(),
+//                           [&](const order_collection::ord_ptr & sptr) {
+//                               return sptr->getId() == id;
+//                           });
+//
+//    if (it == orders.end())
+//        return nullptr;
+//    return it->get();
+//}
+
+
 
 

@@ -9,11 +9,9 @@
 #include "execution.h"
 
 class execution_collection {
-    typedef std::unique_ptr<execution> exec_ptr;
-    typedef std::vector<exec_ptr> exec_ptr_vector;
-    exec_ptr_vector executions;
+    std::vector<execution> executions;
 public:
-    void add_execution(exec_ptr);
+    void add_execution(const execution&);
     void add_execution(int exec_qty, std::string symbol, double price);
     void add_execution(int execQty, std::string symbol, double price, std::string id);
     // can't remove an execution

@@ -37,12 +37,10 @@ TEST(launch_rules_tests, loadHolidaysFromFile)
     holidays& h = holidays::get_instance();
     auto& a = h.getHolidays();
     launch_rules lr;
-    std::shared_ptr<boost::gregorian::date> date1 =
-            std::make_shared<boost::gregorian::date>(2015,1,1);
+    boost::gregorian::date date1(2015,1,1);
     EXPECT_TRUE(a.size() > 0);
     EXPECT_TRUE(lr.is_holiday(date1));
-    std::shared_ptr<boost::gregorian::date> date2 =
-            std::make_shared<boost::gregorian::date>(2015,1,2);
+    boost::gregorian::date date2(2015,1,2);
     EXPECT_FALSE(lr.is_holiday(date2));
 }
 

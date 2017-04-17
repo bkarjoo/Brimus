@@ -5,18 +5,16 @@
 #include "launch_rules.h"
 
 void launch_rules::add_date(int year, int month, int day) {
-    std::shared_ptr<boost::gregorian::date> d1 =
-            std::make_shared<boost::gregorian::date>(year,month,day);
-    dates.insert(d1);
+    dates.insert(bdate(year,month,day));
 }
 
 std::string launch_rules::to_string() const {
     std::stringstream ss;
     for (auto& a : dates) {
         if (ss.str() != "") ss << '\n';
-        ss << a->year() << '-';
-        ss << a->month().as_number() << '-';
-        ss << a->day();
+        ss << a.year() << '-';
+        ss << a.month().as_number() << '-';
+        ss << a.day();
     }
     return ss.str();
 }
@@ -25,22 +23,20 @@ const launch_rules::date_set &launch_rules::getDates() const {
     return dates;
 }
 
-const launch_rules::date_ptr &launch_rules::getStartDate() const {
-    return startDate;
+boost::optional<launch_rules::bdate> launch_rules::getStartDate() const {
+    if (startDate) return *startDate; else return {};
 }
 
 void launch_rules::setStartDate(int year, int month, int day) {
-    date_ptr startDate = std::make_shared<boost::gregorian::date>(year,month,day);
-    launch_rules::startDate = startDate;
+    launch_rules::startDate = bdate(year,month,day);
 }
 
-const launch_rules::date_ptr &launch_rules::getEndDate() const {
-    return endDate;
+boost::optional<launch_rules::bdate> launch_rules::getEndDate() const {
+    if (endDate) return *endDate; else return {};
 }
 
 void launch_rules::setEndDate(int year, int month, int day) {
-    date_ptr endDate = std::make_shared<boost::gregorian::date>(year,month,day);
-    launch_rules::endDate = endDate;
+    launch_rules::endDate = bdate(year,month,day);
 }
 
 void launch_rules::set_date_range() {
@@ -73,14 +69,9 @@ void launch_rules::set_date_range() {
     }
 }
 
-bool launch_rules::is_holiday(date_ptr date) {
-    holidays& h = holidays::get_instance();
-    auto& hdays = h.getHolidays();
-    return hdays.find(*date) != hdays.end();
-}
-
 bool launch_rules::is_holiday(bdate date) {
     holidays& h = holidays::get_instance();
     auto& hdays = h.getHolidays();
     return hdays.find(date) != hdays.end();
 }
+

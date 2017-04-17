@@ -13,7 +13,9 @@
 
 class pcap_file {
     pcap_file() {}
+    // symbols the pcap file generates messages for
     std::set<std::string> symbols;
+    // packet time to start processing as well as to stop
     int start_time_seconds = 0, end_time_seconds = 86399;
 
     read_mode mode = read_mode::PACKET_HEADER;
@@ -36,7 +38,11 @@ public:
     int getEnd_time_seconds() const;
     void setEnd_time_seconds(int end_time_seconds);
     void run(const std::vector<std::string> &file_paths);
+
+    // TODO : keep this, it's needed to know which instruments need to be read
     void add_instrument(std::string);
+
+    // TODO : delete this
     void add_instrument(std::shared_ptr<instrument>);
     void set_notifier(std::shared_ptr<ISTNotifier> istn) { notifier = istn; }
 };

@@ -11,12 +11,13 @@
 #include "symbol_basket.h"
 
 /*
- * global_basket is shared among all classes that need it
+ * global_basket is static and accessible to all classes which need quotes
+ *
+ * a collection of instruments updated with each tick.
  */
 class global_basket {
     std::map<std::string,std::vector<std::function<void(std::string)>>> observers;
-    std::map<std::string,std::shared_ptr<instrument>> instruments;
-    std::function<void(instrument& , const std::string&)> instrument_callback();
+    std::map<std::string,std::unique_ptr<instrument>> instruments;
     global_basket() {}
     ~global_basket() { }
 public:
@@ -26,10 +27,10 @@ public:
     double LastPrice(std::string symbol) {return instruments[symbol]->getLast_price();}
     double BidPrice(std::string symbol) {return instruments[symbol]->getBid_price();}
     double AskPrice(std::string symbol) {return instruments[symbol]->getAsk_price();}
-    std::shared_ptr<instrument> add_instrument(std::string symbol);
+    instrument & add_instrument(std::string symbol);
     void add_basket(const std::shared_ptr<symbol_basket>, std::function<void(std::string)>);
     void symbol_observer(std::string symbol, std::function<void(std::string)> symbol_changed_callback);
-    std::shared_ptr<instrument> get_instrument_ptr(std::string symbol);
+    boost::optional<instrument&> get_instrument(std::string symbol);
 };
 
 

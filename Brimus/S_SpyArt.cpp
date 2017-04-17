@@ -14,7 +14,7 @@ S_SpyArt::S_SpyArt() {
     FiveMinBars->AddNewBarObserver(get_callback());
     auto& gb = global_basket::get_instance();
     // bind give minute bar to SPY so it's updated by itself
-    SPY = gb.get_instrument_ptr("SPY");
+    SPY = gb.get_instrument("SPY");
     if (!SPY) throw std::invalid_argument("instrument not set");
     SPY->setLast_observer(FiveMinBars->get_callback());
 }
@@ -186,7 +186,7 @@ void S_SpyArt::update(std::string s) {
 
 std::function<void(std::string)> S_SpyArt::get_callback() {
     std::function<void(std::string)> callback = [this](std::string symbol) {
-        if (FiveMinBars->PreviousBar(1) != nullptr) {
+        if (FiveMinBars->PreviousBar(1)) {
             time = FiveMinBars->PreviousBar(1)->getStartTime();
             bar_close = FiveMinBars->PreviousBar(1)->get_close();
             avgHigh3 = FiveMinBars->AverageHigh(3);

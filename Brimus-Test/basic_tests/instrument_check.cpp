@@ -19,11 +19,11 @@ TEST(instrument_tests, constructor1)
     st_message m;
     std::string s = "SPY", s2 = "", s3 = "129.32";
     char a = 't', b = 0;
-    auto msg = make_shared<st_message>();
+    auto msg = make_unique<st_message>();
     st_field f;
     msg->set_symbol(s);
     msg->add_field(a,s2,s3,b);
-    spy.on_message(msg);
+    spy.on_message(move(msg));
     double last = spy.getLast_price();
     EXPECT_DOUBLE_EQ(129.32,last);
 }

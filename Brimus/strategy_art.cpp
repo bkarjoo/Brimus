@@ -40,7 +40,7 @@ bool strategy_art::entryConditions(std::string s) {
     // check for buy signal
     try {
         auto bars_ptr = FiveMinute[s]; if (bars_ptr == nullptr) return false;
-        auto prev_bar = bars_ptr->PreviousBar(1); if (prev_bar == nullptr) return false;
+        auto prev_bar = bars_ptr->PreviousBar(1); if (!prev_bar) return false;
 
 
         double prev5mClose = prev_bar->get_close();
@@ -88,11 +88,11 @@ std::function<void(std::string)> strategy_art::get_on_new_bar_callback() {
                     placeExitOrders(symbol);
 
                 cout << FiveMinute[symbol]->to_string() << endl;
-                if (FiveMinute[symbol]->CurrentBar() != nullptr)
+                if (!FiveMinute[symbol]->CurrentBar())
                     cout << "Current High: " << FiveMinute[symbol]->CurrentBar()->get_high() << endl;
-                if (FiveMinute[symbol]->PreviousBar(1) != nullptr)
+                if (!FiveMinute[symbol]->PreviousBar(1))
                     cout << "Previous High: " <<  FiveMinute[symbol]->PreviousBar(1)->get_high() << endl;
-                if (FiveMinute[symbol]->PreviousBar(2) != nullptr)
+                if (!FiveMinute[symbol]->PreviousBar(2))
                     cout << "Previous 2 High: " << FiveMinute[symbol]->PreviousBar(2)->get_high() << endl;
 
             };

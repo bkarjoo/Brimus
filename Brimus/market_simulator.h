@@ -17,11 +17,7 @@ class market_simulator {
     ms_order_collection open_orders;
     // moves filled orders to closed order so there's not many left
     ms_order_collection closed_orders;
-    // TODO: instruments should not be shared, but access through global basket
-    //std::map<std::string,std::shared_ptr<instrument> > instruments;
-
     void check_for_fill(const std::string &symbol);
-
     market_simulator() {}
     ~market_simulator() {}
 public:
@@ -33,11 +29,6 @@ public:
 
     std::string ping() { return "Connected."; }
     std::string ping(std::string);
-
-    //void send_order(int qty, std::string symbol, double price, IOrderSender* sender);
-    // called by notifier when an instrument is updated
-
-
     std::string send_order(int qty, std::string symbol,
                            double price,
                            std::function<void(int&,double&,const std::string&)>);
@@ -47,10 +38,8 @@ public:
     // will only place the new order if it can cancel the order
     std::string cancel_replace_order(std::string id, double new_price);
     std::string cancel_replace_order(std::string id, int new_qty, double new_price);
-
     int closed_orders_size() const { return closed_orders.size(); }
     int open_orders_size() const { return open_orders.size(); }
-
     void notify(std::string symbol);
 };
 

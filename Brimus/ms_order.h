@@ -13,7 +13,9 @@ class ms_order {
     std::string symbol = "";
     double price = 0;
     std::string id = "";
+    // both orders and executions will be disposed of once filled, strategies will save what they need
     ms_execution_collection executions;
+    // the sender is notified and then this order object is destroyed
     std::function<void(int& fillQty,
                        double& fillPrice,
                        const std::string& orderId)> callback = nullptr;

@@ -11,6 +11,7 @@
 #include "market_simulator.h"
 #include "ISTNotifier.h"
 
+// TODO : this class should be deleted completely, global basket should get messages only
 class st_notifier : public ISTNotifier {
     std::map<std::string, std::shared_ptr<instrument> > instruments;
 public:

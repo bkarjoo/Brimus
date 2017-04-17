@@ -15,7 +15,9 @@ class invalid_time_format: public std::exception
     }
 };
 
-
+/*
+ * a time class which is totally date agnostic
+ */
 class btime {
     unsigned short int hours = 0; // 0 to 23
     unsigned short int minutes = 0; // 0 to 59

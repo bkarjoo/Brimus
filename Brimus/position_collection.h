@@ -9,9 +9,8 @@
 #include "stdafx.h"
 #include "position.h"
 
-class position_collection {
-    typedef std::unique_ptr<position> position_ptr;
-    typedef std::map<std::string, position_ptr> position_map;
+class position_collection { 
+    typedef std::map<std::string, position> position_map;
     position_map positions;
 public:
     void add_position(std::string symbol, int qty);

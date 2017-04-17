@@ -7,12 +7,13 @@
 
 #include "stdafx.h"
 #include "st_message.h"
-#include "instrument_observer.h"
 #include "bar_series.h"
 #include "INotifyPropertyChanged.h"
 
 
 class instrument : public INotifyPropertyChanged<instrument> {
+    // TODO : what class extends instrument? message printer
+    // TODO : remove message printer as it has no is-a relation ship to instrument
 protected:
 
     std::string symbol = "";
@@ -54,7 +55,7 @@ public:
     void setOutput_path(const std::string &output_path);
     const std::string &getSymbol() const;
     void setSymbol(const std::string &symbol);
-    void on_message(std::shared_ptr<st_message>);
+    void on_message(std::unique_ptr<st_message>);
 //    void set_strategy(instrument_observer *);
 };
 

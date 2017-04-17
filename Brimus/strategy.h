@@ -9,7 +9,6 @@
 #include "market_simulator.h"
 #include "execution.h"
 #include "btime.h"
-#include "instrument_observer.h"
 #include "strategy_oms.h"
 #include "launch_rules.h"
 #include "symbol_basket.h"
@@ -23,10 +22,17 @@ enum class run_mode { LIVE, BACKTEST };
 class strategy {
 protected:
     run_mode runMode = run_mode::BACKTEST;
+    // TODO : all these shared_ptrs shouldn't be pointers at all
+    // oms shared between rules and strategy class
     std::shared_ptr<strategy_oms> oms;
+    // launch rules need to be shared
     std::shared_ptr<launch_rules> launchRules;
     std::shared_ptr<symbol_basket> symbolBakset;
     std::shared_ptr<IStrategyRules> rules;
+    // TODO : a strategy shouldn't have instruments, just update callback
+    // TODO : a less sensitive strategy can have an on second call back
+    // TODO : an even less sensitive strategy can be just responding to completion of a bar series
+    // note stop orders are handled by the market simulator which checks against every tick
     std::map<std::string, std::shared_ptr<instrument> > instruments;
     btime currentTime;
     std::function<void(std::shared_ptr<execution>)> get_callback();

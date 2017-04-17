@@ -10,8 +10,8 @@
 #include "btime.h"
 
 class bar_series {
-    std::map<btime,std::shared_ptr<bar> > bars;
-    std::shared_ptr<bar> current_bar = nullptr;
+    std::map<btime,bar> bars;
+    boost::optional<bar&> current_bar = {};
     unsigned short int bar_duration = 1;
     std::string symbol;
     std::vector<std::function<void(std::string)> > newBarObservers;
@@ -24,8 +24,8 @@ public:
     unsigned short getBar_duration() const;
     void setBar_duration(unsigned short bar_duration);
     std::function<void(std::string,double)> get_callback();
-    const std::shared_ptr<bar> CurrentBar() const { return current_bar; }
-    const std::shared_ptr<bar> PreviousBar(unsigned int i) const;
+    const boost::optional<bar&> CurrentBar() const { return current_bar; }
+    boost::optional<const bar &> PreviousBar(unsigned int i) const;
     double AverageClose(int numberOfBars);
     double AverageClose(int numberOfBars, int barsBack);
     double AverageHigh(int numberOfBars);

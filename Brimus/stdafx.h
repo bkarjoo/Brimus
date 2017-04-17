@@ -21,6 +21,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/gregorian/greg_date.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/optional.hpp>
 #include <boost/program_options.hpp>
 #include <boost/signals2.hpp>
 #include <boost/tokenizer.hpp> 

@@ -14,9 +14,11 @@
  */
 class pcap_file_server : public IDataServer {
     typedef boost::gregorian::date bdate;
+    // TODO : don't need dates as shared pointer
     typedef std::shared_ptr<bdate> date_ptr;
     typedef std::set<date_ptr, Date_Compare> date_set;
     date_set dates;
+    // paths are given to pcap_file in one shot in order for it to read them in order of date
     std::vector<std::string> paths;
     pcap_file_server() {}
     ~pcap_file_server() {}

@@ -33,12 +33,35 @@ public:
     double open_position_value(std::string);
     double pandl();
     double pandl(std::string);
-    std::string submit(int qty, std::string symbol, double price);
-    std::string cancel_replace(int newQty, std::string symbol, double newPrice);
+    const std::string& submit(int qty, const std::string &symbol, double price);
+
+    void buy_entry(int qty, const std::string& symbol, double price);
+    void short_entry(int qty, const std::string& symbol, double price);
+    void buy_target(int qty, const std::string& symbol, double price);
+    void sell_target(int qty, const std::string& symbol, double price);
+    void buy_stop_loss(int qty, const std::string& symbol, double price);
+    void sell_stop_loss(int qty, const std::string& symbol, double price);
+
+//    void buy_entry(int qty, const std::string& symbol, double price, int tif_sec);
+//    void short_entry(int qty, const std::string& symbol, double price, int tif_sec);
+//    void buy_target(int qty, const std::string& symbol, double price, int tif_sec);
+//    void sell_target(int qty, const std::string& symbol, double price, int tif_sec);
+//    void buy_stop_loss(int qty, const std::string& symbol, double price, int tif_sec);
+//    void sell_stop_loss(int qty, const std::string& symbol, double price, int tif_sec);
+
+    void cancel_replace_buy_entry(int newQty, const std::string& symbol, double newPrice);
+    void cancel_replace_short_entry(int newQty, const std::string& symbol, double newPrice);
+    void cancel_replace_buy_target(int newQty, const std::string& symbol, double newPrice);
+    void cancel_replace_sell_target(int newQty, const std::string& symbol, double newPrice);
+    void cancel_replace_buy_stop_loss(int newQty, const std::string& symbol, double newPrice);
+    void cancel_replace_sell_stop_loss(int newQty, const std::string& symbol, double newPrice);
+
+
+
     void on_execution(int quanity, const std::string &symbol, double price, int orig_qty, double orig_price) override;
     double last_execution_price(std::string);
-    void on_execution(int execQty, double execPrice, const std::string& orderId);
     int sum_execution_qty(const std::string &id);
+
 };
 
 

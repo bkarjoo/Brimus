@@ -8,7 +8,7 @@
 #include "stdafx.h"
 #include "strategy.h"
 #include "bar_series.h"
-
+// TODO delete this class
 class strategy_art : public strategy {
     std::string endOfDayExitTime = "155959";
     std::map<std::string, std::shared_ptr<bar_series> > FiveMinute;

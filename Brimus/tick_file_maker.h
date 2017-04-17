@@ -10,6 +10,7 @@
 #include "ISTNotifier.h"
 
 class tick_file_maker : public ISTNotifier {
+    // TODO : ofstreams can be made using unique ptr
     typedef std::shared_ptr<std::ofstream> os_ptr;
     os_ptr os = nullptr;
     std::string output_path = "";

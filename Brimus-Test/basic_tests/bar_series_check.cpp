@@ -4,16 +4,28 @@
 #include "gtest/gtest.h"
 #include "bar_series.h"
 
-TEST(bar_series_check, test_eq) {
-    EXPECT_EQ(1,1);
+TEST(bar_series_check, constructor)
+{
+    bar_series bs("AAPL");
+    EXPECT_EQ("AAPL",bs.getSymbol());
 }
 
-TEST(bar_series_check, test_eq2) {
-EXPECT_NE(1,0);
+TEST(bar_series_check, set_symbol)
+{
+    bar_series bs("AAPL");
+    bs.setSymbol("GE");
+    EXPECT_EQ("GE",bs.getSymbol());
 }
 
-TEST(bar_series_check, TestName) {
-    EXPECT_EQ(1,1);
+TEST (bar_series_check, add_price)
+{
+    bar_series bs("AAPL");
+    bs.add_price("93123000",128.3);
+    auto bar = bs.CurrentBar();
+    bool bar_found = false;
+    if (bar) bar_found = true;
+    EXPECT_TRUE(bar_found);
+    EXPECT_EQ(128.3,bs.CurrentBar()->get_close());
 }
 
 
@@ -60,3 +72,28 @@ TEST(bar_series_check, AverageClose) {
     EXPECT_DOUBLE_EQ(34.23,bs.MinLow(2,1));
 
 }
+//std::string to_string() const;
+//unsigned short getBar_duration() const;
+//void setBar_duration(unsigned short bar_duration);
+//std::function<void(std::string,double)> get_callback();
+////const std::shared_ptr<bar> CurrentBar() const { return current_bar; }
+//const boost::optional<bar&> CurrentBar() const { return current_bar; }
+//boost::optional<const bar &> PreviousBar(unsigned int i) const;
+//double AverageClose(int numberOfBars);
+//double AverageClose(int numberOfBars, int barsBack);
+//double AverageHigh(int numberOfBars);
+//double AverageHigh(int numberOfBars, int barsBack);
+//double AverageLow(int numberOfBars);
+//double AverageLow(int numberOfBars, int barsBack);
+//double MaxClose(int numberOfBars);
+//double MaxClose(int numberOfBars, int barsBack);
+//double MaxHigh(int numberOfBars);
+//double MaxHigh(int numberOfBars, int barsBack);
+//double MaxLow(int numberOfBars);
+//double MaxLow(int numberOfBars, int barsBack);
+//double MinClose(int numberOfBars);
+//double MinClose(int numberOfBars, int barsBack);
+//double MinHigh(int numberOfBars);
+//double MinHigh(int numberOfBars, int barsBack);
+//double MinLow(int numberOfBars);
+//double MinLow(int numberOfBars, int barsBack);

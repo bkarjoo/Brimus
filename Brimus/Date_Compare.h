@@ -10,6 +10,11 @@
 typedef boost::gregorian::date bdate;
 typedef std::shared_ptr<bdate> DatePtr;
 
+/*
+ * a class to compare facilitate comparison of boost date objects with operators
+ * used in file_server, launch_rules, and holidays
+ * as second parameter of a set, used to keep the dates in order
+ */
 struct Date_Compare {
     using is_transparent = void;
 

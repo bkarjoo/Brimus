@@ -5,15 +5,28 @@
 #ifndef BRIMUS_ORDER_H
 #define BRIMUS_ORDER_H
 #include "stdafx.h"
+#include "order_type.h"
+
+
 
 class order {
+
     int quantity = 0;
     std::string symbol = "";
     double price = 0.0;
-    // TODO: order should have no knowledge of executions
-//    int executed_qty = 0;
     std::string id = "";
+    order_type oType;
+
 public:
+
+    order_type getOType() const {
+        return oType;
+    }
+
+    void setOType(order_type oType) {
+        order::oType = oType;
+    }
+
     const std::string &getId() const {
         return id;
     }
@@ -46,20 +59,12 @@ public:
         order::price = price;
     }
 
-//    int getExecuted_qty() const {
-//        return executed_qty;
-//    }
-//
-//    void setExecuted_qty(int executed_qty) {
-//        order::executed_qty = executed_qty;
-//    }
-
-//    order(int quantity, const std::string &symbol, double price, int executed_qty) : quantity(quantity), symbol(symbol),
-//                                                                                     price(price),
-//                                                                                     executed_qty(executed_qty) {}
-
     order(int qty, std::string symb, double prc) :
             quantity(qty), symbol(symb), price(prc) {}
+
+    order(int quantity, const std::string &symbol, double price, order_type oType) : quantity(
+            quantity), symbol(symbol), price(price), oType(oType) {}
+
 };
 
 

@@ -30,3 +30,4 @@ double ms_execution::getPrice() const {
 void ms_execution::setPrice(double price) {
     ms_execution::price = price;
 }
+

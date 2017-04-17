@@ -5,7 +5,9 @@
 #ifndef BRIMUS_DATE_H
 #define BRIMUS_DATE_H
 
-
+/*
+ * a very dumb date class
+ */
 class date {
 private:
     int month;

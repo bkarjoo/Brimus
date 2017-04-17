@@ -46,7 +46,7 @@ public:
         execution::symbol = symbol;
     }
 
-    double money_flow() { return -1 * execQty * execPrice; }
+    double money_flow() const { return -1 * execQty * execPrice; }
     execution(int qty, std::string symb, double prc) :
             execQty(qty), symbol(symb), execPrice(prc) {}
     execution(int quantity, const std::string &symbol, double price, const std::string &id) :

@@ -8,6 +8,8 @@
 
 #include "instrument.h"
 
+// TODO : delete this class it's not doing anything
+// TODO : create a plugin class for pcap_file to do the printing
 class st_message_printer : public instrument {
     std::shared_ptr<std::ofstream> of;
     std::string output_path = "";

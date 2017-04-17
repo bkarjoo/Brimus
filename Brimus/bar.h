@@ -10,7 +10,6 @@
 
 class bar {
     btime startTime;
-    int duration_minutes = 1;
     double _open = 0.0;
     double _high = 0.0;
     double _low = 100000.0;
@@ -22,13 +21,10 @@ public:
 
     void setStartTime(const btime &startTime);
 
-    void setDuration_minutes(int duration_minutes);
-
     const btime &getStartTime() const;
 
-    int getDuration_minutes() const;
-
     double range() { return _high - _low; }
+
     void add_tick(std::string timestamp, double price);
 
     double get_open() const;
@@ -47,8 +43,5 @@ public:
         return startTime > other.startTime;
     }
 };
-
-
-
 
 #endif //BRIMUS_BAR_H

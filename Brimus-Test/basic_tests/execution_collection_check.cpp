@@ -13,7 +13,7 @@ TEST(execution_collection_tests, add_unique_ptr)
 {
     execution_collection ec;
     unique_ptr<execution> e = make_unique<execution>(100,"SPY",220.12);
-    ec.add_execution(move(e));
+    ec.add_execution(*e);
     EXPECT_EQ(1, ec.execution_collection_size());
 }
 

@@ -35,14 +35,8 @@ const btime &bar::getStartTime() const {
     return startTime;
 }
 
-int bar::getDuration_minutes() const {
-    return duration_minutes;
-}
 
 void bar::setStartTime(const btime &startTime) {
     bar::startTime = startTime;
 }
 
-void bar::setDuration_minutes(int duration_minutes) {
-    bar::duration_minutes = duration_minutes;
-}

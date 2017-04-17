@@ -15,11 +15,12 @@
 
 
 class S_SpyArt : public IStrategyRules {
-
+    // no pointer needed, just own the object
     std::shared_ptr<strategy_oms> oms;
-    // instruments
-    std::shared_ptr<instrument> SPY;
-    // indicators
+    // instruments, some strategies are one symbol, otherwise you need a vector
+    // TODO : should not have instrument, just use global message
+    boost::optional<instrument&> SPY;
+    // indicators, you need one indicator per instrument
     std::shared_ptr<bar_series> FiveMinBars = nullptr;
     // settings
     static constexpr int SHARES_PER_LEVEL = 100;
