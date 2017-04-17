@@ -13,6 +13,7 @@
 /*
  * get singleton instance
  * call setImr with your implementation of IMessageReceiver
+ * if you don't provide one global basket will be used instead
  * optionally set start and end time of day to read from packet files
  * call run with a vector of file_paths to process
  */

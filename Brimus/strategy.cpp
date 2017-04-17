@@ -139,5 +139,15 @@ void strategy::on_symbol_updated(std::string symbol) {
     }
 }
 
+std::function<void(const boost::posix_time::ptime &, const std::string &, stock_field, double)>
+strategy::get_extended_update_symbol_callback() {
+    std::function<void(const boost::posix_time::ptime &, const string &, stock_field, double)> callback;
+    callback = [this](const boost::posix_time::ptime & time, const string & symbol, stock_field field, double value){
+        on_symbol_updated(symbol);
+    };
+
+    return callback;
+}
+
 
 

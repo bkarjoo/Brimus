@@ -13,6 +13,7 @@
 #include "launch_rules.h"
 #include "symbol_basket.h"
 #include "IStrategyRules.h"
+#include "stock_field.h"
 
 
 class instrument;
@@ -47,6 +48,7 @@ public:
     const std::shared_ptr<launch_rules> &getLaunchRules() const;
     const std::shared_ptr<symbol_basket> &getSymbolBakset() const;
     std::function<void(std::string)> get_symbol_update_callback();
+    std::function<void(const boost::posix_time::ptime &, const std::string &, stock_field, double)> get_extended_update_symbol_callback();
     // getter setters
     run_mode getRunMode() const;
     void setRunMode(run_mode runMode);

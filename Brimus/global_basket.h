@@ -15,7 +15,7 @@
  *
  * a collection of instruments updated with each tick.
  */
-class global_basket {
+class global_basket   {
     std::map<std::string,std::vector<std::function<void(std::string)>>> observers;
     std::map<std::string,std::unique_ptr<instrument>> instruments;
     global_basket() {}
@@ -31,6 +31,7 @@ public:
     void add_basket(const std::shared_ptr<symbol_basket>, std::function<void(std::string)>);
     void symbol_observer(std::string symbol, std::function<void(std::string)> symbol_changed_callback);
     boost::optional<instrument&> get_instrument(std::string symbol);
+
 };
 
 

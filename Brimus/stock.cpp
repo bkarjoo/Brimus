@@ -54,6 +54,11 @@ void stock::tick_update(std::unique_ptr<st_message> msg) {
         register_field(a);
 }
 
+void stock::tick_update(const st_message &msg) {
+    for (auto a : msg.get_fields())
+        register_field(a);
+}
+
 void stock::register_field(st_field *pField) {
     switch (pField->field_code) {
         case 'a':
@@ -102,3 +107,5 @@ double stock::set_price(const std::string & prc) {
 void stock::time_update(boost::posix_time::ptime _packetTime) {
     packetTime = _packetTime;
 }
+
+

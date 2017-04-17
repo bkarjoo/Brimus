@@ -7,10 +7,9 @@
 
 #include "stdafx.h"
 #include "st_field.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include "stock_field.h"
 #include "st_message.h"
-#include <boost/signals2.hpp>
+
 
 
 class stock {
@@ -35,6 +34,7 @@ public:
     // when connecting, remember to save the connection object and disconnect or add to scoped connection
     boost::signals2::connection add_observer(std::function<void(const ptime&, const std::string&, stock_field, double)>);
     void tick_update(std::unique_ptr<st_message>);
+    void tick_update(const st_message&);
     void time_update(boost::posix_time::ptime _packetTime);
     // getters
     const std::string &getSymbol() const;
@@ -48,6 +48,8 @@ public:
     const ptime &getPacketTime() const;
     // constructor
     stock(const std::string &symbol);
+    stock(){};
+    void setSymbol(const std::string& symb) { symbol = symb; }
 };
 
 

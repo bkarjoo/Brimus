@@ -1,9 +1,11 @@
+#include <message_router.h>
 #include "cap_file_reader.h"
 #include "stdafx.h"
 #include "st_notifier.h"
 #include "tick_file_maker.h"
 #include "S_SpyArt.h"
 #include "global_basket.h"
+#include "stock_collection.h"
 
 using boost::tokenizer;
 using namespace std;
@@ -39,18 +41,21 @@ void run(param_vec parameters)
 //    auto notifier = std::make_shared<st_notifier>();pcf.set_notifier(notifier);
 
     auto& pcf = cap_file_reader::get_instance();
-    auto & gb = global_basket::get_instance();
+    auto & gb = stock_collection::get_instance();
     auto basket = std::make_shared<symbol_basket>();basket->add_symbol("SPY");
     auto launch = std::make_shared<launch_rules>();
 
     strategy* sptr = new strategy (launch,basket);
-    gb.add_basket(basket,sptr->get_symbol_update_callback());
+    gb.add_basket(*basket,sptr->get_extended_update_symbol_callback());
 
     auto rules = std::make_shared<S_SpyArt>();
     sptr->setRules(rules);
 
 
+
     std::vector<std::string> paths {"C:\\Users\\b.karjoo\\Documents\\Brimus\\cmake-build-debug\\SPY.CAP"};
+    unique_ptr<message_router> router = make_unique<message_router>();
+    pcf.setImr(move(router));
     pcf.run(paths);
 
 

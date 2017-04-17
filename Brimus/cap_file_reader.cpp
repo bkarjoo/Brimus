@@ -3,6 +3,7 @@
 //
 
 #include "cap_file_reader.h"
+#include "stock_collection.h"
 // #include "global_basket.h"
 // IMessageReceiver
 
@@ -66,6 +67,7 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
                 } else if (mode == read_mode::MSG_HEADER) {
                     // message header completed and starting first field
                     //instr = gb.get_instrument(symbol);
+
                     if (imr->has_instrument(symbol)) {
                         msg_ptr = std::make_unique<st_message>(c);
                         if (!prefix == 0) msg_ptr->set_prefix(prefix);
@@ -124,7 +126,10 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
                 // TODO: send completed message to observers
 
                 if (msg_ptr) {
-                    imr->on_message(*msg_ptr);
+                    if (imr)
+                        imr->on_message(*msg_ptr);
+                    else
+                        stock_collection::get_instance().on_message(*msg_ptr);
                     //instr->on_message(move(msg_ptr));
                     msg_ptr = nullptr;
                 }
@@ -179,7 +184,11 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
         if (msg_ptr != nullptr) {
             msg_ptr->add_field(field_code,field_code_val,field_val,field_exchange);
             // TODO : write to interface
-            imr->on_message(*msg_ptr);
+            if (imr)
+                imr->on_message(*msg_ptr);
+            else
+                stock_collection::get_instance().on_message(*msg_ptr);
+
             // instr->on_message(move(msg_ptr));
             msg_ptr = nullptr;
         }
