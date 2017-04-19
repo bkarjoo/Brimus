@@ -1,3 +1,4 @@
+#include <S_SpyArt_Factory.h>
 #include "message_router.h"
 #include "cap_file_reader.h"
 #include "stdafx.h"
@@ -38,46 +39,13 @@ void run(param_vec parameters)
 {
 //    auto &pcf  = pcap_file::get_instance();
 //    auto notifier = std::make_shared<st_notifier>();pcf.set_notifier(notifier);
-
-    auto& pcf = cap_file_reader::get_instance();
-    auto & gb = stock_collection::get_instance();
-    auto basket = std::make_unique<strategy_symbol_basket>();
-    basket->add_symbol("SPY");
-    auto launch = std::make_unique<strategy_launch_rules>();
-
-    strategy* sptr = new strategy (move(launch),move(basket));
-
-    gb.add_basket(sptr->getSymbolBasket(),sptr->get_extended_update_symbol_callback());
-    auto rules = std::make_shared<S_SpyArt>();
-    sptr->setRules(rules);
-
-    cout << gb.has_instrument("SPY") << endl;
-
+    auto strat = S_SpyArt_Factory::get_strat();
+    auto & cfr = cap_file_reader::get_instance();
     std::vector<std::string> paths {"C:\\Users\\b.karjoo\\Documents\\Brimus\\cmake-build-debug\\SPY.CAP"};
-    auto router = make_unique<message_router>();
-    pcf.setImr(move(router));
-    pcf.run(paths);
+    cfr.setImr(make_unique<message_router>());
+    cfr.run(paths);
 
 
-//    std::cout << "In run" << std::endl;
-//    auto& pcf = pcap_file::get_instance();
-//    std::shared_ptr<st_notifier> notifier = std::make_shared<st_notifier>();
-//    pcf.set_notifier(notifier);
-//    // create a vector of file paths to feed to run method of pcf
-//    pcap_file_server& pfs = pcap_file_server::get_instance();
-//    //pcf.run(pfs.get_paths());
-//    // set up strategies
-//    std::shared_ptr<strategy_symbol_basket> sb = std::make_shared<strategy_symbol_basket>();
-//    sb->add_symbol("SPY");
-//    std::shared_ptr<strategy_launch_rules> lr = std::make_shared<strategy_launch_rules>();
-//    lr->add_date(2017,1,3);
-//    std::shared_ptr<strategy> s = std::make_shared<strategy>(lr,sb);
-//    std::shared_ptr<IStrategyRules> r (new S_DoNothing);
-//    s->setRules(r);
-//    std::shared_ptr<strategy_basket> stb = std::make_shared<strategy_basket>();
-//    stb->add_strategy(s);
-//    std::cout << "Start Running" << std::endl;
-//    stb->run_backtests();
     std::cout << "Done Running" << std::endl;
 }
 

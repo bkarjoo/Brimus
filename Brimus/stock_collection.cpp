@@ -19,14 +19,14 @@ bool stock_collection::has_instrument(const string &symbol) {
 }
 
 void stock_collection::add_basket(const strategy_symbol_basket & basket,
-     function<void(const stock_collection::ptime &, const string &, stock_field, double)> callback) {
+     function<void(const stock &, stock_field )> callback) {
     auto& symbols = basket.getSymbols();
     for (auto& a : symbols)
         add_stock(a, callback);
 }
 
 void stock_collection::add_stock(const string & symbol,
-     function<void(const stock_collection::ptime &, const string &, stock_field, double)> callback) {
+     function<void(const stock &, stock_field)> callback) {
     auto& stk = add_stock(symbol);
     stk.add_observer(callback);
 }
@@ -52,15 +52,15 @@ shared_ptr<stock> stock_collection::get_stock(const std::string &symbol) {
 
 double stock_collection::AskPrice(const std::string &symbol) {
     auto stk = get_stock(symbol);
-    if (stk) return stk->getAsk(); else return 0;
+    if (stk) return stk->Ask(); else return 0;
 }
 
 double stock_collection::BidPrice(const std::string &symbol) {
     auto stk = get_stock(symbol);
-    if (stk) return stk->getBid(); else return 0;
+    if (stk) return stk->Bid(); else return 0;
 }
 
 double stock_collection::LastPrice(const std::string &symbol) {
     auto stk = get_stock(symbol);
-    if (stk) return stk->getLast(); else return 0;
+    if (stk) return stk->Last(); else return 0;
 }

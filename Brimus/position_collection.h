@@ -14,8 +14,8 @@ class position_collection {
     position_map positions;
 public:
     void add_position(std::string symbol, int qty);
-    int get_position(std::string symbol);
-    bool has_position(std::string symbol) { return get_position(symbol) != 0; }
+    int get_position(std::string symbol) const;
+    bool has_position(std::string symbol) const { return get_position(symbol) != 0; }
     void bought(std::string symbol,  int qty);
     void sold(std::string symbol,  int qty);
 };

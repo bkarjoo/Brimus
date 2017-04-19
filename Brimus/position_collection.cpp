@@ -13,7 +13,7 @@
     }
 }
 
-int position_collection::get_position(std::string symbol) {
+int position_collection::get_position(std::string symbol) const {
     auto it = positions.find(symbol);
     if (it != positions.end()) {
         return it->second.get_position();

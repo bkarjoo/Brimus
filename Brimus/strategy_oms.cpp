@@ -9,53 +9,53 @@
 
 using namespace std;
 
-bool strategy_oms::has_position(std::string symbol) {
+bool strategy_oms::has_position(std::string symbol) const{
     return positions.has_position(symbol);
 }
 
-bool strategy_oms::has_open_orders(std::string symbol) {
+bool strategy_oms::has_open_orders(std::string symbol) const{
     return open_orders.has_open_order(symbol);
 }
 
-bool strategy_oms::has_open_buy_orders(std::string symbol) {
+bool strategy_oms::has_open_buy_orders(std::string symbol) const{
     return open_orders.has_open_buy_order(symbol);
 }
 
-bool strategy_oms::has_open_sell_orders(std::string symbol) {
+bool strategy_oms::has_open_sell_orders(std::string symbol) const{
     return open_orders.has_open_sell_order(symbol);
 }
 
-int strategy_oms::get_position(std::string symbol) {
+int strategy_oms::get_position(std::string symbol) const{
     return positions.get_position(symbol);
 }
 
-double strategy_oms::sum_money_flow(std::string symbol) {
+double strategy_oms::sum_money_flow(std::string symbol) const{
     return executions.sum_money_flow(symbol);
 }
 
-double strategy_oms::sum_money_flow(const std::vector<std::string>& symbols) {
+double strategy_oms::sum_money_flow(const std::vector<std::string>& symbols) const{
     double sum = 0.0;
     for (auto& a : symbols) {
         sum += sum_money_flow(a);
     }
 }
 
-double strategy_oms::open_position_value(std::string symbol) {
+double strategy_oms::open_position_value(std::string symbol) const{
     int position = get_position(symbol);
     auto &gb = stock_collection::get_instance();
     double last = gb.LastPrice(symbol);
     return position * last;
 }
 
-double strategy_oms::open_position_value() {
+double strategy_oms::open_position_value() const{
     return 0;
 }
 
-double strategy_oms::pandl(std::string symbol) {
+double strategy_oms::pandl(std::string symbol) const{
     return 0;
 }
 
-double strategy_oms::pandl() {
+double strategy_oms::pandl() const{
     return 0;
 }
 
@@ -70,12 +70,12 @@ void strategy_oms::on_execution(int execQty, const std::string &symbol, double p
     positions.add_position(symbol, execQty);
 }
 
-double strategy_oms::last_execution_price(std::string symbol) {
+double strategy_oms::last_execution_price(std::string symbol) const{
     return executions.last_fill_price(symbol);
 }
 
 
-int strategy_oms::sum_execution_qty(const string &id) {
+int strategy_oms::sum_execution_qty(const string &id) const{
     return executions.sum_executions(id);
 }
 

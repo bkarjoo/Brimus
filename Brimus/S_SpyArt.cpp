@@ -8,22 +8,13 @@
 using namespace std;
 
 S_SpyArt::S_SpyArt() {
-    // TODO: request indicators required from global basket
-    FiveMinBars = std::make_unique<bar_series>("SPY");
-    FiveMinBars->setBar_duration(5);
-    FiveMinBars->AddNewBarObserver(get_callback());
-    auto& gb = stock_collection::get_instance();
-    // bind give minute bar to SPY so it's updated by itself
-    SPY = gb.get_stock("SPY");
-    if (!SPY) throw std::invalid_argument("instrument not set");
-    SPY->add_observer(FiveMinBars->get_callback());
+
 }
 
-
-bool S_SpyArt::long_entry_rules(std::string s) {
+bool S_SpyArt::long_entry_rules(const stock& s, const strategy_oms& o) {
     std::cout << std::endl << time.to_string() << std::endl;
     int i = 0;
-    if (oms->has_open_buy_orders(s)) {
+    if (o.has_open_buy_orders(s.Symbol())) {
         // if you are short and trying to exit
         // if you are flat and trying to initiate position
         // if you are long and trying to add to position
@@ -31,7 +22,7 @@ bool S_SpyArt::long_entry_rules(std::string s) {
         return false;
     }
     std::cout << i++;
-    if (oms->get_position(s) >= MAX_POSITION_SIZE) {
+    if (o.get_position(s.Symbol()) >= MAX_POSITION_SIZE) {
         std::cout << "NO CIGAR BECAUSE HAS MAX SHARES ALLOWED" << std::endl;
         return false;
     }
@@ -67,8 +58,8 @@ bool S_SpyArt::long_entry_rules(std::string s) {
         return false;
     }
     std::cout << i++;
-    if (!(oms->get_position(s) == 0 ||
-         bar_close < oms->last_execution_price(s) - MIN_DIST_BET_ORDS)) {
+    if (!(o.get_position(s.Symbol()) == 0 ||
+         bar_close < o.last_execution_price(s.Symbol()) - MIN_DIST_BET_ORDS)) {
         std::cout << "NO CIGAR BECAUSE NOT LOW ENOUGH COMPARED TO PREV BUY" << std::endl;
         return false;
     }
@@ -76,14 +67,14 @@ bool S_SpyArt::long_entry_rules(std::string s) {
     return true;
 }
 
-bool S_SpyArt::short_entry_rules(std::string s) {
-    cout << "POSITION: " << oms->get_position(s) << endl;
+bool S_SpyArt::short_entry_rules(const stock& s, const strategy_oms& o) {
+    cout << "POSITION: " << o.get_position(s.Symbol()) << endl;
 
-    if (oms->has_open_sell_orders(s)) {
+    if (o.has_open_sell_orders(s.Symbol())) {
         cout << "NO CIGAR BECAUSE OPEN BUY ORDER" << endl;
         return false;
     }
-    if (oms->get_position(s) <= -MAX_POSITION_SIZE) {
+    if (o.get_position(s.Symbol()) <= -MAX_POSITION_SIZE) {
         std::cout << "NO CIGAR BECAUSE HAS MAX SHARES ALLOWED" << std::endl;
         return false;
     }
@@ -112,101 +103,120 @@ bool S_SpyArt::short_entry_rules(std::string s) {
         std::cout << "NO CIGAR BECAUSE NOT HIGHEST CLOSE" << std::endl;
         return false;
     }
-    if (!(oms->get_position(s) == 0 ||
-          bar_close > oms->last_execution_price(s) + MIN_DIST_BET_ORDS)) {
+    if (!(o.get_position(s.Symbol()) == 0 ||
+          bar_close > o.last_execution_price(s.Symbol()) + MIN_DIST_BET_ORDS)) {
         std::cout << "NO CIGAR BECAUSE NOT LOW ENOUGH COMPARED TO PREV BUY" << std::endl;
         return false;
     }
     return true;
 }
 
-bool S_SpyArt::long_target_rules(std::string s) {
-    return false;
+bool S_SpyArt::long_target_rules(const stock& s, const strategy_oms& o) {
+    auto position = o.get_position(s.Symbol());
+    return position > 0;
 }
 
-bool S_SpyArt::short_target_rules(std::string s) {
-    auto position = oms->get_position(s);
-    if (position < 0) {
-        // only place a target if I'm short
-        if (oms->has_open_buy_orders(s)) {
-            // if there's already an order cancel replace else place new order
-            // so oms needs a cancel replace function
-            // order should also store its id so I can submit
-            // however market simulator has two submits, one of which must be nullified
-            // TODO : buid a cancel replace from oms
-            // TODO : finds previous buy and repalces it
-            // oms->cancel_replace(-position,s,avgLow8);
-        } else {
-            // TODO : how do I get the position
-            oms->submit(-position,s,avgLow8);
-        }
-    }
-    return false;
+bool S_SpyArt::short_target_rules(const stock& s, const strategy_oms& o) {
+    auto position = o.get_position(s.Symbol());
+    return position < 0;
 }
 
-bool S_SpyArt::long_stoploss_rules(std::string s) {
-    return false;
+bool S_SpyArt::long_stoploss_rules(const stock& s, const strategy_oms& o) {
+    // this strategy has no stop
 }
 
-bool S_SpyArt::short_stoploss_rules(std::string s) {
-    return false;
+bool S_SpyArt::short_stoploss_rules(const stock& s, const strategy_oms& o) {
+    // this strategy has no stop
 }
-
-
-
-void S_SpyArt::place_long_entry(std::string s) {
+ 
+void S_SpyArt::place_long_entry(const stock& s, strategy_oms& o) {
     std::cout << "Placing Long Order" << std::endl;
-    oms->submit(100,s,bar_close - LIMIT_AWAY);
+    o.buy_entry(100,s.Symbol(),bar_close - LIMIT_AWAY);
 }
 
-void S_SpyArt::place_short_entry(std::string s) {
+void S_SpyArt::place_short_entry(const stock& s, strategy_oms& o) {
     cout << "Placing Short Order" << endl;
-    oms->submit(100,s,bar_close + LIMIT_AWAY);
+    o.short_entry(100,s.Symbol(),bar_close + LIMIT_AWAY);
 }
 
-void S_SpyArt::place_long_target(std::string s) {
+void S_SpyArt::place_long_target(const stock& s, strategy_oms& o) {
+    if (o.has_open_sell_orders(s.Symbol())) {
+        o.cancel_replace_sell_target(abs(o.get_position(s.Symbol())),s.Symbol(),avgHigh8);
+    } else {
+        o.sell_target(abs(o.get_position(s.Symbol())),s.Symbol(),avgHigh8);
+    }
+}
+
+void S_SpyArt::place_short_target(const stock& s, strategy_oms& o) {
+    if (o.has_open_buy_orders(s.Symbol())) {
+        o.cancel_replace_buy_target(abs(o.get_position(s.Symbol())),s.Symbol(),avgHigh8);
+    } else {
+        o.buy_target(abs(o.get_position(s.Symbol())),s.Symbol(),avgHigh8);
+    }
+}
+
+void S_SpyArt::place_long_stoploss(const stock& s, strategy_oms& o) {
 
 }
 
-void S_SpyArt::place_short_target(std::string s) {
+void S_SpyArt::place_short_stoploss(const stock& s, strategy_oms& o) {
 
 }
 
-void S_SpyArt::place_long_stoploss(std::string s) {
+
+
+void S_SpyArt::on_open(const stock &stock1, const strategy_oms &oms) {
 
 }
 
-void S_SpyArt::place_short_stoploss(std::string s) {
-
+void S_SpyArt::on_bar_series(const stock &stk, strategy_oms &oms, const bar_series &FiveMinuteBars) {
+    // update the bars dependent vars
+    if (FiveMinBars->PreviousBar(1)) {
+        time = FiveMinBars->PreviousBar(1)->getStartTime();
+        bar_close = FiveMinBars->PreviousBar(1)->Close();
+        avgHigh3 = FiveMinBars->AverageHigh(3);
+        avgLow3 = FiveMinBars->AverageLow(3);
+        avgHigh8 = FiveMinBars->AverageHigh(8);
+        avgLow8 = FiveMinBars->AverageLow(8);
+        bar_high = FiveMinBars->PreviousBar(1)->High();
+        minClose5 = FiveMinBars->MinClose(5);
+        maxClose5 = FiveMinBars->MaxClose(5);
+        run_rules(stk,oms);
+    }
 }
 
-void S_SpyArt::update(std::string s) {
-    cout << "Symbol " << s << " was updated." << endl;
-}
-
-std::function<void(std::string)> S_SpyArt::get_callback() {
-    std::function<void(std::string)> callback = [this](std::string symbol) {
-        if (FiveMinBars->PreviousBar(1)) {
-            time = FiveMinBars->PreviousBar(1)->getStartTime();
-            bar_close = FiveMinBars->PreviousBar(1)->get_close();
-            avgHigh3 = FiveMinBars->AverageHigh(3);
-            avgLow3 = FiveMinBars->AverageLow(3);
-            avgHigh8 = FiveMinBars->AverageHigh(8);
-            avgLow8 = FiveMinBars->AverageLow(8);
-            bar_high = FiveMinBars->PreviousBar(1)->get_high();
-            minClose5 = FiveMinBars->MinClose(5);
-            maxClose5 = FiveMinBars->MaxClose(5);
-            if (this->long_stoploss_rules(symbol)) this->place_long_stoploss(symbol);
-            if (this->short_stoploss_rules(symbol)) this->place_short_stoploss(symbol);
-            if (this->long_entry_rules(symbol)) this->place_long_entry(symbol);
-            if (this->short_entry_rules(symbol)) this->place_short_entry(symbol);
-            if (this->long_target_rules(symbol)) this->place_long_target(symbol);
-            if (this->short_target_rules(symbol)) this->place_short_target(symbol);
-        }
-     };
-    return callback;
-}
-
-bool S_SpyArt::update_on() {
+bool S_SpyArt::update_on_last() {
     return false;
+}
+
+bool S_SpyArt::update_on_bid() {
+    return false;
+}
+
+bool S_SpyArt::update_on_ask() {
+    return false;
+}
+
+bool S_SpyArt::update_on_last_size() {
+    return false;
+}
+
+bool S_SpyArt::update_on_bid_size() {
+    return false;
+}
+
+bool S_SpyArt::update_on_ask_size() {
+    return false;
+}
+
+bool S_SpyArt::update_on_bar_series() {
+    return false;
+}
+
+bool S_SpyArt::update_on_open() {
+    return false;
+}
+
+void S_SpyArt::run_rules(const stock &stock1, strategy_oms &oms) {
+    IStrategyRules::run_rules(stock1, oms);
 }

@@ -22,17 +22,17 @@ class strategy_oms :
     position_collection positions;
     execution_collection executions;
 public:
-    bool has_position(std::string symbol);
-    bool has_open_orders(std::string symbol);
-    bool has_open_buy_orders(std::string symbol);
-    bool has_open_sell_orders(std::string symbol);
-    int get_position(std::string symbol);
-    double sum_money_flow(const std::vector<std::string>&);
-    double sum_money_flow(std::string);
-    double open_position_value();
-    double open_position_value(std::string);
-    double pandl();
-    double pandl(std::string);
+    bool has_position(std::string symbol) const;
+    bool has_open_orders(std::string symbol) const;
+    bool has_open_buy_orders(std::string symbol) const;
+    bool has_open_sell_orders(std::string symbol) const;
+    int get_position(std::string symbol) const;
+    double sum_money_flow(const std::vector<std::string>&) const;
+    double sum_money_flow(std::string) const;
+    double open_position_value() const;
+    double open_position_value(std::string) const;
+    double pandl() const;
+    double pandl(std::string) const;
     const std::string& submit(int qty, const std::string &symbol, double price);
 
     void buy_entry(int qty, const std::string& symbol, double price);
@@ -59,8 +59,8 @@ public:
 
 
     void on_execution(int quanity, const std::string &symbol, double price, int orig_qty, double orig_price) override;
-    double last_execution_price(std::string);
-    int sum_execution_qty(const std::string &id);
+    double last_execution_price(std::string) const;
+    int sum_execution_qty(const std::string &id) const;
 
 };
 

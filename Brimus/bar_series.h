@@ -8,6 +8,7 @@
 #include "stdafx.h"
 #include "bar.h"
 #include "bar_time.h"
+#include "stock.h"
 #include "stock_field.h"
 
 class bar_series {
@@ -16,7 +17,7 @@ class bar_series {
     boost::optional<bar&> current_bar = {};
     unsigned short int bar_duration = 1;
     std::string symbol;
-    std::vector<std::function<void(std::string)> > newBarObservers;
+    std::vector<std::function<void(const bar_series&)> > newBarObservers;
 
 public:
     bar_series(std::string _symbol) : symbol(_symbol) {}
@@ -26,7 +27,7 @@ public:
     std::string to_string() const;
     unsigned short getBar_duration() const;
     void setBar_duration(unsigned short bar_duration);
-    std::function<void(const ptime&, const std::string&, stock_field, double)> get_callback();
+    std::function<void(const stock&, stock_field)> get_callback();
     const boost::optional<bar&> CurrentBar() const { return current_bar; }
     boost::optional<const bar &> PreviousBar(unsigned int i) const;
     double AverageClose(int numberOfBars);
@@ -48,7 +49,7 @@ public:
     double MinLow(int numberOfBars);
     double MinLow(int numberOfBars, int barsBack);
 
-    void AddNewBarObserver(std::function<void(std::string)>);
+    void AddNewBarObserver(std::function<void(const bar_series&)>);
 
 };
 #endif //BRIMUS_BAR_SERIES_H

@@ -22,40 +22,31 @@ class instrument;
 enum class run_mode { LIVE, BACKTEST };
 
 class strategy {
-protected:
     run_mode runMode = run_mode::BACKTEST;
-    // TODO : all these shared_ptrs shouldn't be pointers at all
-    // oms shared between rules and strategy class
-    std::shared_ptr<strategy_oms> oms;
-    // launch rules need to be shared
+    strategy_oms oms;
     std::unique_ptr<strategy_launch_rules> launchRules;
     std::unique_ptr<strategy_symbol_basket> symbolBasket;
-    std::shared_ptr<IStrategyRules> rules;
+    std::unique_ptr<IStrategyRules> rules;
     // TODO : a strategy shouldn't have instruments, just update callback
-    // TODO : a less sensitive strategy can have an on second call back
-    // TODO : an even less sensitive strategy can be just responding to completion of a bar series
-    // note stop orders are handled by the market simulator which checks against every tick
-    std::map<std::string, std::shared_ptr<stock> > instruments;
-    boost::posix_time::ptime currentTime;
-    std::function<void(std::shared_ptr<execution>)> get_callback();
-    void on_symbol_updated(std::string basic_string);
+    // TODO : a strategy shouldn't have indicators, just update callback
+
+    void on_symbol_updated(const stock& stk, stock_field sf);
 public:
-    strategy(std::unique_ptr<strategy_launch_rules> launchRules, std::unique_ptr<strategy_symbol_basket> symbolBakset);
+    strategy(std::unique_ptr<strategy_launch_rules> launchRules,
+             std::unique_ptr<strategy_symbol_basket> symbolBakset);
     ~strategy() {}
-    const bar_time &getCurrentTime() const;
-    void notify(std::string);
-    // void add_instrument(std::shared_ptr<instrument>);
-    void setLaunchRules(std::unique_ptr<strategy_launch_rules> launchRules);
-    void setSymbolBakset(std::unique_ptr<strategy_symbol_basket> symbolBakset);
+
+    const strategy_symbol_basket &getSymbolBasket() const;
+
     const strategy_launch_rules & getLaunchRules() const;
-    const strategy_symbol_basket & getSymbolBakset() const;
-    std::function<void(std::string)> get_symbol_update_callback();
-    std::function<void(const boost::posix_time::ptime &, const std::string &, stock_field, double)> get_extended_update_symbol_callback();
+    std::function<void(const stock&, stock_field)> get_update_symbol_callback();
+    std::function<void(const bar_series&)> get_update_bar_series_callback();
     // getter setters
     run_mode getRunMode() const;
     void setRunMode(run_mode runMode);
-    void setRules(std::shared_ptr<IStrategyRules> r) { rules = r; rules->set_oms(oms); }
-    const strategy_symbol_basket& getSymbolBasket() const;
+    void setRules(std::unique_ptr<IStrategyRules> r) { rules = move(r); };
+
+    void run_rules(const stock &stk);
 };
 
 

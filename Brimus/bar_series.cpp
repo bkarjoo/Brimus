@@ -22,7 +22,7 @@ void bar_series::add_price(std::string timestamp, double price) {
         current_bar = bars[nt,(nt)];
 
         //bars[nt] = new bar(start_time);
-        for (auto a : newBarObservers) a(symbol);
+        for (auto a : newBarObservers) a(*this);
     } else if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
         // check if new bar needs to be created
         if (start_time.getMinutes() % bar_duration == 0) {
@@ -32,7 +32,7 @@ void bar_series::add_price(std::string timestamp, double price) {
             //current_bar->setDuration_minutes(bar_duration);
             // bars[start_time] = current_bar;
             current_bar = bars[start_time,(start_time)];
-            for (auto a : newBarObservers) a(symbol);
+            for (auto a : newBarObservers) a(*this);
         }
     }
     current_bar->add_tick(timestamp, price);
@@ -43,10 +43,10 @@ std::string bar_series::to_string() const {
     std::string str;
     for (auto& a : bars) {
         str += a.first.to_string(); str += ' ';
-        str += std::to_string(a.second.get_open()); str += ' ';
-        str += std::to_string(a.second.get_high()); str += ' ';
-        str += std::to_string(a.second.get_low()); str += ' ';
-        str += std::to_string(a.second.get_close()); str += '\n';
+        str += std::to_string(a.second.Open()); str += ' ';
+        str += std::to_string(a.second.High()); str += ' ';
+        str += std::to_string(a.second.Low()); str += ' ';
+        str += std::to_string(a.second.Close()); str += '\n';
     }
     return str;
 }
@@ -65,10 +65,11 @@ void bar_series::setBar_duration(unsigned short bar_duration) {
     bar_series::bar_duration = bar_duration;
 }
 
-std::function<void(const bar_series::ptime&, const std::string&, stock_field, double)> bar_series::get_callback() {
-    std::function<void(const bar_series::ptime&, const std::string&, stock_field, double)> callback =
-        [this](const bar_series::ptime& time, const std::string&, stock_field, double price) {
-            bar_time t(time);
+std::function<void(const stock&, stock_field)> bar_series::get_callback() {
+    std::function<void(const stock&, stock_field)> callback =
+        [this](const stock& stk, stock_field sf) {
+            if (sf != stock_field::LAST) return;
+            bar_time t(stk.Time());
             bar_time start_time(t.getHours(),t.getMinutes());
 
             if (!current_bar) {
@@ -80,7 +81,7 @@ std::function<void(const bar_series::ptime&, const std::string&, stock_field, do
                 // current_bar->setDuration_minutes(bar_duration);
                 current_bar = bars[nt,(nt)];
                 //bars[nt] = new bar(start_time);
-                for (auto a : newBarObservers) a(symbol);
+                for (auto a : newBarObservers) a(*this);
             } else if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
                 // check if new bar needs to be created
                 if (start_time.getMinutes() % bar_duration == 0) {
@@ -90,10 +91,10 @@ std::function<void(const bar_series::ptime&, const std::string&, stock_field, do
                     //current_bar->setDuration_minutes(bar_duration);
                     // bars[start_time] = current_bar;
                     current_bar = bars[start_time,(start_time)];
-                    for (auto a : newBarObservers) a(symbol);
+                    for (auto a : newBarObservers) a(*this);
                 }
             }
-            current_bar->add_tick(price);
+            current_bar->add_tick(stk.Last());
         };
     return callback;
 }
@@ -115,7 +116,7 @@ double bar_series::AverageClose(int numberOfBars) {
     int count = 0;
     double sum =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) sum += a->second.get_close(); else break;
+        if (count < numberOfBars) sum += a->second.Close(); else break;
         count ++;
     }
     return sum / numberOfBars;
@@ -131,7 +132,7 @@ double bar_series::AverageClose(int numberOfBars, int barsBack) {
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
             if (count < numberOfBars)
-                sum += a->second.get_close();
+                sum += a->second.Close();
             else
                 break;
         }
@@ -146,8 +147,8 @@ double bar_series::AverageHigh(int numberOfBars)
     int count = 0;
     double sum =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (a->second.get_high() == 0) continue;
-        if (count < numberOfBars) sum += a->second.get_high(); else break;
+        if (a->second.High() == 0) continue;
+        if (count < numberOfBars) sum += a->second.High(); else break;
         count ++;
     }
     return sum / numberOfBars;
@@ -159,10 +160,10 @@ double bar_series::AverageHigh(int numberOfBars, int barsBack)
     int count = 0 - barsBack;
     double sum = 0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (a->second.get_high() == 0) continue;
+        if (a->second.High() == 0) continue;
         if (count >= 0) {
             if (count < numberOfBars)
-                sum += a->second.get_high();
+                sum += a->second.High();
             else
                 break;
         }
@@ -176,8 +177,8 @@ double bar_series::AverageLow(int numberOfBars)
     int count = 0;
     std::vector<double> vec;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (a->second.get_low() != 100000) {
-            if (count < numberOfBars) vec.push_back(a->second.get_low()); else break;
+        if (a->second.Low() != 100000) {
+            if (count < numberOfBars) vec.push_back(a->second.Low()); else break;
             count++;
         }
     }
@@ -191,9 +192,9 @@ double bar_series::AverageLow(int numberOfBars, int barsBack)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_low());
+                vec.push_back(a->second.Low());
             else
                 break;
         }
@@ -210,7 +211,7 @@ void bar_series::setSymbol(const std::string &symbol) {
     bar_series::symbol = symbol;
 }
 
-void bar_series::AddNewBarObserver(std::function<void(std::string)> observer) {
+void bar_series::AddNewBarObserver(std::function<void(const bar_series&)> observer) {
     newBarObservers.push_back(observer);
 }
 
@@ -222,9 +223,9 @@ double bar_series::MaxClose(int numberOfBars)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_close());
+                vec.push_back(a->second.Close());
             else
                 break;
         }
@@ -240,9 +241,9 @@ double bar_series::MaxClose(int numberOfBars, int barsBack)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_close());
+                vec.push_back(a->second.Close());
             else
                 break;
         }
@@ -258,9 +259,9 @@ double bar_series::MaxHigh(int numberOfBars)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_high());
+                vec.push_back(a->second.High());
             else
                 break;
         }
@@ -276,9 +277,9 @@ double bar_series::MaxHigh(int numberOfBars, int barsBack)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_high());
+                vec.push_back(a->second.High());
             else
                 break;
         }
@@ -294,9 +295,9 @@ double bar_series::MaxLow(int numberOfBars)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_low());
+                vec.push_back(a->second.Low());
             else
                 break;
         }
@@ -312,9 +313,9 @@ double bar_series::MaxLow(int numberOfBars, int barsBack)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_low());
+                vec.push_back(a->second.Low());
             else
                 break;
         }
@@ -330,9 +331,9 @@ double bar_series::MinClose(int numberOfBars) {
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_close());
+                vec.push_back(a->second.Close());
             else
                 break;
         }
@@ -349,9 +350,9 @@ double bar_series::MinClose(int numberOfBars, int barsBack)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_close());
+                vec.push_back(a->second.Close());
             else
                 break;
         }
@@ -368,9 +369,9 @@ double bar_series::MinHigh(int numberOfBars)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_high());
+                vec.push_back(a->second.High());
             else
                 break;
         }
@@ -386,9 +387,9 @@ double bar_series::MinHigh(int numberOfBars, int barsBack)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_high());
+                vec.push_back(a->second.High());
             else
                 break;
         }
@@ -404,9 +405,9 @@ double bar_series::MinLow(int numberOfBars)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_low());
+                vec.push_back(a->second.Low());
             else
                 break;
         }
@@ -422,9 +423,9 @@ double bar_series::MinLow(int numberOfBars, int barsBack)
     // reverse it
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.get_low() == 100000) continue; // low hasn't been set yet
+            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.get_low());
+                vec.push_back(a->second.Low());
             else
                 break;
         }

@@ -29,23 +29,24 @@ class stock {
     size set_size(const std::string&);
     double set_price(const std::string&);
     // tell the observer packet time, symbol, field, value as double
-    boost::signals2::signal<void(const ptime&, const std::string&, stock_field, double)> observers;
+    boost::signals2::signal<void(const stock&, stock_field)> observers;
 public:
     // when connecting, remember to save the connection object and disconnect or add to scoped connection
-    boost::signals2::connection add_observer(std::function<void(const ptime&, const std::string&, stock_field, double)>);
+    boost::signals2::connection add_observer(
+            std::function<void(const stock&, stock_field)>);
     void tick_update(std::unique_ptr<cap_message>);
     void tick_update(const cap_message&);
     void time_update(boost::posix_time::ptime _packetTime);
     // getters
-    const std::string &getSymbol() const;
-    price getLast() const;
-    price getAsk() const;
-    price getBid() const;
-    price getOpen() const;
-    size getLastSize() const;
-    size getAskSize() const;
-    size getBidSize() const;
-    const ptime &getPacketTime() const;
+    const std::string &Symbol() const;
+    price Last() const;
+    price Ask() const;
+    price Bid() const;
+    price Open() const;
+    size LastSize() const;
+    size AskSize() const;
+    size BidSize() const;
+    const ptime &Time() const;
     // constructor
     stock(const std::string &symbol);
     stock(){};

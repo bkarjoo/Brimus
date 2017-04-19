@@ -77,15 +77,3 @@ TEST(order_collection_tests, find_raw_order)
     order & ord = *opt;
     EXPECT_EQ(100,ord.getQuantity());
 }
-
-//const ord_ptr& add_order(int qty, std::string symbol, double price);
-//void pass_order(ord_ptr);
-//const ord_ptr & find_order(std::string);
-//const ord_ptr & find_order(int qty, std::string symbol, double price);
-//void remove_order(int qty, std::string symbol, double price);
-//ord_ptr fetch_remove_order(int qty, std::string symbol, double price);
-//ord_ptr fetch_remove_order(std::string id);
-//bool has_open_order(const std::string&) const;
-//bool has_open_buy_order(const std::string&) const;
-//bool has_open_sell_order(const std::string&) const;
-//int size() const { return orders.size(); }

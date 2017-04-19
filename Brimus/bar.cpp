@@ -10,19 +10,19 @@ void bar::add_tick(std::string timestamp, double price) {
     _close = price;
 }
 
-double bar::get_open() const {
+double bar::Open() const {
     return _open;
 }
 
-double bar::get_high() const {
+double bar::High() const {
     return _high;
 }
 
-double bar::get_low() const {
+double bar::Low() const {
     return _low;
 }
 
-double bar::get_close() const {
+double bar::Close() const {
     return _close;
 }
 

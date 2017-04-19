@@ -243,8 +243,6 @@ TEST(market_simulator_tests, cancel_replace_order)
         inst.tick_update(move(msg));
     }
 
-
-
     EXPECT_EQ("129.320000",ms.ping("AAPL"));
 
     string id = ms.send_order(100,"AAPL", 129);

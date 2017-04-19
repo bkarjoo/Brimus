@@ -6,92 +6,10 @@
 #include "cap_filepath_maker.h"
 #include "stock_collection.h"
 
-using std::cout; using std::endl;using std::string;
+using namespace std;
 
-/*
- * called by instrument so strategy knows that instrument was updated
- */
-
-// strategy level notify only updates strategy functions like current time
-// strategy level notify called by base which overrides it
-void strategy::notify(std::string symbol) {
-
-    auto symb = instruments[symbol];
-    if (symb == nullptr) return;
-
-    currentTime = symb->getPacketTime();
-
-
-    if (oms->has_position(symbol)
-        && !oms->has_open_orders(symbol)) {
-        oms->submit(100,symbol,symb->getBid());
-    } else if (oms->get_position(symbol) > 0
-        && !oms->has_open_orders(symbol)) {
-        oms->submit(-100,symbol,symb->getBid());
-    }
-
-    //cout << "Current Time : " << currentTime.to_string() << endl;
-}
-
-
-
-//void strategy::add_instrument(std::shared_ptr<instrument> i) {
-//    string symbol = i->getSymbol();
-//    instruments[symbol] = i;
-//    //i->set_strategy(this);
-//}
-
-
-
-
-
-const bar_time &strategy::getCurrentTime() const {
-    return currentTime;
-}
-
-std::function<void(std::shared_ptr<execution>)> strategy::get_callback() {
-    std::function<void(std::shared_ptr<execution>)> callback =
-            [this] (std::shared_ptr<execution> exec) {
-                // find the order
-
-                // adjust its quantity
-
-                // if order is done move it to closed_orders
-
-                // add execution to order and execution stack
-
-
-                // update position
-
-
-//                auto quantity = exec->quantity;
-//                auto symbol = exec->symbol;
-//                auto price = exec->price;
-//
-//                std::string side = (quantity > 0) ? "bot" : "sold";
-//                cout << side << " " << abs(quantity) << " " << symbol << " @" << price
-//                     << " position: " << positions[symbol] << " money flow: "
-//                        << sum_money_flow(symbol) << " #execs: " << executions[symbol].size() << endl;
-//                cout << "Open Position Value: " << open_position_value(symbol) << endl;
-//                cout << "P&L: " << pandl(symbol) << endl;
-//                cout << "P&L total: " << pandl() << endl;
-            };
-    return callback;
-}
-
-
-
-void strategy::setLaunchRules(std::unique_ptr<strategy_launch_rules> launchRules) {
-    launchRules = move(launchRules);
-}
-
-void strategy::setSymbolBakset(std::unique_ptr<strategy_symbol_basket> symbolBakset) {
-    symbolBakset = move(symbolBakset);
-}
-
-strategy::strategy(std::unique_ptr<strategy_launch_rules> lr, std::unique_ptr<strategy_symbol_basket> sb)
+strategy::strategy(unique_ptr<strategy_launch_rules> lr, unique_ptr<strategy_symbol_basket> sb)
 {
-    oms = std::make_shared<strategy_oms>();
     launchRules = move(lr);
     symbolBasket = move(sb);
 }
@@ -108,48 +26,69 @@ const strategy_launch_rules & strategy::getLaunchRules() const {
     return *launchRules;
 }
 
-const strategy_symbol_basket & strategy::getSymbolBakset() const {
-    return *symbolBasket;
-}
-
-std::function<void(std::string)> strategy::get_symbol_update_callback() {
-
-    std::function<void(std::string)> callback;
-
-    callback = [this](std::string symbol){
-        on_symbol_updated(symbol);
-    };
-
-    return callback;
-}
-
-void strategy::on_symbol_updated(std::string symbol) {
-//    std::cout << symbol << " Last Price: "
+void strategy::on_symbol_updated(const stock& stk, stock_field sf) {
+//    cout << symbol << " Last Price: "
 //              << global_basket::get_instance().LastPrice(symbol) << endl;
-
-    if (rules->update_on()) {
-        if (rules->long_stoploss_rules(symbol)) rules->place_long_stoploss(symbol);
-        if (rules->short_stoploss_rules(symbol)) rules->place_short_stoploss(symbol);
-        if (rules->long_entry_rules(symbol)) rules->place_long_entry(symbol);
-        if (rules->short_entry_rules(symbol)) rules->place_short_entry(symbol);
-        if (rules->long_target_rules(symbol)) rules->place_long_target(symbol);
-        if (rules->short_target_rules(symbol)) rules->place_short_target(symbol);
+    switch (sf)
+    {
+        case stock_field::ASK :
+            if (rules->update_on_ask()) run_rules(stk);
+            break;
+        case stock_field::ASK_SIZE:
+            if (rules->update_on_ask_size()) run_rules(stk);
+            break;
+        case stock_field::BID :
+            if (rules->update_on_bid()) run_rules(stk);
+            break;
+        case stock_field::BID_SIZE:
+            if (rules->update_on_bid_size()) run_rules(stk);
+            break;
+        case stock_field::LAST :
+            if (rules->update_on_last()) run_rules(stk);
+            break;
+        case stock_field::LAST_SIZE:
+            if (rules->update_on_last_size()) run_rules(stk);
+            break;
+        case stock_field::OPEN:
+            if (rules->update_on_open()) run_rules(stk);
+            break;
     }
 }
 
-std::function<void(const boost::posix_time::ptime &, const std::string &, stock_field, double)>
-strategy::get_extended_update_symbol_callback() {
-    std::function<void(const boost::posix_time::ptime &, const string &, stock_field, double)> callback;
-    callback = [this](const boost::posix_time::ptime & time, const string & symbol, stock_field field, double value){
-        on_symbol_updated(symbol);
+function<void(const stock &, stock_field)>
+strategy::get_update_symbol_callback() {
+    function<void(const stock &, stock_field)> callback;
+    callback = [this](const stock & stk, stock_field sf){
+        on_symbol_updated(stk,sf);
     };
-
     return callback;
+}
+
+std::function<void(const bar_series &)>
+strategy::get_update_bar_series_callback() {
+    function<void(const bar_series &)> callback;
+    callback = [this](const bar_series& bs){
+        rules->on_bar_series(
+                *(stock_collection::get_instance().get_stock(bs.getSymbol())),
+            oms, bs);
+    };
+    return function<void(const bar_series &)>();
+}
+
+void strategy::run_rules(const stock &stk) {
+    if (rules->long_stoploss_rules(stk, oms)) rules->place_long_stoploss(stk, oms);
+    if (rules->short_stoploss_rules(stk, oms)) rules->place_short_stoploss(stk, oms);
+    if (rules->long_entry_rules(stk, oms)) rules->place_long_entry(stk, oms);
+    if (rules->short_entry_rules(stk, oms)) rules->place_short_entry(stk, oms);
+    if (rules->long_target_rules(stk, oms)) rules->place_long_target(stk, oms);
+    if (rules->short_target_rules(stk, oms)) rules->place_short_target(stk, oms);
 }
 
 const strategy_symbol_basket &strategy::getSymbolBasket() const {
     return *symbolBasket;
 }
+
+
 
 
 

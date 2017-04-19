@@ -29,13 +29,13 @@ public:
 
     void add_tick(double price);
 
-    double get_open() const;
+    double Open() const;
 
-    double get_high() const;
+    double High() const;
 
-    double get_low() const;
+    double Low() const;
 
-    double get_close() const;
+    double Close() const;
 
     bool operator<(bar& other) {
         return startTime < other.startTime;

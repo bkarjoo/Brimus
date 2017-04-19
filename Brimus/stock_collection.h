@@ -22,10 +22,11 @@ public:
     void operator=(stock_collection const&) = delete;
     static stock_collection& get_instance() { static stock_collection sc; return sc; }
     stock& add_stock(std::string);
-    void add_stock(const std::string&, std::function<void(const ptime&, const std::string&, stock_field, double)>);
+    void add_stock(const std::string&,
+                   std::function<void(const stock&, stock_field)>);
     // makes caller an observer to the stock
     void add_basket(const strategy_symbol_basket&,
-                    std::function<void(const ptime&, const std::string&, stock_field, double)>);
+                    std::function<void(const stock&, stock_field)>);
     void on_message(const cap_message &message);
     bool has_instrument(const std::string &string);
     std::shared_ptr<stock> get_stock(const std::string&);
