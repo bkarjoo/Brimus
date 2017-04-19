@@ -7,7 +7,6 @@
 
 
 #include "stdafx.h"
-#include "Date_Compare.h"
 
 class holidays {
     typedef boost::gregorian::date bdate;

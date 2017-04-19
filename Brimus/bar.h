@@ -6,26 +6,28 @@
 #define BRIMUS_BAR_H
 
 
-#include "btime.h"
+#include "bar_time.h"
 
 class bar {
-    btime startTime;
+    bar_time startTime;
     double _open = 0.0;
     double _high = 0.0;
     double _low = 100000.0;
     double _close = 0.0;
 public:
     bar() {}
-    bar(btime b) { startTime.setHours(b.getHours()); startTime.setMinutes(b.getMinutes()); }
+    bar(bar_time b) { startTime.setHours(b.getHours()); startTime.setMinutes(b.getMinutes()); }
     bar(unsigned short int hour, unsigned short int minute);
 
-    void setStartTime(const btime &startTime);
+    void setStartTime(const bar_time &startTime);
 
-    const btime &getStartTime() const;
+    const bar_time &getStartTime() const;
 
     double range() { return _high - _low; }
 
     void add_tick(std::string timestamp, double price);
+
+    void add_tick(double price);
 
     double get_open() const;
 

@@ -5,7 +5,7 @@
 #ifndef BRIMUS_READ_MODE_H
 #define BRIMUS_READ_MODE_H
 
-enum class read_mode {
+enum class capfile_read_mode {
     PACKET_HEADER,
     MSG_HEADER,
     FIELD,

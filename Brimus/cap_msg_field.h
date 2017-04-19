@@ -6,7 +6,7 @@
 #define BRIMUS_ST_FIELD_H
 #include "stdafx.h"
 
-struct st_field {
+struct cap_msg_field {
     char field_exchange;
     char field_code;
     std::string field_code_value;

@@ -9,7 +9,7 @@ message_router::message_router() {
     sc = stock_collection::get_instance();
 }
 
-void message_router::on_message(const st_message &message) {
+void message_router::on_message(const cap_message &message) {
     sc->on_message(message);
 }
 

@@ -3,20 +3,20 @@
 //
 
 #include "S_SpyArt.h"
-#include "global_basket.h"
+#include "stock_collection.h"
 
 using namespace std;
 
 S_SpyArt::S_SpyArt() {
     // TODO: request indicators required from global basket
-    FiveMinBars = std::make_shared<bar_series>("SPY");
+    FiveMinBars = std::make_unique<bar_series>("SPY");
     FiveMinBars->setBar_duration(5);
     FiveMinBars->AddNewBarObserver(get_callback());
-    auto& gb = global_basket::get_instance();
+    auto& gb = stock_collection::get_instance();
     // bind give minute bar to SPY so it's updated by itself
-    SPY = gb.get_instrument("SPY");
+    SPY = gb.get_stock("SPY");
     if (!SPY) throw std::invalid_argument("instrument not set");
-    SPY->setLast_observer(FiveMinBars->get_callback());
+    SPY->add_observer(FiveMinBars->get_callback());
 }
 
 

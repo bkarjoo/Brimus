@@ -5,9 +5,9 @@
 #define BRIMUS_CAP_FILE_READER_H
 
 #include "stdafx.h"
-#include "read_mode.h"
-#include "st_field.h"
-#include "st_message.h"
+#include "capfile_read_mode.h"
+#include "cap_msg_field.h"
+#include "cap_message.h"
 #include "IMessageReceiver.h"
 
 /*
@@ -33,7 +33,7 @@ private:
     ~cap_file_reader() {}
     int start_time_seconds = 0;
     int end_time_seconds = 86399;
-    read_mode mode = read_mode::PACKET_HEADER;
+    capfile_read_mode mode = capfile_read_mode::PACKET_HEADER;
     bool is_packet_delimiter(const char &c);
     bool is_msg_delimiter(const char &c, const char &prev);
     bool is_upper_case(const char &c);

@@ -6,7 +6,7 @@
 #define BRIMUS_INSTRUMENT_H
 
 #include "stdafx.h"
-#include "st_message.h"
+#include "cap_message.h"
 #include "bar_series.h"
 #include "INotifyPropertyChanged.h"
 
@@ -26,8 +26,8 @@ protected:
     double open_price = 0.0;
     double close_price = 0.0;
     unsigned short int precision = 0;
-    void register_field(st_field *pField);
-    void set_precision(st_field *f);
+    void register_field(cap_msg_field *pField);
+    void set_precision(cap_msg_field *f);
     unsigned int set_volume(const std::string&);
     double set_price(const std::string&);
     std::string last_time_stamp = "";
@@ -55,7 +55,7 @@ public:
     void setOutput_path(const std::string &output_path);
     const std::string &getSymbol() const;
     void setSymbol(const std::string &symbol);
-    void on_message(std::unique_ptr<st_message>);
+    void on_message(std::unique_ptr<cap_message>);
 //    void set_strategy(instrument_observer *);
 };
 

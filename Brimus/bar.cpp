@@ -31,12 +31,19 @@ bar::bar(unsigned short int hour, unsigned short int minute) {
     startTime.setMinutes(minute);
 }
 
-const btime &bar::getStartTime() const {
+const bar_time &bar::getStartTime() const {
     return startTime;
 }
 
 
-void bar::setStartTime(const btime &startTime) {
+void bar::setStartTime(const bar_time &startTime) {
     bar::startTime = startTime;
+}
+
+void bar::add_tick(double price) {
+    if (_open == 0) _open = price;
+    if (price > _high) _high = price;
+    if (price < _low) _low = price;
+    _close = price;
 }
 

@@ -6,9 +6,9 @@
 #define BRIMUS_SYMBOL_BASKET_H
 
 #include "stdafx.h"
-#include "launch_rules.h"
+#include "strategy_launch_rules.h"
 
-class symbol_basket {
+class strategy_symbol_basket {
 public:
     void add_symbol(const std::string &symbol);
     int get_symbol_count();

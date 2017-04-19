@@ -1,11 +1,10 @@
-#include <message_router.h>
+#include "message_router.h"
 #include "cap_file_reader.h"
 #include "stdafx.h"
-#include "st_notifier.h"
 #include "tick_file_maker.h"
 #include "S_SpyArt.h"
-#include "global_basket.h"
 #include "stock_collection.h"
+#include "strategy.h"
 
 using boost::tokenizer;
 using namespace std;
@@ -42,19 +41,20 @@ void run(param_vec parameters)
 
     auto& pcf = cap_file_reader::get_instance();
     auto & gb = stock_collection::get_instance();
-    auto basket = std::make_shared<symbol_basket>();basket->add_symbol("SPY");
-    auto launch = std::make_shared<launch_rules>();
+    auto basket = std::make_unique<strategy_symbol_basket>();
+    basket->add_symbol("SPY");
+    auto launch = std::make_unique<strategy_launch_rules>();
 
-    strategy* sptr = new strategy (launch,basket);
-    gb.add_basket(*basket,sptr->get_extended_update_symbol_callback());
+    strategy* sptr = new strategy (move(launch),move(basket));
 
+    gb.add_basket(sptr->getSymbolBasket(),sptr->get_extended_update_symbol_callback());
     auto rules = std::make_shared<S_SpyArt>();
     sptr->setRules(rules);
 
-
+    cout << gb.has_instrument("SPY") << endl;
 
     std::vector<std::string> paths {"C:\\Users\\b.karjoo\\Documents\\Brimus\\cmake-build-debug\\SPY.CAP"};
-    unique_ptr<message_router> router = make_unique<message_router>();
+    auto router = make_unique<message_router>();
     pcf.setImr(move(router));
     pcf.run(paths);
 
@@ -67,9 +67,9 @@ void run(param_vec parameters)
 //    pcap_file_server& pfs = pcap_file_server::get_instance();
 //    //pcf.run(pfs.get_paths());
 //    // set up strategies
-//    std::shared_ptr<symbol_basket> sb = std::make_shared<symbol_basket>();
+//    std::shared_ptr<strategy_symbol_basket> sb = std::make_shared<strategy_symbol_basket>();
 //    sb->add_symbol("SPY");
-//    std::shared_ptr<launch_rules> lr = std::make_shared<launch_rules>();
+//    std::shared_ptr<strategy_launch_rules> lr = std::make_shared<strategy_launch_rules>();
 //    lr->add_date(2017,1,3);
 //    std::shared_ptr<strategy> s = std::make_shared<strategy>(lr,sb);
 //    std::shared_ptr<IStrategyRules> r (new S_DoNothing);
@@ -93,15 +93,13 @@ void extract(param_vec parameters)
         else if (a->parameter == "input") paths.push_back(a->value);
     }
     if (paths.size() == 0) paths.push_back(default_path);
-    pcap_file& pf = pcap_file::get_instance();
+    auto& pf = cap_file_reader::get_instance();
     pf.setStart_time_seconds(((9 * 60) + 30) * 60);
     pf.setEnd_time_seconds(((16 * 60) + 15) * 60);
-    std::shared_ptr<tick_file_maker> tfmptr =
-        std::make_shared<tick_file_maker>(output_path);
-    pf.set_notifier(tfmptr);
-    pf.add_instrument(symbol);
+    auto tfmptr = std::make_unique<tick_file_maker>(output_path);
+    tfmptr->add_instrument(symbol);
+    pf.setImr(move(tfmptr));
     pf.run(paths);
-    tfmptr->close_os();
     cout << endl;
     cout << "Exctract completed." << endl;
 }
@@ -131,6 +129,7 @@ void command_interpretter(std::string choice, param_vec tokens)
  *
  */
 int main() {
+
     auto t1 = std::chrono::high_resolution_clock::now();
     // timer begin
     boost::program_options::options_description desc("Program options");
@@ -168,4 +167,5 @@ int main() {
     long ms = (long)(1000*diff.count());
     std::cout << "Completed in: " << ms << " miliseconds." << std::endl;
     return 0;
+
 }

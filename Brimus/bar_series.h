@@ -7,14 +7,17 @@
 
 #include "stdafx.h"
 #include "bar.h"
-#include "btime.h"
+#include "bar_time.h"
+#include "stock_field.h"
 
 class bar_series {
-    std::map<btime,bar> bars;
+    typedef boost::posix_time::ptime ptime;
+    std::map<bar_time,bar> bars;
     boost::optional<bar&> current_bar = {};
     unsigned short int bar_duration = 1;
     std::string symbol;
     std::vector<std::function<void(std::string)> > newBarObservers;
+
 public:
     bar_series(std::string _symbol) : symbol(_symbol) {}
     const std::string &getSymbol() const;
@@ -23,7 +26,7 @@ public:
     std::string to_string() const;
     unsigned short getBar_duration() const;
     void setBar_duration(unsigned short bar_duration);
-    std::function<void(std::string,double)> get_callback();
+    std::function<void(const ptime&, const std::string&, stock_field, double)> get_callback();
     const boost::optional<bar&> CurrentBar() const { return current_bar; }
     boost::optional<const bar &> PreviousBar(unsigned int i) const;
     double AverageClose(int numberOfBars);

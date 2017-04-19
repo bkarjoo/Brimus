@@ -1,53 +1,54 @@
 //
 // Created by b.karjoo on 4/11/2017.
 //
-#include <global_basket.h>
+#include <stock_collection.h>
 #include "gtest/gtest.h"
 #include "stdafx.h"
 #include "market_simulator.h"
 #include "instrument.h"
-#include "st_message.h"
-#include "st_field.h"
+#include "cap_message.h"
+#include "cap_msg_field.h"
 
 using namespace std;
 
 TEST(market_simulator_tests, ping)
 {
-    global_basket& gb = global_basket::get_instance();
+    auto& gb = stock_collection::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto& inst = gb.add_instrument("SPY");
+    auto& inst = gb.add_stock("SPY");
 
-    st_message m;
+    cap_message m;
 
     // last
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "SPY", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
+
     }
     // bid
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "SPY", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // ask
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "SPY", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
 
 
@@ -57,41 +58,41 @@ TEST(market_simulator_tests, ping)
     EXPECT_EQ("Connected.", response2);
 }
 
-TEST(market_simulator_tests, add_instrument)
+TEST(market_simulator_tests, add_stock)
 {
-    global_basket& gb = global_basket::get_instance();
+    stock_collection& gb = stock_collection::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto& inst = gb.add_instrument("AAPL");
-    st_message m;
+    auto& inst = gb.add_stock("AAPL");
+    cap_message m;
     // last
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // bid
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // ask
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
 
 
@@ -100,39 +101,39 @@ TEST(market_simulator_tests, add_instrument)
 
 TEST(market_simulator_tests, send_order)
 {
-    global_basket& gb = global_basket::get_instance();
+    stock_collection& gb = stock_collection::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto& inst = gb.add_instrument("AAPL");
-    st_message m;
+    auto& inst = gb.add_stock("AAPL");
+    cap_message m;
     // last
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // bid
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // ask
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
 
 
@@ -149,39 +150,39 @@ TEST(market_simulator_tests, send_order)
 
 TEST(market_simulator_tests, cancel_order)
 {
-    global_basket& gb = global_basket::get_instance();
+    stock_collection& gb = stock_collection::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto& inst = gb.add_instrument("AAPL");
-    st_message m;
+    auto& inst = gb.add_stock("AAPL");
+    cap_message m;
     // last
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // bid
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // ask
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
 
 
@@ -207,39 +208,39 @@ TEST(market_simulator_tests, cancel_order)
 
 TEST(market_simulator_tests, cancel_replace_order)
 {
-    global_basket& gb = global_basket::get_instance();
+    stock_collection& gb = stock_collection::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto& inst = gb.add_instrument("AAPL");
-    st_message m;
+    auto& inst = gb.add_stock("AAPL");
+    cap_message m;
     // last
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // bid
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // ask
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
 
 
@@ -269,39 +270,39 @@ TEST(market_simulator_tests, cancel_replace_order)
 
 TEST(market_simulator_tests, cancel_replace_order_shares)
 {
-    global_basket& gb = global_basket::get_instance();
+    stock_collection& gb = stock_collection::get_instance();
     market_simulator& ms = market_simulator::get_instance();
-    auto& inst = gb.add_instrument("AAPL");
-    st_message m;
+    auto& inst = gb.add_stock("AAPL");
+    cap_message m;
     // last
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.32";
         char a = 't', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // bid
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.31";
         char a = 'b', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
     // ask
     {
-        auto msg = make_unique<st_message>();
-        st_field f;
+        auto msg = make_unique<cap_message>();
+        cap_msg_field f;
         std::string s = "AAPL", s2 = "", s3 = "129.33";
         char a = 'a', b = 0;
         msg->set_symbol(s);
         msg->add_field(a, s2, s3, b);
-        inst.on_message(move(msg));
+        inst.tick_update(move(msg));
     }
 
 

@@ -51,30 +51,30 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
         int hours = 0, minutes = 0, seconds = 0, time_since_midnight = 0;
         bool packet_header_has_time = false;
 
-        unique_ptr<st_message> msg_ptr = nullptr;
+        unique_ptr<cap_message> msg_ptr = nullptr;
 
         while (fs.get(c)) {
             //cout << c << endl;
             // first check if it's a delimiter starting with field delimiter which occurs the most
-            if (mode != read_mode::IGNORE_MSG
-                && mode != read_mode::IGNORE_PACKET
-                && mode != read_mode::PACKET_HEADER
+            if (mode != capfile_read_mode::IGNORE_MSG
+                && mode != capfile_read_mode::IGNORE_PACKET
+                && mode != capfile_read_mode::PACKET_HEADER
                 && is_field_delimiter(c, prev)) {
 
-                if (mode == read_mode::FIELD) {
+                if (mode == capfile_read_mode::FIELD) {
                     // one field completed starting a new field
                     msg_ptr->add_field(field_code, field_code_val, field_val, field_exchange);
-                } else if (mode == read_mode::MSG_HEADER) {
+                } else if (mode == capfile_read_mode::MSG_HEADER) {
                     // message header completed and starting first field
                     //instr = gb.get_instrument(symbol);
 
                     if (imr->has_instrument(symbol)) {
-                        msg_ptr = std::make_unique<st_message>(c);
+                        msg_ptr = std::make_unique<cap_message>(c);
                         if (!prefix == 0) msg_ptr->set_prefix(prefix);
                         msg_ptr->set_symbol(symbol);
-                        mode = read_mode::FIELD;
+                        mode = capfile_read_mode::FIELD;
                     } else {
-                        mode = read_mode::IGNORE_MSG;
+                        mode = capfile_read_mode::IGNORE_MSG;
                         msg_ptr = nullptr;
                     }
                     prefix = 0;
@@ -84,16 +84,16 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
                 // reset and initialize field variables
                 field_code_val = ""; field_val = ""; field_exchange = 0;
                 field_code = c;
-            } else if (mode != read_mode::MSG_HEADER
-                       && mode != read_mode::IGNORE_PACKET
+            } else if (mode != capfile_read_mode::MSG_HEADER
+                       && mode != capfile_read_mode::IGNORE_PACKET
                        && is_msg_delimiter(c, prev)) {
 
-                if (mode == read_mode::FIELD) {
+                if (mode == capfile_read_mode::FIELD) {
                     // last field of previous message complete
                     msg_ptr->add_field(field_code,field_code_val,field_val,field_exchange);
                     if (is_upper_case(c)) symbol += c; else msg_delim = c;
-                    mode = read_mode::MSG_HEADER;
-                } else if (mode == read_mode::PACKET_HEADER) {
+                    mode = capfile_read_mode::MSG_HEADER;
+                } else if (mode == capfile_read_mode::PACKET_HEADER) {
                     // packet header complete, new message starting
 //                    cout << endl;
 //                    cout << "Packet header complete: " << packet_header_str << endl;
@@ -105,22 +105,22 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
                             time_since_midnight = (((hours * 60) + minutes) * 60) + seconds;
                             if (time_since_midnight < start_time_seconds ||
                                 time_since_midnight > end_time_seconds)
-                                mode = read_mode::IGNORE_PACKET;
+                                mode = capfile_read_mode::IGNORE_PACKET;
                             else {
                                 //cout << packet_header_str << endl;
                                 if (is_upper_case(c)) symbol += c; else msg_delim = c;
-                                mode = read_mode::MSG_HEADER;
+                                mode = capfile_read_mode::MSG_HEADER;
                             }
                         } catch (...) {
                             cout << "error: time capture was off in packet header" << endl;
                         }
                     } else {
                         if (is_upper_case(c)) symbol += c; else msg_delim = c;
-                        mode = read_mode::MSG_HEADER;
+                        mode = capfile_read_mode::MSG_HEADER;
                     }
                 } else {
                     if (is_upper_case(c)) symbol += c; else msg_delim = c;
-                    mode = read_mode::MSG_HEADER;
+                    mode = capfile_read_mode::MSG_HEADER;
                 }
 
                 // TODO: send completed message to observers
@@ -138,20 +138,20 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
 
 
 
-            } else if (mode != read_mode::MSG_HEADER
+            } else if (mode != capfile_read_mode::MSG_HEADER
                        && is_packet_delimiter(c)) {
 
                 // last field of previous message was read
-                if (mode == read_mode::FIELD) {
+                if (mode == capfile_read_mode::FIELD) {
                     msg_ptr->add_field(field_code,field_code_val,field_val,field_exchange);
                 }
 
                 packet_header_str = "";
                 hours_str = "", minutes_str = ""; seconds_str = "";
                 packet_header_has_time = false;
-                mode = read_mode::PACKET_HEADER;
+                mode = capfile_read_mode::PACKET_HEADER;
 
-            } else if (mode == read_mode::FIELD) {
+            } else if (mode == capfile_read_mode::FIELD) {
 
 
                 if (c == ',')
@@ -161,14 +161,14 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
                 else
                     field_val += c;
 
-            } else if (mode == read_mode::MSG_HEADER) {
+            } else if (mode == capfile_read_mode::MSG_HEADER) {
 
                 if (symbol.length() == 0 && is_lower_case(c))
                     prefix = c;
                 else
                     symbol += c;
 
-            } else if (mode == read_mode::PACKET_HEADER) {
+            } else if (mode == capfile_read_mode::PACKET_HEADER) {
 
                 packet_header_str += c;
                 if (packet_header_str.length() < 3) hours_str += c;

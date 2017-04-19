@@ -49,17 +49,17 @@ boost::signals2::connection stock::add_observer(std::function<void(const stock::
     return observers.connect(observer);
 }
 
-void stock::tick_update(std::unique_ptr<st_message> msg) {
+void stock::tick_update(std::unique_ptr<cap_message> msg) {
     for (auto a : msg->get_fields())
         register_field(a);
 }
 
-void stock::tick_update(const st_message &msg) {
+void stock::tick_update(const cap_message &msg) {
     for (auto a : msg.get_fields())
         register_field(a);
 }
 
-void stock::register_field(st_field *pField) {
+void stock::register_field(cap_msg_field *pField) {
     switch (pField->field_code) {
         case 'a':
             ask = set_price(pField->field_value);

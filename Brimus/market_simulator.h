@@ -28,7 +28,7 @@ public:
     // void add_instrument(std::shared_ptr<instrument> &);
 
     std::string ping() { return "Connected."; }
-    std::string ping(std::string);
+    std::string ping(const std::string&);
     std::string send_order(int qty, std::string symbol,
                            double price,
                            std::function<void(int&,double&,const std::string&)>);

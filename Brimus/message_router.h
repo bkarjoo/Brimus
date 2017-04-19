@@ -14,7 +14,7 @@ class message_router : public IMessageReceiver {
 public:
     message_router();
 
-    void on_message(const st_message &message) override;
+    void on_message(const cap_message &message) override;
 
     bool has_instrument(const std::string &string) override;
 };

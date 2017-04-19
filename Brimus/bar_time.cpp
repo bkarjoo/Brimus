@@ -2,15 +2,16 @@
 // Created by b.karjoo on 3/23/2017.
 //
 
-#include "btime.h"
+#include "bar_time.h"
 
-
-
-btime::btime(unsigned short int hour, unsigned short int minute) {
-    hours = hour; minutes = minute;
+bar_time::bar_time(const boost::posix_time::ptime & bt) {
+    hours = bt.time_of_day().hours();
+    minutes = bt.time_of_day().minutes();
+    seconds = bt.time_of_day().seconds();
 }
 
-btime::btime(std::string t)
+
+bar_time::bar_time(std::string t)
 {
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
@@ -34,17 +35,17 @@ btime::btime(std::string t)
     }
 }
 
-int btime::seconds_from_midnight() const
+int bar_time::seconds_from_midnight() const
 {
     return ((hours * 60) + minutes) * 60 + seconds;
 }
 
-int btime::milliseconds_from_midnight() const
+int bar_time::milliseconds_from_midnight() const
 {
     return (seconds_from_midnight() * 1000) + milliseconds;
 }
 
-std::string btime::to_string() const
+std::string bar_time::to_string() const
 {
     std::string hour_str = "", minute_str = "", second_str = "", ms_str = "";
     if (hours < 10) hour_str += '0'; hour_str += std::to_string(hours);
@@ -55,22 +56,22 @@ std::string btime::to_string() const
     return hour_str + minute_str + second_str + ms_str;
 }
 
-bool btime::operator<(const btime& other) const
+bool bar_time::operator<(const bar_time& other) const
 {
     return milliseconds_from_midnight() < other.milliseconds_from_midnight();
 }
 
-bool btime::operator>(const btime& other) const
+bool bar_time::operator>(const bar_time& other) const
 {
     return milliseconds_from_midnight() > other.milliseconds_from_midnight();
 }
 
-bool btime::operator==(const btime& other) const
+bool bar_time::operator==(const bar_time& other) const
 {
     return milliseconds_from_midnight() == other.milliseconds_from_midnight();
 }
 
-void btime::update(const std::string &t) {
+void bar_time::update(const std::string &t) {
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
     if (t.length() == 4) {
@@ -93,8 +94,8 @@ void btime::update(const std::string &t) {
     }
 }
 
-bool btime::isGreaterThan(std::string t) {
-    btime x;
+bool bar_time::isGreaterThan(std::string t) {
+    bar_time x;
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
     if (t.length() == 4) {
@@ -118,8 +119,8 @@ bool btime::isGreaterThan(std::string t) {
     return *this > x;
 }
 
-bool btime::isLessThan(std::string t) {
-    btime x;
+bool bar_time::isLessThan(std::string t) {
+    bar_time x;
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
     if (t.length() == 4) {
@@ -143,8 +144,8 @@ bool btime::isLessThan(std::string t) {
     return *this < x;
 }
 
-bool btime::isEqualTo(std::string t) {
-    btime x;
+bool bar_time::isEqualTo(std::string t) {
+    bar_time x;
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
     if (t.length() == 4) {
@@ -168,20 +169,27 @@ bool btime::isEqualTo(std::string t) {
     return *this == x;
 }
 
-void btime::setHours(unsigned short hours) {
-    btime::hours = hours;
+bar_time::bar_time(int h, int m) {
+    hours = h;
+    minutes = m;
 }
 
-void btime::setMinutes(unsigned short minutes) {
-    btime::minutes = minutes;
+void bar_time::setHours(int hours) {
+    bar_time::hours = hours;
 }
 
-void btime::setSeconds(unsigned short seconds) {
-    btime::seconds = seconds;
+void bar_time::setMinutes(int minutes) {
+    bar_time::minutes = minutes;
 }
 
-void btime::setMilliseconds(unsigned short milliseconds) {
-    btime::milliseconds = milliseconds;
+void bar_time::setSeconds(int seconds) {
+    bar_time::seconds = seconds;
 }
+
+void bar_time::setMilliseconds(int milliseconds) {
+    bar_time::milliseconds = milliseconds;
+}
+
+
 
 

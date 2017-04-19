@@ -4,7 +4,7 @@
 
 #ifndef BRIMUS_ORDER_TYPE_H
 #define BRIMUS_ORDER_TYPE_H
-enum class order_type {
+enum class strategy_order_type {
     ENTRY,
     TARGET,
     STOP_LOSS

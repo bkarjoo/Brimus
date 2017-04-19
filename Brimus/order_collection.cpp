@@ -105,7 +105,7 @@ boost::optional<order &> order_collection::add_order(int qty, std::string symbol
 }
 
 boost::optional<order &>
-order_collection::add_order(int qty, const std::string &symbol, double price, order_type oType) {
+order_collection::add_order(int qty, const std::string &symbol, double price, strategy_order_type oType) {
     auto ord = make_unique<order>(qty,symbol,price,oType);
     orders.push_back(move(ord));
     return *ord;
@@ -137,7 +137,7 @@ boost::optional<order &> order_collection::find_first_sell_order(const std::stri
     return **it;
 }
 
-boost::optional<order &> order_collection::find_first_buy_order(const std::string &symbol, order_type oType) const {
+boost::optional<order &> order_collection::find_first_buy_order(const std::string &symbol, strategy_order_type oType) const {
     auto it = std::find_if(orders.begin(),orders.end(),
                            [&](const order_collection::ord_ptr & sptr) {
                                return sptr->getSymbol() == symbol
@@ -150,7 +150,7 @@ boost::optional<order &> order_collection::find_first_buy_order(const std::strin
     return **it;
 }
 
-boost::optional<order &> order_collection::find_first_sell_order(const std::string &symbol, order_type oType) const {
+boost::optional<order &> order_collection::find_first_sell_order(const std::string &symbol, strategy_order_type oType) const {
     auto it = std::find_if(orders.begin(),orders.end(),
                            [&](const order_collection::ord_ptr & sptr) {
                                return sptr->getSymbol() == symbol

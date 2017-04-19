@@ -3,12 +3,12 @@
 //
 #include "stdafx.h"
 #include "gtest/gtest.h"
-#include "launch_rules.h"
+#include "strategy_launch_rules.h"
 #include "holidays.h"
 
 TEST(launch_rules_tests, add_date)
 {
-    launch_rules lr;
+    strategy_launch_rules lr;
     lr.add_date(2015,1,1);
 
     EXPECT_EQ("2015-1-1",lr.to_string());
@@ -18,7 +18,7 @@ TEST(launch_rules_tests, add_date)
 
 TEST(launch_rules_tests, test2)
 {
-    launch_rules lr;
+    strategy_launch_rules lr;
     lr.setStartDate(2015,1,1);
     std::stringstream ss;
     ss << *lr.getStartDate();
@@ -36,7 +36,7 @@ TEST(launch_rules_tests, loadHolidaysFromFile)
 {
     holidays& h = holidays::get_instance();
     auto& a = h.getHolidays();
-    launch_rules lr;
+    strategy_launch_rules lr;
     boost::gregorian::date date1(2015,1,1);
     EXPECT_TRUE(a.size() > 0);
     EXPECT_TRUE(lr.is_holiday(date1));

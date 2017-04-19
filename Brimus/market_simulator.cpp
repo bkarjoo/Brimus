@@ -3,8 +3,8 @@
 //
 
 #include "market_simulator.h"
-#include "instrument.h"
-#include "global_basket.h"
+#include "stock_collection.h"
+//#include "global_basket.h"
 
 
 using namespace std;
@@ -18,13 +18,9 @@ using namespace std;
 ////    instruments[i->getSymbol()] = i;
 //}
 
-std::string market_simulator::ping(std::string s) {
-    //auto instrPtr = instruments[s];
-    return std::to_string(global_basket::get_instance().LastPrice(s));
-//    if (instrPtr)
-//        return std::to_string(instruments[s]->getLast_price());
-//    else
-//        return "Instrument not found.";
+std::string market_simulator::ping(const std::string& symb) {
+    auto& sc = stock_collection::get_instance();
+    return to_string(sc.LastPrice(symb));
 }
 
 //void market_simulator::send_order(int qty, std::string symbol, double price, IOrderSender* sender) {
@@ -39,7 +35,7 @@ void market_simulator::check_for_fill(const std::string &symbol) {
 
     for (auto& it : orders) {
         //auto instr = instruments[it->getSymbol()];
-        global_basket& gb = global_basket::get_instance();
+        auto& gb = stock_collection::get_instance();
         double bid = gb.BidPrice(symbol);
         double ask = gb.AskPrice(symbol);
         if (it->getSymbol() == symbol) {
@@ -80,15 +76,13 @@ void market_simulator::notify(std::string symbol) {
 
 std::string market_simulator::send_order(int qty, std::string symbol, double price,
                                          std::function<void(int&, double&, const std::string&)> callback) {
-    order* optr = new order(qty,symbol,price);
     boost::uuids::random_generator generator;
     boost::uuids::uuid uuid1 = generator();
-    string id =  boost::lexical_cast<string>(uuid1);
-    auto orderPtr = make_unique<ms_order>(qty,symbol,price,id);
+    auto orderPtr = make_unique<ms_order>(qty,symbol,price,boost::lexical_cast<string>(uuid1));
     orderPtr->setCallback(callback);
     open_orders.add_order(move(orderPtr));
     check_for_fill(symbol);
-    return id;
+    return boost::lexical_cast<string>(uuid1);
 }
 
 std::string market_simulator::send_order(int qty, std::string symbol, double price) {

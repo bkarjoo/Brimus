@@ -8,8 +8,8 @@
 
 #include "stdafx.h"
 #include "bar_series.h"
-#include "btime.h"
-#include "instrument.h"
+#include "bar_time.h"
+#include "stock.h"
 #include "IStrategyRules.h"
 #include "strategy_oms.h"
 
@@ -18,10 +18,9 @@ class S_SpyArt : public IStrategyRules {
     // no pointer needed, just own the object
     std::shared_ptr<strategy_oms> oms;
     // instruments, some strategies are one symbol, otherwise you need a vector
-    // TODO : should not have instrument, just use global message
-    boost::optional<instrument&> SPY;
+    std::shared_ptr<stock> SPY;
     // indicators, you need one indicator per instrument
-    std::shared_ptr<bar_series> FiveMinBars = nullptr;
+    std::unique_ptr<bar_series> FiveMinBars = nullptr;
     // settings
     static constexpr int SHARES_PER_LEVEL = 100;
     static constexpr int NUMBER_OF_LEVELS = 4;
@@ -29,7 +28,7 @@ class S_SpyArt : public IStrategyRules {
     static constexpr double MIN_DIST_BET_ORDS = 0.10;
     static constexpr double LIMIT_AWAY = .02;
     // variables
-    btime time;
+    bar_time time;
     double bar_close = 0;
     double bar_high = 0;
     double minClose5 = 0;

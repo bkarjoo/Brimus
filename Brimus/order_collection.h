@@ -17,7 +17,7 @@ class order_collection {
 public:
     // void add_order(ord_ptr);
     boost::optional<order &> add_order(int qty, std::string symbol, double price);
-    boost::optional<order &> add_order(int qty, const std::string &symbol, double price, order_type oType);
+    boost::optional<order &> add_order(int qty, const std::string &symbol, double price, strategy_order_type oType);
     boost::optional<order &> add_order();
     void pass_order(ord_ptr);
     boost::optional<order &> find_order(std::string id);
@@ -32,9 +32,9 @@ public:
     int size() const { return orders.size(); }
     order* findOrder(std::string id);
     boost::optional<order &> find_first_buy_order(const std::string &symbol) const;
-    boost::optional<order &> find_first_buy_order(const std::string &symbol, order_type oType) const;
+    boost::optional<order &> find_first_buy_order(const std::string &symbol, strategy_order_type oType) const;
     boost::optional<order &> find_first_sell_order(const std::string &symbol) const;
-    boost::optional<order &> find_first_sell_order(const std::string &symbol, order_type oType) const;
+    boost::optional<order &> find_first_sell_order(const std::string &symbol, strategy_order_type oType) const;
 
 };
 

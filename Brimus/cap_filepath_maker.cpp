@@ -4,7 +4,7 @@
 
 #include "cap_filepath_maker.h"
 
-void cap_filepath_maker::add_launch_rules(const launch_rules & lr) {
+void cap_filepath_maker::add_launch_rules(const strategy_launch_rules & lr) {
     auto d = lr.getDates();
     for (auto& a : d)
         dates.insert(a);

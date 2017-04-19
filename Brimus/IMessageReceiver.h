@@ -5,12 +5,12 @@
 #ifndef BRIMUS_IMESSAGEREADER_H
 #define BRIMUS_IMESSAGEREADER_H
 
-#include "st_message.h"
+#include "cap_message.h"
 
 class IMessageReceiver
 {
 public:
-    virtual void on_message(const st_message&) = 0;
+    virtual void on_message(const cap_message&) = 0;
     virtual bool has_instrument(const std::string&) = 0;
 };
 

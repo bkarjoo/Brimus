@@ -3,11 +3,8 @@
 //
 
 #include "strategy.h"
-#include "instrument.h"
-#include "IDataServer.h"
-#include "pcap_file_server.h"
-#include "live_data_server.h"
-#include "global_basket.h"
+#include "cap_filepath_maker.h"
+#include "stock_collection.h"
 
 using std::cout; using std::endl;using std::string;
 
@@ -22,15 +19,15 @@ void strategy::notify(std::string symbol) {
     auto symb = instruments[symbol];
     if (symb == nullptr) return;
 
-    currentTime.update(symb->getLast_time_stamp());
+    currentTime = symb->getPacketTime();
 
 
     if (oms->has_position(symbol)
         && !oms->has_open_orders(symbol)) {
-        oms->submit(100,symbol,symb->getBid_price());
+        oms->submit(100,symbol,symb->getBid());
     } else if (oms->get_position(symbol) > 0
         && !oms->has_open_orders(symbol)) {
-        oms->submit(-100,symbol,symb->getBid_price());
+        oms->submit(-100,symbol,symb->getBid());
     }
 
     //cout << "Current Time : " << currentTime.to_string() << endl;
@@ -48,7 +45,7 @@ void strategy::notify(std::string symbol) {
 
 
 
-const btime &strategy::getCurrentTime() const {
+const bar_time &strategy::getCurrentTime() const {
     return currentTime;
 }
 
@@ -84,18 +81,19 @@ std::function<void(std::shared_ptr<execution>)> strategy::get_callback() {
 
 
 
-void strategy::setLaunchRules(const std::shared_ptr<launch_rules> &launchRules) {
-    strategy::launchRules = launchRules;
+void strategy::setLaunchRules(std::unique_ptr<strategy_launch_rules> launchRules) {
+    launchRules = move(launchRules);
 }
 
-void strategy::setSymbolBakset(const std::shared_ptr<symbol_basket> &symbolBakset) {
-    strategy::symbolBakset = symbolBakset;
+void strategy::setSymbolBakset(std::unique_ptr<strategy_symbol_basket> symbolBakset) {
+    symbolBakset = move(symbolBakset);
 }
 
-strategy::strategy(const std::shared_ptr<launch_rules> &launchRules, const std::shared_ptr<symbol_basket> &symbolBakset)
-        : launchRules(launchRules), symbolBakset(symbolBakset)
+strategy::strategy(std::unique_ptr<strategy_launch_rules> lr, std::unique_ptr<strategy_symbol_basket> sb)
 {
     oms = std::make_shared<strategy_oms>();
+    launchRules = move(lr);
+    symbolBasket = move(sb);
 }
 
 run_mode strategy::getRunMode() const {
@@ -106,12 +104,12 @@ void strategy::setRunMode(run_mode runMode) {
     strategy::runMode = runMode;
 }
 
-const std::shared_ptr<launch_rules> &strategy::getLaunchRules() const {
-    return launchRules;
+const strategy_launch_rules & strategy::getLaunchRules() const {
+    return *launchRules;
 }
 
-const std::shared_ptr<symbol_basket> &strategy::getSymbolBakset() const {
-    return symbolBakset;
+const strategy_symbol_basket & strategy::getSymbolBakset() const {
+    return *symbolBasket;
 }
 
 std::function<void(std::string)> strategy::get_symbol_update_callback() {
@@ -147,6 +145,10 @@ strategy::get_extended_update_symbol_callback() {
     };
 
     return callback;
+}
+
+const strategy_symbol_basket &strategy::getSymbolBasket() const {
+    return *symbolBasket;
 }
 
 

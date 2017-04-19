@@ -3,11 +3,11 @@
 //
 
 
-#include "st_message.h"
+#include "cap_message.h"
 
 
-void st_message::add_field(const char &fCode, std::string &fCodeVal, std::string &fVal, const char &fExch) {
-    st_field* f = new st_field();
+void cap_message::add_field(const char &fCode, std::string &fCodeVal, std::string &fVal, const char &fExch) {
+    cap_msg_field* f = new cap_msg_field();
     f->field_code = fCode;
     std::swap(f->field_code_value,fCodeVal);
     std::swap(f->field_value,fVal);
@@ -15,12 +15,12 @@ void st_message::add_field(const char &fCode, std::string &fCodeVal, std::string
     fields.push_back(f);
 }
 
-st_message::st_message(char pfix, std::string &symb) {
+cap_message::cap_message(char pfix, std::string &symb) {
     prefix = pfix;
     std::swap(symb,symbol);
 }
 
-std::string st_message::to_string() {
+std::string & cap_message::to_string() const {
     std::string s;
     s += prefix;
     s += symbol;
@@ -36,32 +36,32 @@ std::string st_message::to_string() {
     return s;
 }
 
-st_message::st_message(char dlim) {
+cap_message::cap_message(char dlim) {
     delim = dlim;
 }
 
-void st_message::set_prefix(const char &c) {
+void cap_message::set_prefix(const char &c) {
     prefix = c;
 }
 
-void st_message::set_symbol(std::string &symb) {
+void cap_message::set_symbol(std::string &symb) {
     std::swap(symb,symbol);
 }
 
-const std::vector<st_field *> &st_message::get_fields() const {
+const std::vector<cap_msg_field *> &cap_message::get_fields() const {
     return fields;
 }
 
-const std::string &st_message::getSymbol() const {
+const std::string &cap_message::getSymbol() const {
     return symbol;
 }
 
-char st_message::getDelim() const {
+char cap_message::getDelim() const {
     return delim;
 }
 
-void st_message::setDelim(char delim) {
-    st_message::delim = delim;
+void cap_message::setDelim(char delim) {
+    cap_message::delim = delim;
 }
 
 

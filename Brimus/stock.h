@@ -6,9 +6,9 @@
 #define BRIMUS_STOCK_H
 
 #include "stdafx.h"
-#include "st_field.h"
+#include "cap_msg_field.h"
 #include "stock_field.h"
-#include "st_message.h"
+#include "cap_message.h"
 
 
 
@@ -25,7 +25,7 @@ class stock {
     size askSize = 0;
     size bidSize = 0;
     ptime packetTime;
-    void register_field(st_field *pField);
+    void register_field(cap_msg_field *pField);
     size set_size(const std::string&);
     double set_price(const std::string&);
     // tell the observer packet time, symbol, field, value as double
@@ -33,8 +33,8 @@ class stock {
 public:
     // when connecting, remember to save the connection object and disconnect or add to scoped connection
     boost::signals2::connection add_observer(std::function<void(const ptime&, const std::string&, stock_field, double)>);
-    void tick_update(std::unique_ptr<st_message>);
-    void tick_update(const st_message&);
+    void tick_update(std::unique_ptr<cap_message>);
+    void tick_update(const cap_message&);
     void time_update(boost::posix_time::ptime _packetTime);
     // getters
     const std::string &getSymbol() const;

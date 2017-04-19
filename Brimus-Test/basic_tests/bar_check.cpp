@@ -3,7 +3,7 @@
 //
 #include <gtest/gtest.h>
 #include <bar.h>
-#include <btime.h>
+#include <bar_time.h>
 
 TEST(bar_tests, constructors)
 {

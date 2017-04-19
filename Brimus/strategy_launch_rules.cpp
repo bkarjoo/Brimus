@@ -2,13 +2,13 @@
 // Created by b.karjoo on 3/30/2017.
 //
 
-#include "launch_rules.h"
+#include "strategy_launch_rules.h"
 
-void launch_rules::add_date(int year, int month, int day) {
+void strategy_launch_rules::add_date(int year, int month, int day) {
     dates.insert(bdate(year,month,day));
 }
 
-std::string launch_rules::to_string() const {
+std::string strategy_launch_rules::to_string() const {
     std::stringstream ss;
     for (auto& a : dates) {
         if (ss.str() != "") ss << '\n';
@@ -19,27 +19,27 @@ std::string launch_rules::to_string() const {
     return ss.str();
 }
 
-const launch_rules::date_set &launch_rules::getDates() const {
+const strategy_launch_rules::date_set &strategy_launch_rules::getDates() const {
     return dates;
 }
 
-boost::optional<launch_rules::bdate> launch_rules::getStartDate() const {
+boost::optional<strategy_launch_rules::bdate> strategy_launch_rules::getStartDate() const {
     if (startDate) return *startDate; else return {};
 }
 
-void launch_rules::setStartDate(int year, int month, int day) {
-    launch_rules::startDate = bdate(year,month,day);
+void strategy_launch_rules::setStartDate(int year, int month, int day) {
+    strategy_launch_rules::startDate = bdate(year,month,day);
 }
 
-boost::optional<launch_rules::bdate> launch_rules::getEndDate() const {
+boost::optional<strategy_launch_rules::bdate> strategy_launch_rules::getEndDate() const {
     if (endDate) return *endDate; else return {};
 }
 
-void launch_rules::setEndDate(int year, int month, int day) {
-    launch_rules::endDate = bdate(year,month,day);
+void strategy_launch_rules::setEndDate(int year, int month, int day) {
+    strategy_launch_rules::endDate = bdate(year,month,day);
 }
 
-void launch_rules::set_date_range() {
+void strategy_launch_rules::set_date_range() {
     typedef boost::gregorian::date bdate;
     bdate start, end, dcounter;
     if (startDate)
@@ -69,7 +69,7 @@ void launch_rules::set_date_range() {
     }
 }
 
-bool launch_rules::is_holiday(bdate date) {
+bool strategy_launch_rules::is_holiday(bdate date) {
     holidays& h = holidays::get_instance();
     auto& hdays = h.getHolidays();
     return hdays.find(date) != hdays.end();

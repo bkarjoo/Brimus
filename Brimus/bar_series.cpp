@@ -8,15 +8,15 @@ using std::cout; using std::endl;
 
 void bar_series::add_price(std::string timestamp, double price) {
 
-    btime t(timestamp);
-    btime start_time(t.getHours(),t.getMinutes());
+    bar_time t(timestamp);
+    bar_time start_time(t.getHours(),t.getMinutes());
 
     // TODO need mutex somewhere when this is changing
     if (!current_bar) {
         unsigned short int minute = start_time.getMinutes();
         // first bar starts on a proper start time, so take back minutes until you get there
         while (minute % bar_duration != 0 && minute > 0) minute--;
-        btime nt(start_time.getHours(),minute);
+        bar_time nt(start_time.getHours(),minute);
         // current_bar = std::make_shared<bar>(start_time);
         // current_bar->setDuration_minutes(bar_duration);
         current_bar = bars[nt,(nt)];
@@ -65,17 +65,17 @@ void bar_series::setBar_duration(unsigned short bar_duration) {
     bar_series::bar_duration = bar_duration;
 }
 
-std::function<void(std::string, double)> bar_series::get_callback() {
-    std::function<void(std::string , double )> callback =
-        [this](std::string timestamp, double price) {
-            btime t(timestamp);
-            btime start_time(t.getHours(),t.getMinutes());
+std::function<void(const bar_series::ptime&, const std::string&, stock_field, double)> bar_series::get_callback() {
+    std::function<void(const bar_series::ptime&, const std::string&, stock_field, double)> callback =
+        [this](const bar_series::ptime& time, const std::string&, stock_field, double price) {
+            bar_time t(time);
+            bar_time start_time(t.getHours(),t.getMinutes());
 
             if (!current_bar) {
                 unsigned short int minute = start_time.getMinutes();
                 // first bar starts on a proper start time, so take back minutes until you get there
                 while (minute % bar_duration != 0 && minute > 0) minute--;
-                btime nt(start_time.getHours(),minute);
+                bar_time nt(start_time.getHours(),minute);
                 // current_bar = std::make_shared<bar>(start_time);
                 // current_bar->setDuration_minutes(bar_duration);
                 current_bar = bars[nt,(nt)];
@@ -93,7 +93,7 @@ std::function<void(std::string, double)> bar_series::get_callback() {
                     for (auto a : newBarObservers) a(symbol);
                 }
             }
-            current_bar->add_tick(timestamp, price);
+            current_bar->add_tick(price);
         };
     return callback;
 }

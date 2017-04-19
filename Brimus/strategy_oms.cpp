@@ -3,8 +3,9 @@
 //
 
 #include "strategy_oms.h"
-#include "global_basket.h"
-#include "order_type.h";
+#include "stock_collection.h"
+#include "strategy_order_type.h"
+#include "market_simulator.h"
 
 using namespace std;
 
@@ -41,7 +42,7 @@ double strategy_oms::sum_money_flow(const std::vector<std::string>& symbols) {
 
 double strategy_oms::open_position_value(std::string symbol) {
     int position = get_position(symbol);
-    auto &gb = global_basket::get_instance();
+    auto &gb = stock_collection::get_instance();
     double last = gb.LastPrice(symbol);
     return position * last;
 }
@@ -83,7 +84,7 @@ int strategy_oms::sum_execution_qty(const string &id) {
 
 const string& strategy_oms::submit(int qty, const string &symbol, double price) {
     auto& broker = market_simulator::get_instance();
-    string id = broker.send_order(qty, symbol, price,
+    return broker.send_order(qty, symbol, price,
                                   [this](int& execQty, double& execPrc, const std::string& id){
                                       auto oo = open_orders.find_order(id);
                                       if (!oo) return; // TODO consider throwing exception here
@@ -93,42 +94,42 @@ const string& strategy_oms::submit(int qty, const string &symbol, double price) 
                                       if (sumExec == oo->getQuantity())
                                           closed_orders.pass_order(move(open_orders.fetch_remove_order(id)));
                                   });
-    return id;
+
 }
 
 void strategy_oms::buy_entry(int qty, const std::string &symbol, double price) {
     int abs_qty = abs(qty);
-    open_orders.add_order(abs_qty,symbol,price,order_type::ENTRY);
+    open_orders.add_order(abs_qty,symbol,price,strategy_order_type::ENTRY);
     submit(qty,symbol,price);
 }
 
 void strategy_oms::short_entry(int qty, const std::string &symbol, double price) {
     int abs_qty = abs(qty);
-    open_orders.add_order(-qty,symbol,price,order_type::ENTRY);
+    open_orders.add_order(-qty,symbol,price,strategy_order_type::ENTRY);
     submit(qty,symbol,price);
 }
 
 void strategy_oms::buy_target(int qty, const std::string &symbol, double price) {
     int abs_qty = abs(qty);
-    open_orders.add_order(qty,symbol,price,order_type::TARGET);
+    open_orders.add_order(qty,symbol,price,strategy_order_type::TARGET);
     submit(qty,symbol,price);
 }
 
 void strategy_oms::sell_target(int qty, const std::string &symbol, double price) {
     int abs_qty = abs(qty);
-    open_orders.add_order(-qty,symbol,price,order_type::TARGET);
+    open_orders.add_order(-qty,symbol,price,strategy_order_type::TARGET);
     submit(qty,symbol,price);
 }
 
 void strategy_oms::buy_stop_loss(int qty, const std::string &symbol, double price) {
     int abs_qty = abs(qty);
-    open_orders.add_order(qty,symbol,price,order_type::STOP_LOSS);
+    open_orders.add_order(qty,symbol,price,strategy_order_type::STOP_LOSS);
     submit(qty,symbol,price);
 }
 
 void strategy_oms::sell_stop_loss(int qty, const std::string &symbol, double price) {
     int abs_qty = abs(qty);
-    open_orders.add_order(qty,symbol,price,order_type::STOP_LOSS);
+    open_orders.add_order(qty,symbol,price,strategy_order_type::STOP_LOSS);
     submit(qty,symbol,price);
 }
 

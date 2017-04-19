@@ -8,11 +8,13 @@
 #include "stdafx.h"
 #include "IMessageReceiver.h"
 #include "stock.h"
-#include "symbol_basket.h"
+#include "strategy_symbol_basket.h"
 
 class stock_collection {
     typedef boost::posix_time::ptime ptime;
-    std::map<std::string,stock> stocks;
+    typedef std::shared_ptr<stock> stock_ptr;
+    typedef std::map<std::string,stock_ptr> stock_map;
+    stock_map stocks;
     stock_collection() {}
     ~stock_collection() {}
 public:
@@ -20,10 +22,16 @@ public:
     void operator=(stock_collection const&) = delete;
     static stock_collection& get_instance() { static stock_collection sc; return sc; }
     stock& add_stock(std::string);
-    void add_basket(const symbol_basket&,
+    void add_stock(const std::string&, std::function<void(const ptime&, const std::string&, stock_field, double)>);
+    // makes caller an observer to the stock
+    void add_basket(const strategy_symbol_basket&,
                     std::function<void(const ptime&, const std::string&, stock_field, double)>);
-    void on_message(const st_message &message);
+    void on_message(const cap_message &message);
     bool has_instrument(const std::string &string);
+    std::shared_ptr<stock> get_stock(const std::string&);
+    double AskPrice(const std::string&);
+    double BidPrice(const std::string&);
+    double LastPrice(const std::string&);
 };
 
 

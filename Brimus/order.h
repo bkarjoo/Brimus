@@ -5,7 +5,7 @@
 #ifndef BRIMUS_ORDER_H
 #define BRIMUS_ORDER_H
 #include "stdafx.h"
-#include "order_type.h"
+#include "strategy_order_type.h"
 
 
 
@@ -15,15 +15,15 @@ class order {
     std::string symbol = "";
     double price = 0.0;
     std::string id = "";
-    order_type oType;
+    strategy_order_type oType;
 
 public:
 
-    order_type getOType() const {
+    strategy_order_type getOType() const {
         return oType;
     }
 
-    void setOType(order_type oType) {
+    void setOType(strategy_order_type oType) {
         order::oType = oType;
     }
 
@@ -62,7 +62,7 @@ public:
     order(int qty, std::string symb, double prc) :
             quantity(qty), symbol(symb), price(prc) {}
 
-    order(int quantity, const std::string &symbol, double price, order_type oType) : quantity(
+    order(int quantity, const std::string &symbol, double price, strategy_order_type oType) : quantity(
             quantity), symbol(symbol), price(price), oType(oType) {}
 
 };
