@@ -10,7 +10,10 @@
 #include "stock_field.h"
 #include "cap_message.h"
 
-
+enum class cap_file_type {
+    FULL,
+    SUMMARY
+};
 
 class stock {
     typedef boost::posix_time::ptime ptime;
@@ -25,9 +28,13 @@ class stock {
     size askSize = 0;
     size bidSize = 0;
     ptime packetTime;
+    boost::gregorian::date dt{1970,01,01};
+    std::string last_timestamp;
+    int precision = 4;
     void register_field(cap_msg_field *pField);
     size set_size(const std::string&);
     double set_price(const std::string&);
+    cap_file_type capType = cap_file_type::SUMMARY;
     // tell the observer packet time, symbol, field, value as double
     boost::signals2::signal<void(const stock&, stock_field)> observers;
 public:
@@ -51,6 +58,12 @@ public:
     stock(const std::string &symbol);
     stock(){};
     void setSymbol(const std::string& symb) { symbol = symb; }
+    const ptime &to_boost_ptime(const std::string& timestamp) const;
+    void set_precision(const std::string &basic_string);
+    cap_file_type getCapType() const;
+    void setCapType(cap_file_type capType);
+    const boost::gregorian::date &getDt() const;
+    void setDt(const boost::gregorian::date &dt);
 };
 
 

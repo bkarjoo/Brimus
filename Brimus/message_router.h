@@ -10,7 +10,9 @@
 #include "stock_collection.h"
 
 class message_router : public IMessageReceiver {
-    boost::optional<stock_collection&> sc;
+public:
+    void on_packet_header(const std::string &string) override;
+
 public:
     message_router();
 

@@ -20,7 +20,7 @@ cap_message::cap_message(char pfix, std::string &symb) {
     std::swap(symb,symbol);
 }
 
-std::string & cap_message::to_string() const {
+std::string  cap_message::to_string() const {
     std::string s;
     s += prefix;
     s += symbol;
@@ -62,6 +62,10 @@ char cap_message::getDelim() const {
 
 void cap_message::setDelim(char delim) {
     cap_message::delim = delim;
+}
+
+char cap_message::getPrefix() const {
+    return prefix;
 }
 
 

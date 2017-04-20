@@ -37,7 +37,6 @@ public:
     ~strategy() {}
 
     const strategy_symbol_basket &getSymbolBasket() const;
-
     const strategy_launch_rules & getLaunchRules() const;
     std::function<void(const stock&, stock_field)> get_update_symbol_callback();
     std::function<void(const bar_series&)> get_update_bar_series_callback();

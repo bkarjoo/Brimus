@@ -28,6 +28,7 @@ unique_ptr<strategy> S_SpyArt_Factory::get_strat() {
     // add a bar series for every symbol in the strategy, in this case 1
     bsc.add_bar_series("SPY",5,s->get_update_bar_series_callback());
     s->setRules(make_unique<S_SpyArt>());
+
     return move(s);
 
 }

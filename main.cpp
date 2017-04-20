@@ -39,21 +39,27 @@ void run(param_vec parameters)
 {
 //    auto &pcf  = pcap_file::get_instance();
 //    auto notifier = std::make_shared<st_notifier>();pcf.set_notifier(notifier);
+    stock_collection& sc = stock_collection::get_instance();
+    cout << sc.size() << endl;
     auto strat = S_SpyArt_Factory::get_strat();
     auto & cfr = cap_file_reader::get_instance();
     std::vector<std::string> paths {"C:\\Users\\b.karjoo\\Documents\\Brimus\\cmake-build-debug\\SPY.CAP"};
     cfr.setImr(make_unique<message_router>());
+    cout << sc.size() << endl;
     cfr.run(paths);
 
+    cout << sc.size() << endl;
 
     std::cout << "Done Running" << std::endl;
+    cout << sc.size() << endl;
 }
 
 void extract(param_vec parameters)
 {
-    string output_path = "output.CAP";
+    string output_path = "20170131.CAP";
     string symbol = "SPY";
-    string default_path = "C:\\Users\\b.karjoo\\Documents\\CMDCPP\\CapFileMaker\\output\\40000.CAP";
+    //string default_path = "C:\\Users\\b.karjoo\\Documents\\CMDCPP\\CapFileMaker\\output\\40000.CAP";
+    string default_path = "E:\\2017\\2017-01-31 Daily.CAP";
     vector<string> paths;
     for (auto & a : parameters) {
         if (a->parameter == "output") output_path = a->value;

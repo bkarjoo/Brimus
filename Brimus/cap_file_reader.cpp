@@ -95,8 +95,9 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
                     mode = capfile_read_mode::MSG_HEADER;
                 } else if (mode == capfile_read_mode::PACKET_HEADER) {
                     // packet header complete, new message starting
-//                    cout << endl;
-//                    cout << "Packet header complete: " << packet_header_str << endl;
+                    cout << endl;
+                    cout << "Packet header complete: " << packet_header_str << endl;
+                        imr->on_packet_header(packet_header_str);
                     if (packet_header_has_time) {
                         try {
                             hours = stoi(hours_str);

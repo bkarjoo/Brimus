@@ -15,7 +15,7 @@ void stock_collection::on_message(const cap_message &message) {
 
 bool stock_collection::has_instrument(const string &symbol) {
     auto s = stocks.find(symbol);
-    return (s == stocks.end());
+    return (s != stocks.end());
 }
 
 void stock_collection::add_basket(const strategy_symbol_basket & basket,

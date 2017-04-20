@@ -6,13 +6,16 @@
 #include "stock_collection.h"
 
 message_router::message_router() {
-    sc = stock_collection::get_instance();
 }
 
 void message_router::on_message(const cap_message &message) {
-    sc->on_message(message);
+    stock_collection::get_instance().on_message(message);
 }
 
 bool message_router::has_instrument(const std::string &symbol) {
-    return sc->has_instrument(symbol);
+    return stock_collection::get_instance().has_instrument(symbol);
+}
+
+void message_router::on_packet_header(const std::string &string) {
+
 }

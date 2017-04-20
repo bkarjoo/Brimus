@@ -16,7 +16,10 @@ public:
         for (auto a: fields) { delete a; a = nullptr; }
     }
     void add_field(const char& fCode, std::string& fCodeVal, std::string& fVal, const char& fExch);
-    std::string & to_string() const;
+    std::string  to_string() const;
+
+    char getPrefix() const;
+
     void set_prefix(const char&);
     void set_symbol(std::string& symb);
     // make these unique pointers to keep them

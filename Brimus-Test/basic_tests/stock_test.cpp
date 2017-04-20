@@ -41,20 +41,3 @@ TEST(stock_test,time_update) {
     EXPECT_EQ(boost::posix_time::second_clock::local_time().time_of_day().hours(),s.Time().time_of_day().hours());
 }
 
-//void tick_update(std::unique_ptr<cap_message>);
-//void tick_update(const cap_message&);
-//void time_update(boost::posix_time::ptime _packetTime);
-//// getters
-//const std::string &Symbol() const;
-//price Last() const;
-//price Ask() const;
-//price Bid() const;
-//price Open() const;
-//size LastSize() const;
-//size AskSize() const;
-//size BidSize() const;
-//const ptime &Time() const;
-//// constructor
-//stock(const std::string &symbol);
-//stock(){};
-//void setSymbol(const std::string& symb) { symbol = symb; }

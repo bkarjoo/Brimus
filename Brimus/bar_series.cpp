@@ -22,7 +22,7 @@ void bar_series::add_price(std::string timestamp, double price) {
         current_bar = bars[nt,(nt)];
 
         //bars[nt] = new bar(start_time);
-        for (auto a : newBarObservers) a(*this);
+        for (auto a : newBarObservers) a(symbol);
     } else if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
         // check if new bar needs to be created
         if (start_time.getMinutes() % bar_duration == 0) {
@@ -32,7 +32,7 @@ void bar_series::add_price(std::string timestamp, double price) {
             //current_bar->setDuration_minutes(bar_duration);
             // bars[start_time] = current_bar;
             current_bar = bars[start_time,(start_time)];
-            for (auto a : newBarObservers) a(*this);
+            for (auto a : newBarObservers) a(symbol);
         }
     }
     current_bar->add_tick(timestamp, price);
@@ -81,7 +81,7 @@ std::function<void(const stock&, stock_field)> bar_series::get_callback() {
                 // current_bar->setDuration_minutes(bar_duration);
                 current_bar = bars[nt,(nt)];
                 //bars[nt] = new bar(start_time);
-                for (auto a : newBarObservers) a(*this);
+                for (auto a : newBarObservers) a(symbol);
             } else if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
                 // check if new bar needs to be created
                 if (start_time.getMinutes() % bar_duration == 0) {
@@ -91,7 +91,7 @@ std::function<void(const stock&, stock_field)> bar_series::get_callback() {
                     //current_bar->setDuration_minutes(bar_duration);
                     // bars[start_time] = current_bar;
                     current_bar = bars[start_time,(start_time)];
-                    for (auto a : newBarObservers) a(*this);
+                    for (auto a : newBarObservers) a(symbol);
                 }
             }
             current_bar->add_tick(stk.Last());

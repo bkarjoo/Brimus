@@ -9,12 +9,24 @@
 #include <functional>
 #include "IMessageReceiver.h"
 
+struct dup_tracking {
+    std::string symbol = "";
+    char f = 0;
+    std::string v = "";
+    dup_tracking(std::string symb, char field, std::string value)
+        : symbol(symb), f(field), v(value) {}
+};
+
 class tick_file_maker : public IMessageReceiver {
     // TODO : ofstreams can be made using unique ptr
     typedef std::shared_ptr<std::ofstream> os_ptr;
     os_ptr os = nullptr;
     std::string output_path = "";
     std::set<std::string> symbol_list;
+    std::map<std::string, dup_tracking> dups;
+    bool is_dup(std::string symbol, char field, std::string value);
+    void add_dup_tracker(std::string symbol, char field, std::string value);
+
 public:
     tick_file_maker(std::string out_path) : output_path(out_path) {
         os = std::make_shared<std::ofstream>(out_path);
@@ -25,6 +37,7 @@ public:
 
     void setOutput_path(const std::string &output_path);
 
+    std::string format_price(int precision, const std::string &val);
 public:
 
     void close_os() { os->close(); }
@@ -34,6 +47,17 @@ public:
     void on_message(const cap_message &message) override;
 
     bool has_instrument(const std::string &string) override;
+
+    template<typename T>
+    std::string to_str(const T &t) {
+        std::string str{std::to_string(t)};
+        int offset{1};
+        if (str.find_last_not_of('0') == str.find('.')) { offset = 0; }
+        str.erase(str.find_last_not_of('0') + offset, std::string::npos);
+        return str;
+    }
+
+    void on_packet_header(const std::string &string) override;
 };
 
 
