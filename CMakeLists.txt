@@ -11,7 +11,7 @@ set(Boost_INCLUDE_DIR C:/Users/b.karjoo/Documents/boost_1_63_0)
 set(BOOST_LIBRARYDIR C:/Users/b.karjoo/Documents/boost_1_63_0/lib64-msvc-14.0)
 #set(BOOST_LIBRARYDIR /Users/SuperMac/devel/cpp/boost_1_63_0/build/lib)
 set (Boost_USE_STATIC_LIBS OFF)
-find_package(Boost 1.63.0 COMPONENTS program_options system thread REQUIRED)
+find_package(Boost 1.63.0 COMPONENTS program_options system filesystem thread REQUIRED)
 
 set(SOURCE_FILES main.cpp)
 add_executable(Brimus_run ${SOURCE_FILES})

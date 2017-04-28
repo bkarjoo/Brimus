@@ -28,6 +28,7 @@ public:
     bar_time(std::string time_str); // format hhmmss (6 digit), or (h)hmmssmmm (8 or 9 digit)
     bar_time(int hours, int minutes);
     bar_time(const boost::posix_time::ptime&);
+
     int getHours() const { return hours; }
     int getMinutes() const { return minutes; }
     int getSeconds() const { return seconds; }

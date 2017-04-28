@@ -28,6 +28,13 @@ class stock {
     size askSize = 0;
     size bidSize = 0;
     ptime packetTime;
+    bool time_set = false;
+public:
+    bool isTime_set() const;
+
+    void setTime_set(bool time_set);
+
+private:
     boost::gregorian::date dt{1970,01,01};
     std::string last_timestamp;
     int precision = 4;

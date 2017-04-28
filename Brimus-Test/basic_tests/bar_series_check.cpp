@@ -22,10 +22,7 @@ TEST (bar_series_check, add_price)
     bar_series bs("AAPL");
     bs.add_price("93123000",128.3);
     auto bar = bs.CurrentBar();
-    bool bar_found = false;
-    if (bar) bar_found = true;
-    EXPECT_TRUE(bar_found);
-    EXPECT_EQ(128.3, bs.CurrentBar()->Close());
+    EXPECT_EQ(128.3, bar.Close());
 }
 
 
@@ -45,17 +42,17 @@ TEST(bar_series_check, AverageClose) {
     bs.add_price("93231000", 36.48);
     EXPECT_DOUBLE_EQ(35.83, bs.PreviousBar(2)->Close());
     EXPECT_DOUBLE_EQ(35.33, bs.PreviousBar(1)->Close());
-    EXPECT_DOUBLE_EQ(36.48, bs.CurrentBar()->Close());
+    EXPECT_DOUBLE_EQ(36.48, bs.CurrentBar().Close());
     EXPECT_DOUBLE_EQ(35.88,bs.AverageClose(3));
     EXPECT_DOUBLE_EQ(35.58,bs.AverageClose(2,1));
     EXPECT_DOUBLE_EQ(36.23, bs.PreviousBar(2)->High());
     EXPECT_DOUBLE_EQ(36.23, bs.PreviousBar(1)->High());
-    EXPECT_DOUBLE_EQ(36.48, bs.CurrentBar()->High());
+    EXPECT_DOUBLE_EQ(36.48, bs.CurrentBar().High());
     EXPECT_DOUBLE_EQ(36.313333333333333,bs.AverageHigh(3));
     EXPECT_DOUBLE_EQ(36.23,bs.AverageHigh(2,1));
     EXPECT_DOUBLE_EQ(34.23, bs.PreviousBar(2)->Low());
     EXPECT_DOUBLE_EQ(34.23, bs.PreviousBar(1)->Low());
-    EXPECT_DOUBLE_EQ(33.12, bs.CurrentBar()->Low());
+    EXPECT_DOUBLE_EQ(33.12, bs.CurrentBar().Low());
     EXPECT_DOUBLE_EQ(33.86,bs.AverageLow(3));
     EXPECT_DOUBLE_EQ(34.23,bs.AverageLow(2,1));
     EXPECT_DOUBLE_EQ(36.48,bs.MaxClose(3));

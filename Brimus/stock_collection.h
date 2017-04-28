@@ -37,6 +37,7 @@ public:
     double AskPrice(const std::string&);
     double BidPrice(const std::string&);
     double LastPrice(const std::string&);
+    void on_packet_time(boost::posix_time::ptime);
 };
 
 

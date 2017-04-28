@@ -64,3 +64,7 @@ double stock_collection::LastPrice(const std::string &symbol) {
     auto stk = get_stock(symbol);
     if (stk) return stk->Last(); else return 0;
 }
+
+void stock_collection::on_packet_time(boost::posix_time::ptime t) {
+    for (auto& s : stocks) s.second->time_update(t);
+}

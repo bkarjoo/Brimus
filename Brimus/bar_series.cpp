@@ -4,7 +4,7 @@
 
 #include "bar_series.h"
 
-using std::cout; using std::endl;
+using namespace std;
 
 void bar_series::add_price(std::string timestamp, double price) {
 
@@ -12,18 +12,19 @@ void bar_series::add_price(std::string timestamp, double price) {
     bar_time start_time(t.getHours(),t.getMinutes());
 
     // TODO need mutex somewhere when this is changing
-    if (!current_bar) {
+    if (bars.size() == 0) {
         unsigned short int minute = start_time.getMinutes();
         // first bar starts on a proper start time, so take back minutes until you get there
         while (minute % bar_duration != 0 && minute > 0) minute--;
         bar_time nt(start_time.getHours(),minute);
         // current_bar = std::make_shared<bar>(start_time);
         // current_bar->setDuration_minutes(bar_duration);
-        current_bar = bars[nt,(nt)];
+
+        bars.insert(make_pair(nt, bar(nt)));
 
         //bars[nt] = new bar(start_time);
         for (auto a : newBarObservers) a(symbol);
-    } else if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
+    } else if (bars.rbegin()->second.getStartTime().getMinutes() != start_time.getMinutes()) {
         // check if new bar needs to be created
         if (start_time.getMinutes() % bar_duration == 0) {
             // time for new bar
@@ -31,11 +32,11 @@ void bar_series::add_price(std::string timestamp, double price) {
             // current_bar = std::make_shared<bar> (start_time);
             //current_bar->setDuration_minutes(bar_duration);
             // bars[start_time] = current_bar;
-            current_bar = bars[start_time,(start_time)];
+            bars.insert(make_pair(start_time, bar(start_time)));
             for (auto a : newBarObservers) a(symbol);
         }
     }
-    current_bar->add_tick(timestamp, price);
+    bars.rbegin()->second.add_tick(timestamp, price);
 }
 
 
@@ -69,20 +70,23 @@ std::function<void(const stock&, stock_field)> bar_series::get_callback() {
     std::function<void(const stock&, stock_field)> callback =
         [this](const stock& stk, stock_field sf) {
             if (sf != stock_field::LAST) return;
+            if (!stk.isTime_set()) return;
             bar_time t(stk.Time());
             bar_time start_time(t.getHours(),t.getMinutes());
 
-            if (!current_bar) {
+            if (bars.size()==0) {
                 unsigned short int minute = start_time.getMinutes();
                 // first bar starts on a proper start time, so take back minutes until you get there
                 while (minute % bar_duration != 0 && minute > 0) minute--;
                 bar_time nt(start_time.getHours(),minute);
                 // current_bar = std::make_shared<bar>(start_time);
                 // current_bar->setDuration_minutes(bar_duration);
-                current_bar = bars[nt,(nt)];
+
+                bars.insert(make_pair(nt,bar(nt)));
                 //bars[nt] = new bar(start_time);
                 for (auto a : newBarObservers) a(symbol);
-            } else if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
+            } else if (bars.rbegin()->second.getStartTime().getMinutes()
+                       != start_time.getMinutes()) {
                 // check if new bar needs to be created
                 if (start_time.getMinutes() % bar_duration == 0) {
                     // time for new bar
@@ -90,11 +94,12 @@ std::function<void(const stock&, stock_field)> bar_series::get_callback() {
                     // current_bar = std::make_shared<bar> (start_time);
                     //current_bar->setDuration_minutes(bar_duration);
                     // bars[start_time] = current_bar;
-                    current_bar = bars[start_time,(start_time)];
+                    bars.insert(make_pair(start_time,bar(start_time)));
                     for (auto a : newBarObservers) a(symbol);
                 }
             }
-            current_bar->add_tick(stk.Last());
+
+            bars.rbegin()->second.add_tick(stk.Last());
         };
     return callback;
 }

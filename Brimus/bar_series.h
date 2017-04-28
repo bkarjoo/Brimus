@@ -14,13 +14,13 @@
 class bar_series {
     typedef boost::posix_time::ptime ptime;
     std::map<bar_time,bar> bars;
-    boost::optional<bar&> current_bar = {};
     unsigned short int bar_duration = 1;
     std::string symbol;
     std::vector<std::function<void(const bar_series&)> > newBarObservers;
 
 public:
     bar_series(std::string _symbol) : symbol(_symbol) {}
+    ~bar_series() {   }
     const std::string &getSymbol() const;
     void setSymbol(const std::string &symbol);
     void add_price(std::string timestamp,double price);
@@ -28,7 +28,7 @@ public:
     unsigned short getBar_duration() const;
     void setBar_duration(unsigned short bar_duration);
     std::function<void(const stock&, stock_field)> get_callback();
-    const boost::optional<bar&> CurrentBar() const { return current_bar; }
+    const bar& CurrentBar() const { return (bars.rbegin()->second); }
     boost::optional<const bar &> PreviousBar(unsigned int i) const;
     double AverageClose(int numberOfBars);
     double AverageClose(int numberOfBars, int barsBack);

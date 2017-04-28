@@ -129,6 +129,7 @@ double stock::set_price(const std::string & prc) {
 
 void stock::time_update(boost::posix_time::ptime _packetTime) {
     packetTime = _packetTime;
+    time_set = true;
 }
 
 cap_file_type stock::getCapType() const {
@@ -180,6 +181,14 @@ const gregorian::date &stock::getDt() const {
 
 void stock::setDt(const gregorian::date &dt) {
     stock::dt = dt;
+}
+
+bool stock::isTime_set() const {
+    return time_set;
+}
+
+void stock::setTime_set(bool time_set) {
+    stock::time_set = time_set;
 }
 
 

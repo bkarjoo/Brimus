@@ -11,19 +11,27 @@
 
 struct dup_tracking {
     std::string symbol = "";
-    char f = 0;
+    //char f = 0;
     std::string v = "";
-    dup_tracking(std::string symb, char field, std::string value)
-        : symbol(symb), f(field), v(value) {}
+//    dup_tracking(std::string symb, char field, std::string value)
+//        : symbol(symb), f(field), v(value) {}
+    dup_tracking(std::string symb, std::string value) : symbol(symb), v(value){}
 };
 
 class tick_file_maker : public IMessageReceiver {
     // TODO : ofstreams can be made using unique ptr
     typedef std::shared_ptr<std::ofstream> os_ptr;
     os_ptr os = nullptr;
+    std::string previous_symbol = "";
     std::string output_path = "";
     std::set<std::string> symbol_list;
     std::map<std::string, dup_tracking> dups;
+    std::map<std::string, dup_tracking> lastBid;
+    std::map<std::string, dup_tracking> lastAsk;
+    std::map<std::string, dup_tracking> lastLast;
+    std::map<std::string, dup_tracking> lastBidSize;
+    std::map<std::string, dup_tracking> lastAskSize;
+    std::map<std::string, dup_tracking> lastLastSize;
     bool is_dup(std::string symbol, char field, std::string value);
     void add_dup_tracker(std::string symbol, char field, std::string value);
 
@@ -38,7 +46,7 @@ public:
     void setOutput_path(const std::string &output_path);
 
     std::string format_price(int precision, const std::string &val);
-public:
+    void flush_stream() { os->flush(); }
 
     void close_os() { os->close(); }
 

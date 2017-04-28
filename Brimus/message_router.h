@@ -10,15 +10,17 @@
 #include "stock_collection.h"
 
 class message_router : public IMessageReceiver {
+
 public:
     void on_packet_header(const std::string &string) override;
 
-public:
     message_router();
 
     void on_message(const cap_message &message) override;
 
     bool has_instrument(const std::string &string) override;
+
+    boost::posix_time::ptime convert_time(std::string);
 };
 
 
