@@ -10,3 +10,9 @@ TEST(message_router_tests, convert) {
     boost::posix_time::ptime t = mr.convert_time("00:08:34 01/03/2017");
     EXPECT_EQ(x,t);
 }
+
+TEST(message_router_tests, convert2) {
+    message_router mr;
+    std::string time = "09:30:13";
+    EXPECT_EQ("93013000", mr.mock_time_stamp(time));
+}

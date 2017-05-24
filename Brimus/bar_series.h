@@ -12,15 +12,13 @@
 #include "stock_field.h"
 
 class bar_series {
-    typedef boost::posix_time::ptime ptime;
-    std::map<bar_time,bar> bars;
+    std::map<bar_time,std::shared_ptr<bar> > bars;
+    std::shared_ptr<bar> current_bar = nullptr;
     unsigned short int bar_duration = 1;
     std::string symbol;
-    std::vector<std::function<void(const bar_series&)> > newBarObservers;
-
+    std::vector<std::function<void(std::string)> > newBarObservers;
 public:
     bar_series(std::string _symbol) : symbol(_symbol) {}
-    ~bar_series() {   }
     const std::string &getSymbol() const;
     void setSymbol(const std::string &symbol);
     void add_price(std::string timestamp,double price);
@@ -28,8 +26,8 @@ public:
     unsigned short getBar_duration() const;
     void setBar_duration(unsigned short bar_duration);
     std::function<void(const stock&, stock_field)> get_callback();
-    const bar& CurrentBar() const { return (bars.rbegin()->second); }
-    boost::optional<const bar &> PreviousBar(unsigned int i) const;
+    const std::shared_ptr<bar> CurrentBar() const { return current_bar; }
+    const std::shared_ptr<bar> PreviousBar(unsigned int i) const;
     double AverageClose(int numberOfBars);
     double AverageClose(int numberOfBars, int barsBack);
     double AverageHigh(int numberOfBars);
@@ -49,7 +47,7 @@ public:
     double MinLow(int numberOfBars);
     double MinLow(int numberOfBars, int barsBack);
 
-    void AddNewBarObserver(std::function<void(const bar_series&)>);
+    void AddNewBarObserver(std::function<void(std::string)>);
 
 };
 #endif //BRIMUS_BAR_SERIES_H

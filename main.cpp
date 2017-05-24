@@ -9,6 +9,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <message_cout.h>
+#include <simple_strat.h>
 
 using boost::tokenizer;
 using namespace std;
@@ -18,6 +19,8 @@ void print_menu();
 void command_interpretter(vector<string> tokens);
 void run(vector<string>);
 void extract(vector<string>);
+
+
 struct param;
 
 typedef vector<std::shared_ptr<param>> param_vec;
@@ -47,7 +50,7 @@ void run(param_vec parameters)
     //cout << sc.size() << endl;
     auto strat = S_SpyArt_Factory::get_strat();
     auto & cfr = cap_file_reader::get_instance();
-    std::vector<std::string> paths {"F:\\2017-01-03 Daily.CAP"};
+    std::vector<std::string> paths {"F:\\2015-05-26.CAP"};
     cfr.setImr(make_unique<message_router>());
     //cout << sc.size() << endl;
     cfr.setStart_time_seconds(((9 * 60) + 30) * 60);
@@ -62,15 +65,13 @@ void run(param_vec parameters)
 
 void extract(param_vec parameters)
 {
-    path myPath("E:\\2017\\");
+    path myPath("E:\\2015\\");
     directory_iterator it(myPath), end;
     vector<string> paths;
-    BOOST_FOREACH(path const&p, make_pair(it, end))
-    {
-
+    BOOST_FOREACH(path const&p, make_pair(it, end)){
         if (is_regular_file(p) && file_size(p) > 1000000000) {
             path can = canonical(p);
-            string output_path = p.filename().string();
+            string output_path = "f:\\" + p.filename().string();
             string symbol = "SPY";
             string default_path = can.string();
             vector<string> paths;
@@ -93,30 +94,31 @@ void extract(param_vec parameters)
             tfmref.close_os();
         }
     }
+}
 
-//    string output_path = "40000b.CAP";
-//    //string output_path = "20170131noabs.CAP";
-//    string symbol = "SPY";
-//    string default_path = "C:\\Users\\b.karjoo\\Documents\\CMDCPP\\CapFileMaker\\output\\40000.CAP";
-//    //string default_path = "E:\\2017\\2017-01-31 Daily.CAP";
-//    vector<string> paths;
-//    for (auto & a : parameters) {
-//        if (a->parameter == "output") output_path = a->value;
-//        else if (a->parameter == "symbol") symbol = a->value;
-//        else if (a->parameter == "input") paths.push_back(a->value);
-//    }
-//    if (paths.size() == 0) paths.push_back(default_path);
-//    auto& pf = cap_file_reader::get_instance();
-//    pf.setStart_time_seconds(((4 * 60) + 00) * 60);
-//    pf.setEnd_time_seconds(((20 * 60) + 00) * 60);
-//    auto tfmptr = std::make_unique<tick_file_maker>(output_path);
-//    auto& tfmref = *tfmptr;
-//    tfmptr->add_instrument(symbol);
-//    pf.setImr(move(tfmptr));
-//    pf.run(paths);
-//    cout << endl;
-//    tfmref.flush_stream();
-//    tfmref.close_os();
+void extract1(param_vec parameters)
+{
+    string output_path = "F:\\2015-05-26.CAP";
+    string symbol = "";
+    string default_path = "E:\\2015\\2015-05-26 Daily.CAP";
+    vector<string> paths;
+    for (auto & a : parameters) {
+        if (a->parameter == "output") output_path = a->value;
+        else if (a->parameter == "symbol") symbol = a->value;
+        else if (a->parameter == "input") paths.push_back(a->value);
+    }
+    if (paths.size() == 0) paths.push_back(default_path);
+    auto& pf = cap_file_reader::get_instance();
+    pf.setStart_time_seconds(((4 * 60) + 00) * 60);
+    pf.setEnd_time_seconds(((20 * 60) + 00) * 60);
+    auto tfmptr = std::make_unique<tick_file_maker>(output_path);
+    auto& tfmref = *tfmptr;
+    //tfmptr->add_instrument(symbol);
+    pf.setImr(move(tfmptr));
+    pf.run(paths);
+    cout << endl;
+    tfmref.flush_stream();
+    tfmref.close_os();
     cout << "Exctract completed." << endl;
 }
 
@@ -124,6 +126,7 @@ void output(param_vec parameters) {
     cap_file_reader& cfr = cap_file_reader::get_instance();
     cfr.setImr(make_unique<message_cout>());
     std::vector<std::string> paths {"F:\\2017-01-03 Daily.CAP"};
+    cfr.setStart_time_seconds(34200);
     cfr.run(paths);
 }
 
@@ -137,8 +140,20 @@ void print_menu() {
     cout << "quit - quits the program" << endl;
     cout << "run - runs a strategy backtest (inprog>" << endl;
     cout << "output - prints messages to screen" << endl;
+    cout << "simple - runs bare minimum strategy" << endl;
     cout << endl;
 }
+
+void simple(param_vec vector) {
+    cap_file_reader& cfr = cap_file_reader::get_instance();
+    cfr.setImr(make_unique<message_router>());
+    stock_collection& sc = stock_collection::get_instance();
+    simple_strat ss;
+    sc.add_stock("SPY", ss.get_callback());
+    std::vector<std::string> paths {"F:\\2015-05-26.CAP"};
+    cfr.run(paths);
+}
+
 
 void command_interpretter(std::string choice, param_vec tokens)
 {
@@ -146,8 +161,12 @@ void command_interpretter(std::string choice, param_vec tokens)
     if (choice == "menu") print_menu();
     else if (choice == "run") run(tokens);
     else if (choice == "extract") extract(tokens);
+    else if (choice == "extract1") extract1(tokens);
     else if (choice == "output") output(tokens);
+    else if (choice == "simple") simple(tokens);
 }
+
+
 
 /*
  * command line prompt for controlling program features

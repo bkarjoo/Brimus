@@ -52,12 +52,14 @@ TEST(execution_collections_tests, find_last_sell)
     EXPECT_DOUBLE_EQ(220.34,ec.last_sell_fill_price("SPY"));
 }
 
-TEST(execution_collections_tests, money_flow_test)
+
+
+TEST(execution_collections_tests, printOut)
 {
     execution_collection ec;
     ec.add_execution(-100,"SPY",220.22);
     ec.add_execution(100,"SPY",220.12);
     ec.add_execution(100,"AAPL",127.34);
     ec.add_execution(-100,"AAPL",127.44);
-    EXPECT_TRUE(20-ec.sum_money_flow()<.0000001);
+    ec.to_file("Fills.csv");
 }

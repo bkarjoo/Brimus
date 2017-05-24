@@ -21,6 +21,8 @@ public:
     bool has_instrument(const std::string &string) override;
 
     boost::posix_time::ptime convert_time(std::string);
+
+    std::string mock_time_stamp(const std::string &basic_string);
 };
 
 

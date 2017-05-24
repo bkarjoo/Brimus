@@ -25,4 +25,4 @@ add_subdirectory(Brimus)
 add_subdirectory(Brimus-Test)
 
 #target_link_libraries(Brimus_run Brimus)
-target_link_libraries(Brimus_run Brimus  ${Boost_LIBRARIES})
+target_link_libraries(Brimus_run Brimus ${Boost_FILESYSTEM_LIBRARY} ${Boost_LIBRARIES})

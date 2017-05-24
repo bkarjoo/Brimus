@@ -9,8 +9,8 @@
 
 class execution {
 private:
-    int execQty = 0;
     std::string symbol = "";
+    int execQty = 0;
     double execPrice = 0.0;
     std::string id;
 public:

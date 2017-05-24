@@ -75,6 +75,17 @@ int execution_collection::sum_executions(const std::string &id) const {
     return sum;
 }
 
+void execution_collection::to_file(std::string full_path) {
+    ofstream of(full_path);
+    of << "symbol,qty,price,dollars" << endl;
+    for (auto& a  : executions) {
+        of << a.getSymbol() << ',' <<
+           a.getQuantity() << ',' <<
+           a.getPrice() << ',' <<
+           (a.getQuantity() * a.getPrice()) << endl;
+    }
+}
+
 
 
 

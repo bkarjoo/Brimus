@@ -102,7 +102,10 @@ void cap_file_reader::run(const std::vector<std::string> &file_paths) {
                         try {
                             hours = stoi(hours_str);
                             minutes = stoi(minutes_str);
-                            seconds = stoi(seconds_str);
+                            if (seconds_str == "")
+                                seconds = 0;
+                            else
+                                seconds = stoi(seconds_str);
                             time_since_midnight = (((hours * 60) + minutes) * 60) + seconds;
                             if (time_since_midnight < start_time_seconds ||
                                 time_since_midnight > end_time_seconds)

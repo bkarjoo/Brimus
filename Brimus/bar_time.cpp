@@ -95,7 +95,7 @@ void bar_time::update(const std::string &t) {
 }
 
 bool bar_time::isGreaterThan(std::string t) {
-    bar_time x;
+    bar_time x = bar_time("00000000");
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
     if (t.length() == 4) {
@@ -120,7 +120,7 @@ bool bar_time::isGreaterThan(std::string t) {
 }
 
 bool bar_time::isLessThan(std::string t) {
-    bar_time x;
+    bar_time x = bar_time("00000000");
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
     if (t.length() == 4) {
@@ -145,7 +145,7 @@ bool bar_time::isLessThan(std::string t) {
 }
 
 bool bar_time::isEqualTo(std::string t) {
-    bar_time x;
+    bar_time x = bar_time("00000000");
     std::string hh = "", mm = "", ss = "", ms = "";
     int i = 0;
     if (t.length() == 4) {

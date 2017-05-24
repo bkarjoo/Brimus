@@ -68,3 +68,7 @@ double stock_collection::LastPrice(const std::string &symbol) {
 void stock_collection::on_packet_time(boost::posix_time::ptime t) {
     for (auto& s : stocks) s.second->time_update(t);
 }
+
+void stock_collection::set_mock_time(std::string mt) {
+    for (auto& s : stocks) s.second->setTimestamp(mt);
+}

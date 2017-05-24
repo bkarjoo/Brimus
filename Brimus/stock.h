@@ -28,6 +28,7 @@ class stock {
     size askSize = 0;
     size bidSize = 0;
     ptime packetTime;
+    std::string timestamp;
     bool time_set = false;
 public:
     bool isTime_set() const;
@@ -51,6 +52,11 @@ public:
     void tick_update(std::unique_ptr<cap_message>);
     void tick_update(const cap_message&);
     void time_update(boost::posix_time::ptime _packetTime);
+
+    const std::string &getTimestamp() const;
+
+    void setTimestamp(const std::string &timestamp);
+
     // getters
     const std::string &Symbol() const;
     price Last() const;

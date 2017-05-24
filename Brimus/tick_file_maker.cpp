@@ -25,9 +25,9 @@ void tick_file_maker::on_message(const cap_message &message) {
     // start a new message header if symbol changed
     // previous symbol resets on new packet header
     if (message.getSymbol() != previous_symbol) {
-        if (message.getPrefix() != 0) s += message.getPrefix();
+        //if (message.getPrefix() != 0) s += message.getPrefix();
         s += message.getSymbol();
-        previous_symbol = message.getSymbol();
+
     }
 
     int precision = 4;
@@ -51,33 +51,41 @@ void tick_file_maker::on_message(const cap_message &message) {
                 } catch (...) {}
             } else {
                 // if any field except trade size is reported twice will not be recorded
-                if (is_dup(message.getSymbol(),a->field_code, a->field_value)) continue;
+                // if (is_dup(message.getSymbol(),a->field_code, a->field_value)) continue;
 
                 // new field is given to dup tracker
-                add_dup_tracker(message.getSymbol(),a->field_code, a->field_value);
+                // add_dup_tracker(message.getSymbol(),a->field_code, a->field_value);
 
                 // only if there's a field we need with the symbol will it be rcorded
                 field_encountered = true;
-                s += a->field_code;
-                if (a->field_exchange != 0) s += a->field_exchange;
-                if (a->field_code_value != "") {
-                    s += a->field_code_value;
-                    s += ',';
-                }
+
+                //if (a->field_exchange != 0) s += a->field_exchange;
+//                if (a->field_code_value != "") {
+//                    s += a->field_code_value;
+//                    s += ',';
+//                }
                 // record the value (format if it's price)
                 if (a->field_code == 't'
                     || a->field_code == 'b'
-                    || a->field_code == 'a'
-                    || a->field_code == 'o') {
+                    || a->field_code == 'a') {
+                    s += a->field_code;
                     s += format_price(precision, a->field_value);
+                } else if (a->field_code == 'o') {
+                    if (hour > 9 and minute >= 30) {
+                        s += a->field_code;
+                        s += format_price(precision, a->field_value);
+                    }
                 } else {
+                    s += a->field_code;
                     s += a->field_value;
                 }
+
             }
         }
     }
     if (field_encountered) {
         *os << s;
+        previous_symbol = message.getSymbol();
         //std::cout << s;
         //char a;
         //cin >> a;
@@ -87,7 +95,8 @@ void tick_file_maker::on_message(const cap_message &message) {
 
 bool tick_file_maker::has_instrument(const std::string & symbol) {
     // we record all instruments
-    return  true;
+    if (symbol_list.size() == 0) return true;
+    return (symbol_list.find(symbol) != symbol_list.end());
 }
 
 std::string tick_file_maker::format_price(int precision, const string &price) {
@@ -101,22 +110,31 @@ std::string tick_file_maker::format_price(int precision, const string &price) {
 }
 
 void tick_file_maker::on_packet_header(const std::string &pheader) {
+    previous_symbol = "";
     if (pheader.length() < 3) return;
     if (pheader[2] != ':') return;
-    string hour = "";
-    hour += pheader[0]; hour += pheader[1];
+    string hr = "";
+    string mn = "";
+    hr += pheader[0]; hr += pheader[1];
+    mn += pheader[3]; mn += pheader[4];
     try {
-        int h = stoi(hour);
+        int h = stoi(hr);
         if (h < 4 || h > 19) return;
+        hour = h;
+        int m = stoi(mn);
+        minute = m;
     } catch (...) {
         return;
     }
 
-    dups.clear();
-    previous_symbol = "";
+    // dups.clear();
+
     char delimiter = 31;
     *os << delimiter;
-    *os << pheader;
+    if (pheader[5] == ':')
+        *os << pheader.substr(0,8);
+    else
+        *os << pheader.substr(0,5);
 
 }
 

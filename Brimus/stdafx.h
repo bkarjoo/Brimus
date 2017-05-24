@@ -29,4 +29,5 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>
+//#include <boost/filesystem.hpp>
 #endif //BRIMUS_STDAFX_H_H

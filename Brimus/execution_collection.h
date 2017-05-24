@@ -22,6 +22,7 @@ public:
     double sum_money_flow() const;
     double sum_money_flow(std::string symbol) const;
     int sum_executions(const std::string& id) const;
+    void to_file(std::string full_path);
 };
 
 

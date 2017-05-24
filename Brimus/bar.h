@@ -9,13 +9,13 @@
 #include "bar_time.h"
 
 class bar {
-    bar_time startTime;
+    bar_time startTime = bar_time("00000000");
     double _open = 0.0;
     double _high = 0.0;
     double _low = 100000.0;
     double _close = 0.0;
 public:
-    bar(){}
+    //bar(){}
     bar(bar_time b) { startTime.setHours(b.getHours()); startTime.setMinutes(b.getMinutes()); }
     bar(unsigned short int hour, unsigned short int minute);
 

@@ -18,4 +18,4 @@ TEST(ms_execution_collection_tests, add_unique_ptr)
     for (auto i = ec.begin(); i != ec.end(); ++i) count++;
     EXPECT_EQ(1, count);
 }
-
+ 

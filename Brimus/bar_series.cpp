@@ -3,8 +3,10 @@
 //
 
 #include "bar_series.h"
+#include <iostream>
+#include <cmath>
 
-using namespace std;
+using std::cout; using std::endl;
 
 void bar_series::add_price(std::string timestamp, double price) {
 
@@ -12,31 +14,25 @@ void bar_series::add_price(std::string timestamp, double price) {
     bar_time start_time(t.getHours(),t.getMinutes());
 
     // TODO need mutex somewhere when this is changing
-    if (bars.size() == 0) {
+    if (current_bar == nullptr) {
         unsigned short int minute = start_time.getMinutes();
         // first bar starts on a proper start time, so take back minutes until you get there
         while (minute % bar_duration != 0 && minute > 0) minute--;
         bar_time nt(start_time.getHours(),minute);
-        // current_bar = std::make_shared<bar>(start_time);
-        // current_bar->setDuration_minutes(bar_duration);
-
-        bars.insert(make_pair(nt, bar(nt)));
-
-        //bars[nt] = new bar(start_time);
+        current_bar = std::make_shared<bar>(start_time);
+        bars[nt] = current_bar;
         for (auto a : newBarObservers) a(symbol);
-    } else if (bars.rbegin()->second.getStartTime().getMinutes() != start_time.getMinutes()) {
+    } else if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
         // check if new bar needs to be created
         if (start_time.getMinutes() % bar_duration == 0) {
             // time for new bar
 
-            // current_bar = std::make_shared<bar> (start_time);
-            //current_bar->setDuration_minutes(bar_duration);
-            // bars[start_time] = current_bar;
-            bars.insert(make_pair(start_time, bar(start_time)));
+            current_bar = std::make_shared<bar> (start_time);
+            bars[start_time] = current_bar;
             for (auto a : newBarObservers) a(symbol);
         }
     }
-    bars.rbegin()->second.add_tick(timestamp, price);
+    current_bar->add_tick(timestamp, price);
 }
 
 
@@ -44,10 +40,10 @@ std::string bar_series::to_string() const {
     std::string str;
     for (auto& a : bars) {
         str += a.first.to_string(); str += ' ';
-        str += std::to_string(a.second.Open()); str += ' ';
-        str += std::to_string(a.second.High()); str += ' ';
-        str += std::to_string(a.second.Low()); str += ' ';
-        str += std::to_string(a.second.Close()); str += '\n';
+        str += std::to_string(a.second->Open()); str += ' ';
+        str += std::to_string(a.second->High()); str += ' ';
+        str += std::to_string(a.second->Low()); str += ' ';
+        str += std::to_string(a.second->Close()); str += '\n';
     }
     return str;
 }
@@ -67,53 +63,41 @@ void bar_series::setBar_duration(unsigned short bar_duration) {
 }
 
 std::function<void(const stock&, stock_field)> bar_series::get_callback() {
-    std::function<void(const stock&, stock_field)> callback =
-        [this](const stock& stk, stock_field sf) {
-            if (sf != stock_field::LAST) return;
-            if (!stk.isTime_set()) return;
-            bar_time t(stk.Time());
-            bar_time start_time(t.getHours(),t.getMinutes());
+    std::function<void(const stock&, stock_field )> callback =
+            [this](const stock& stk, stock_field sf) {
+                bar_time t(stk.getTimestamp());
+                bar_time start_time(t.getHours(),t.getMinutes());
 
-            if (bars.size()==0) {
-                unsigned short int minute = start_time.getMinutes();
-                // first bar starts on a proper start time, so take back minutes until you get there
-                while (minute % bar_duration != 0 && minute > 0) minute--;
-                bar_time nt(start_time.getHours(),minute);
-                // current_bar = std::make_shared<bar>(start_time);
-                // current_bar->setDuration_minutes(bar_duration);
-
-                bars.insert(make_pair(nt,bar(nt)));
-                //bars[nt] = new bar(start_time);
-                for (auto a : newBarObservers) a(symbol);
-            } else if (bars.rbegin()->second.getStartTime().getMinutes()
-                       != start_time.getMinutes()) {
-                // check if new bar needs to be created
-                if (start_time.getMinutes() % bar_duration == 0) {
-                    // time for new bar
-
-                    // current_bar = std::make_shared<bar> (start_time);
-                    //current_bar->setDuration_minutes(bar_duration);
-                    // bars[start_time] = current_bar;
-                    bars.insert(make_pair(start_time,bar(start_time)));
+                if (!current_bar) {
+                    unsigned short int minute = start_time.getMinutes();
+                    // first bar starts on a proper start time, so take back minutes until you get there
+                    while (minute % bar_duration != 0 && minute > 0) minute--;
+                    bar_time nt(start_time.getHours(),minute);
+                    current_bar = std::make_shared<bar>(start_time); 
+                    bars[nt] = current_bar;
                     for (auto a : newBarObservers) a(symbol);
+                } else {//if (current_bar->getStartTime().getMinutes() != start_time.getMinutes()) {
+                    cout << current_bar->High() << endl;
+                    // check if new bar needs to be created
+                    if (start_time.getMinutes() % bar_duration == 0) {
+                        // time for new bar
+                        current_bar = std::make_shared<bar>(start_time); 
+                        bars[start_time] = current_bar;
+                        for (auto a : newBarObservers) a(symbol);
+                    }
                 }
-            }
-
-            bars.rbegin()->second.add_tick(stk.Last());
-        };
+                current_bar->add_tick(stk.getTimestamp(), stk.Last());
+            };
     return callback;
 }
 
-boost::optional<const bar &> bar_series::PreviousBar(unsigned int i) const {
+const std::shared_ptr<bar> bar_series::PreviousBar(unsigned int i) const {
     int count = -1;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         count ++;
-        if (count == i) {
-            const bar& b = a->second;
-            return b;
-        }
+        if (count == i) return a->second;
     }
-    return {};
+    return nullptr;
 }
 
 double bar_series::AverageClose(int numberOfBars) {
@@ -121,7 +105,7 @@ double bar_series::AverageClose(int numberOfBars) {
     int count = 0;
     double sum =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count < numberOfBars) sum += a->second.Close(); else break;
+        if (count < numberOfBars) sum += a->second->Close(); else break;
         count ++;
     }
     return sum / numberOfBars;
@@ -137,7 +121,7 @@ double bar_series::AverageClose(int numberOfBars, int barsBack) {
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
             if (count < numberOfBars)
-                sum += a->second.Close();
+                sum += a->second->Close();
             else
                 break;
         }
@@ -152,8 +136,7 @@ double bar_series::AverageHigh(int numberOfBars)
     int count = 0;
     double sum =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (a->second.High() == 0) continue;
-        if (count < numberOfBars) sum += a->second.High(); else break;
+        if (count < numberOfBars) sum += a->second->High(); else break;
         count ++;
     }
     return sum / numberOfBars;
@@ -165,10 +148,9 @@ double bar_series::AverageHigh(int numberOfBars, int barsBack)
     int count = 0 - barsBack;
     double sum = 0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (a->second.High() == 0) continue;
         if (count >= 0) {
             if (count < numberOfBars)
-                sum += a->second.High();
+                sum += a->second->High();
             else
                 break;
         }
@@ -180,32 +162,28 @@ double bar_series::AverageLow(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
     int count = 0;
-    std::vector<double> vec;
+    double sum =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (a->second.Low() != 100000) {
-            if (count < numberOfBars) vec.push_back(a->second.Low()); else break;
-            count++;
-        }
+        if (count < numberOfBars) sum += a->second->Low(); else break;
+        count ++;
     }
-    return std::accumulate(vec.begin(), vec.end(), 0.0) / vec.size();
+    return sum / numberOfBars;
 }
 double bar_series::AverageLow(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0 - barsBack;
+    double sum = 0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
             if (count < numberOfBars)
-                vec.push_back(a->second.Low());
+                sum += a->second->Low();
             else
                 break;
         }
         count ++;
     }
-    return std::accumulate(vec.begin(), vec.end(), 0.0) / vec.size();
+    return sum / numberOfBars;
 }
 
 const std::string &bar_series::getSymbol() const {
@@ -216,225 +194,200 @@ void bar_series::setSymbol(const std::string &symbol) {
     bar_series::symbol = symbol;
 }
 
-void bar_series::AddNewBarObserver(std::function<void(const bar_series&)> observer) {
+void bar_series::AddNewBarObserver(std::function<void(std::string)> observer) {
     newBarObservers.push_back(observer);
 }
 
 double bar_series::MaxClose(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0;
+    double max =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Close());
-            else
-                break;
+        if (count < numberOfBars) {
+            if (max < a->second->Close()) max = a->second->Close();
         }
+        else
+            break;
         count ++;
     }
-    return *std::max_element(vec.begin(), vec.end());
+    return max;
 }
 double bar_series::MaxClose(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0 - barsBack;
+    double max = 0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Close());
+            if (count < numberOfBars) {
+                if (max < a->second->Close()) max = a->second->Close();
+            }
             else
                 break;
         }
         count ++;
     }
-    return *std::max_element(vec.begin(), vec.end());
+    return max;
 }
 double bar_series::MaxHigh(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 ; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0;
+    double max =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.High());
-            else
-                break;
+        if (count < numberOfBars) {
+            if (max < a->second->High()) max = a->second->High();
         }
+        else
+            break;
         count ++;
     }
-    return *std::max_element(vec.begin(), vec.end());
+    return max;
 }
 double bar_series::MaxHigh(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0 - barsBack;
+    double max = 0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.High());
+            if (count < numberOfBars) {
+                if (max < a->second->High()) max = a->second->High();
+            }
             else
                 break;
         }
         count ++;
     }
-    return *std::max_element(vec.begin(), vec.end());
+    return max;
 }
 double bar_series::MaxLow(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 ; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0;
+    double max =0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Low());
-            else
-                break;
+        if (count < numberOfBars) {
+            if (max < a->second->Low()) max = a->second->Low();
         }
+        else
+            break;
         count ++;
     }
-    return *std::max_element(vec.begin(), vec.end());
+    return max;
 }
 double bar_series::MaxLow(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0 - barsBack;
+    double max = 0;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Low());
+            if (count < numberOfBars) {
+                if (max < a->second->Low()) max = a->second->Low();
+            }
             else
                 break;
         }
         count ++;
     }
-    return *std::max_element(vec.begin(), vec.end());
+    return max;
 }
 
-double bar_series::MinClose(int numberOfBars) {
+double bar_series::MinClose(int numberOfBars)
+{
     if (numberOfBars < 1) return 0;
-    int count = 0; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0;
+    double min =100000;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Close());
-            else
-                break;
+        if (count < numberOfBars) {
+            if (min > a->second->Close()) min = a->second->Close();
         }
-        count++;
+        else
+            break;
+        count ++;
     }
-    return *std::min_element(vec.begin(), vec.end());
+    return min;
 }
-
 double bar_series::MinClose(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0 - barsBack;
+    double min = 100000;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Close());
+            if (count < numberOfBars) {
+                if (min > a->second->Close()) min = a->second->Close();
+            }
             else
                 break;
         }
         count ++;
     }
-    return *std::min_element(vec.begin(), vec.end());
+    return min;
 }
-
 double bar_series::MinHigh(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0;
+    double min =100000;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.High());
-            else
-                break;
+        if (count < numberOfBars) {
+            if (min > a->second->High()) min = a->second->High();
         }
+        else
+            break;
         count ++;
     }
-    return *std::min_element(vec.begin(), vec.end());
+    return min;
 }
 double bar_series::MinHigh(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0 - barsBack;
+    double min = 100000;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.High());
+            if (count < numberOfBars) {
+                if (min > a->second->High()) min = a->second->High();
+            }
             else
                 break;
         }
         count ++;
     }
-    return *std::min_element(vec.begin(), vec.end());
+    return min;
 }
 double bar_series::MinLow(int numberOfBars)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0;
+    double min =100000;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
-        if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Low());
-            else
-                break;
+        if (count < numberOfBars) {
+            if (min > a->second->Low()) min = a->second->Low();
         }
+        else
+            break;
         count ++;
     }
-    return *std::min_element(vec.begin(), vec.end());
+    return min;
 }
 double bar_series::MinLow(int numberOfBars, int barsBack)
 {
     if (numberOfBars < 1) return 0;
-    int count = 0 - barsBack; // skip these bars
-    std::vector<double> vec;
-    // reverse it
+    int count = 0 - barsBack;
+    double min = 100000;
     for (auto a = bars.rbegin(); a != bars.rend(); a++) {
         if (count >= 0) {
-            if (a->second.Low() == 100000) continue; // low hasn't been set yet
-            if (count < numberOfBars)
-                vec.push_back(a->second.Low());
+            if (count < numberOfBars) {
+                if (min > a->second->Low()) min = a->second->Low();
+            }
             else
                 break;
         }
         count ++;
     }
-    return *std::min_element(vec.begin(), vec.end());
+    return min;
 }

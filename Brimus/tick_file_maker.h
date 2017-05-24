@@ -34,6 +34,8 @@ class tick_file_maker : public IMessageReceiver {
     std::map<std::string, dup_tracking> lastLastSize;
     bool is_dup(std::string symbol, char field, std::string value);
     void add_dup_tracker(std::string symbol, char field, std::string value);
+    int hour = 0;
+    int minute = 0;
 
 public:
     tick_file_maker(std::string out_path) : output_path(out_path) {

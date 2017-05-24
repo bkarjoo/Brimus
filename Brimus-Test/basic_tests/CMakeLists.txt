@@ -1,7 +1,7 @@
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_executable(runBasicBrimusTests
-        bar_series_check.cpp strategy_oms_check.cpp symbol_basket_check.cpp launch_rules_check.cpp boost_dateclass.cpp order_collection_check.cpp hydra_message_check.cpp position_check.cpp position_collection_check.cpp execution_collection_check.cpp boost_UUID_check.cpp ms_order_collection_check.cpp market_simulator_check.cpp bar_check.cpp execution_check.cpp holidays_check.cpp ms_execution_check.cpp ms_execution_collection_check.cpp ms_order_check.cpp order_check.cpp st_field_check.cpp st_message_check.cpp strategy_check.cpp strategy_basket_check.cpp tick_file_make_check.cpp stock_collection_tests.cpp stock_test.cpp mini_cap_reader_check.cpp message_router_check.cpp)
+        bar_series_check.cpp strategy_oms_check.cpp symbol_basket_check.cpp launch_rules_check.cpp boost_dateclass.cpp order_collection_check.cpp hydra_message_check.cpp position_check.cpp position_collection_check.cpp execution_collection_check.cpp boost_UUID_check.cpp ms_order_collection_check.cpp market_simulator_check.cpp bar_check.cpp execution_check.cpp holidays_check.cpp ms_execution_check.cpp ms_execution_collection_check.cpp ms_order_check.cpp order_check.cpp st_field_check.cpp st_message_check.cpp strategy_check.cpp strategy_basket_check.cpp tick_file_make_check.cpp stock_collection_tests.cpp stock_test.cpp mini_cap_reader_check.cpp message_router_check.cpp simple_bar_series_check.cpp boost_filesystem_check.cpp)
 
 target_link_libraries(runBasicBrimusTests gtest gtest_main)
 target_link_libraries(runBasicBrimusTests Brimus)

@@ -23,7 +23,7 @@ class S_SpyArt : public IStrategyRules {
     static constexpr double MIN_DIST_BET_ORDS = 0.10;
     static constexpr double LIMIT_AWAY = .02;
     // variables
-    bar_time time;
+    bar_time time = bar_time("00000000");
     double bar_close = 0;
     double bar_high = 0;
 public:

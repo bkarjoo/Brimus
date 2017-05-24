@@ -24,7 +24,7 @@ class bar_time {
     int seconds = 0; // 0 to 59
     int milliseconds = 0; // 0 to 999
 public:
-    bar_time() {}
+    //bar_time() {}
     bar_time(std::string time_str); // format hhmmss (6 digit), or (h)hmmssmmm (8 or 9 digit)
     bar_time(int hours, int minutes);
     bar_time(const boost::posix_time::ptime&);

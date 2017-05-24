@@ -38,6 +38,7 @@ public:
     double BidPrice(const std::string&);
     double LastPrice(const std::string&);
     void on_packet_time(boost::posix_time::ptime);
+    void set_mock_time(std::string);
 };
 
 

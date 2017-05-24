@@ -66,13 +66,22 @@ void stock::tick_update(const cap_message &msg) {
 }
 
 void stock::register_field(cap_msg_field *pField) {
+    double temp;
     switch (pField->field_code) {
         case 'a':
-            ask = set_price(pField->field_value);
+             temp;
+            temp = set_price(pField->field_value);
+            if (temp <= 0) return;
+            if (temp == ask) return;
+            ask = temp;
             observers(*this, stock_field::ASK);
             break;
         case 'b':
-            bid = set_price(pField->field_value);
+             temp;
+            temp = set_price(pField->field_value);
+            if (temp <= 0) return;
+            if (temp == bid) return;
+            bid = temp;
             observers(*this, stock_field::BID);
             break;
         case 'f':
@@ -105,7 +114,13 @@ void stock::register_field(cap_msg_field *pField) {
             observers(*this, stock_field::OPEN);
             break;
         case 't':
-            last = set_price(pField->field_value);
+            // between bid ask filter
+             temp = set_price((pField->field_value));
+            if (temp == last) return;
+            if (bid == 0 || ask == 0) return;
+            if (temp < bid * .99) return;
+            if (temp > ask * 1.01) return;
+            last = temp;
             observers(*this, stock_field::LAST);
             break;
     }
@@ -189,6 +204,14 @@ bool stock::isTime_set() const {
 
 void stock::setTime_set(bool time_set) {
     stock::time_set = time_set;
+}
+
+const string &stock::getTimestamp() const {
+    return timestamp;
+}
+
+void stock::setTimestamp(const string &timestamp) {
+    stock::timestamp = timestamp;
 }
 
 
